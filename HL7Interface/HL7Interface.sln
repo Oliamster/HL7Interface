@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2047
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HL7Interface", "HL7Interface\HL7Interface.csproj", "{DB0F4680-50B7-4062-AC4A-8A57BC3D7B82}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DB0F4680-50B7-4062-AC4A-8A57BC3D7B82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB0F4680-50B7-4062-AC4A-8A57BC3D7B82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB0F4680-50B7-4062-AC4A-8A57BC3D7B82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB0F4680-50B7-4062-AC4A-8A57BC3D7B82}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {47689B69-364A-484D-B177-079D76A81D67}
+	EndGlobalSection
+EndGlobal
