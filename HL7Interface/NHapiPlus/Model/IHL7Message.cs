@@ -30,6 +30,9 @@ namespace NHapiPlus.Model
         /// </summary>
         String ExpectedResponseName { get; } 
 
+        /// <summary>
+        /// The type of transaction
+        /// </summary>
         TransactionType TypeOfTransaction { get; set; }
     }
 }
