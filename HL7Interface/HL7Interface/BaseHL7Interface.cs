@@ -1,4 +1,5 @@
-﻿using SuperSocket.ClientEngine;
+﻿using NHapiPlus.Model;
+using SuperSocket.ClientEngine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,8 @@ namespace HL7Interface
 
         HL7Protocol IHL7Interface.Protocol => throw new NotImplementedException();
 
+        string IHL7Interface.Name => throw new NotImplementedException();
+
         Task<bool> IHL7Interface.ConnectAsync(EndPoint remoteEndPoint)
         {
             throw new NotImplementedException();
@@ -30,6 +33,8 @@ namespace HL7Interface
         {
             throw new NotImplementedException();
         }
+
+      
 
         bool IHL7Interface.Start()
         {

@@ -31,7 +31,7 @@ namespace NHapiPlus.V251.Message
         public AdmitVisitNotification(ADT_A01 aDT_A01)
             : base(aDT_A01)
         {
-            aDT_A01 = this.m_Message as ADT_A01;
+            this.aDT_A01 = this.m_Message as ADT_A01;
         }
 
         public TS DateTimeOfMEssage

@@ -8,10 +8,8 @@ using System.Threading.Tasks;
 
 namespace HL7Interface.ServerProtocol
 {
-    public class HL7Session : AppSession
+    public class HL7Session : AppSession<HL7Session, HL7Request>
     {
-        public override AppServerBase<AppSession, StringRequestInfo> AppServer => base.AppServer;
-
         public override void Close(CloseReason reason)
         {
             base.Close(reason);
@@ -30,11 +28,6 @@ namespace HL7Interface.ServerProtocol
         public override int GetHashCode()
         {
             return base.GetHashCode();
-        }
-
-        public override void Initialize(IAppServer<AppSession, StringRequestInfo> appServer, ISocketSession socketSession)
-        {
-            base.Initialize(appServer, socketSession);
         }
 
         public override void Send(byte[] data, int offset, int length)
@@ -97,10 +90,7 @@ namespace HL7Interface.ServerProtocol
             base.HandleException(e);
         }
 
-        protected override void HandleUnknownRequest(StringRequestInfo requestInfo)
-        {
-            base.HandleUnknownRequest(requestInfo);
-        }
+       
 
         protected override void OnInit()
         {
@@ -117,9 +107,6 @@ namespace HL7Interface.ServerProtocol
             base.OnSessionStarted();
         }
 
-        protected override string ProcessSendingMessage(string rawMessage)
-        {
-            return base.ProcessSendingMessage(rawMessage);
-        }
+      
     }
 }
