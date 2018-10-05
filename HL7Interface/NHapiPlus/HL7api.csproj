@@ -81,8 +81,10 @@
   <ItemGroup>
     <Compile Include="Model\AbstractHL7Message.cs" />
     <Compile Include="Model\IHL7Message.cs" />
+    <Compile Include="HL7apiException.cs" />
     <Compile Include="Parser\HL7Encoding.cs" />
     <Compile Include="Parser\HL7Parser.cs" />
+    <Compile Include="Parser\ParserResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TransactionType.cs" />
   </ItemGroup>

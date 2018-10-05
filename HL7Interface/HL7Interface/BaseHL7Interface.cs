@@ -1,4 +1,4 @@
-﻿using NHapiPlus.Model;
+﻿using HL7api.Model;
 using SuperSocket.ClientEngine;
 using System;
 using System.Collections.Generic;
@@ -26,6 +26,7 @@ namespace HL7Interface
 
         bool IHL7Interface.Initialise()
         {
+            //IBoostrap bootstrap = DefaultBootStrap.CreateBootstrap()
             throw new NotImplementedException();
         }
 

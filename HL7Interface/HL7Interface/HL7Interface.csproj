@@ -84,9 +84,9 @@
     <Folder Include="ClientProtocol\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NHapiPlus\NHapiPlus.csproj">
+    <ProjectReference Include="..\NHapiPlus\HL7api.csproj">
       <Project>{160740A5-90C5-4A59-B358-65A4185CC753}</Project>
-      <Name>NHapiPlus</Name>
+      <Name>HL7api</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

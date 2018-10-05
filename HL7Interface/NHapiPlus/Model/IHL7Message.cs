@@ -1,7 +1,7 @@
 ﻿using NHapi.Base.Model;
 using System;
 
-namespace NHapiPlus.Model
+namespace HL7api.Model
 {
     public interface IHL7Message
     {
@@ -10,6 +10,11 @@ namespace NHapiPlus.Model
         /// </summary>
         String MessageName { get; }
 
+        string Trigger { get; }
+
+        string Code { get; }
+
+        IMessage Message { get; }
         /// <summary>
         /// The date an time of message (MSH- )
         /// </summary>
@@ -34,5 +39,7 @@ namespace NHapiPlus.Model
         /// The type of transaction
         /// </summary>
         TransactionType TypeOfTransaction { get; set; }
+
+        String Encode();
     }
 }

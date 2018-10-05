@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NHapiPlus
+namespace HL7api
 {
     public enum TransactionType
     {

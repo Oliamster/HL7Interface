@@ -86,20 +86,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="AdmitVisitNotificationMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NHapiPlus.V251\NHapiPlus.V251.csproj">
+    <ProjectReference Include="..\NHapiPlus.V251\HL7api.V251.csproj">
       <Project>{1DC2BF49-6257-4B95-895B-111DE7BA5A89}</Project>
-      <Name>NHapiPlus.V251</Name>
+      <Name>HL7api.V251</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NHapiPlus\NHapiPlus.csproj">
+    <ProjectReference Include="..\NHapiPlus\HL7api.csproj">
       <Project>{160740a5-90c5-4a59-b358-65a4185cc753}</Project>
-      <Name>NHapiPlus</Name>
+      <Name>HL7api</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

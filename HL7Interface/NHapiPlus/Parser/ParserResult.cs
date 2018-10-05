@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HL7api.V251
+namespace HL7api.Parser
 {
-    public class Class1
+    public class ParserResult
     {
+        
     }
 }

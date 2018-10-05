@@ -1,5 +1,5 @@
 ﻿using NHapi.Model.V251.Message;
-using NHapiPlus.Model;
+using HL7api.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,10 +8,13 @@ using System.Threading.Tasks;
 using NHapi.Model.V251.Datatype;
 using NHapi.Base.Model.Primitive;
 using NHapi.Base;
+using System.Globalization;
+using NHapi.Base.Parser;
+using System.Diagnostics;
 
-namespace NHapiPlus.V251.Message
+namespace HL7api.V251.Message
 {
-    public class AdmitVisitNotification  : AbstractHL7Message
+    public class AdmitVisitNotification : AbstractHL7Message
     {
         protected ADT_A01 aDT_A01;
 
@@ -25,13 +28,20 @@ namespace NHapiPlus.V251.Message
 
         public AdmitVisitNotification() : this(new ADT_A01())
         {
-            
+
         }
 
         public AdmitVisitNotification(ADT_A01 aDT_A01)
             : base(aDT_A01)
         {
             this.aDT_A01 = this.m_Message as ADT_A01;
+            Debug.Print((new PipeParser()).Encode(aDT_A01));
+            this.aDT_A01.MSH.DateTimeOfMessage.Time.SetLongDateWithSecond(DateTime.Now);
+            this.aDT_A01.MSH.GetMessageProfileIdentifier(0).EntityIdentifier.Value = GetType().Name;
+            this.aDT_A01.MSH.MessageControlID.Value = Guid.NewGuid().ToString();
+            this.aDT_A01.MSH.MessageType.MessageCode.Value = "ADT";
+            this.aDT_A01.MSH.MessageType.TriggerEvent.Value = "A01";
+
         }
 
         public TS DateTimeOfMEssage
@@ -44,9 +54,9 @@ namespace NHapiPlus.V251.Message
                     ret = aDT_A01.MSH.DateTimeOfMessage;
                 }
                 catch (HL7Exception he)
-                { throw new NHapiPlusException("", he); }
+                { throw new HL7apiException("", he); }
                 return ret;
-            } 
+            }
         }
 
         public override DateTime MessageDateTime
@@ -56,12 +66,27 @@ namespace NHapiPlus.V251.Message
                 DateTime ret;
                 try
                 {
-                    ret = DateTime.Parse(DateTimeOfMEssage.Time.Value);
+                    ret = DateTime.ParseExact(DateTimeOfMEssage.Time.Value, "yyyyMMddHHmmss", null);
                 }
                 catch (Exception)
-                {   throw;   }
+                { throw; }
                 return ret;
             }
         }
+
+        public override string MessageID
+        {
+            get
+            {
+                string ret = null;
+                ret = aDT_A01.MSH.MessageControlID.Value;
+                return ret;
+            }
+        }
+
+        public override string Code => aDT_A01.MSH.MessageType.MessageCode.Value;
+        public override string Trigger => aDT_A01.MSH.MessageType.TriggerEvent.Value;
+
+        
     }
 }

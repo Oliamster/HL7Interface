@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NHapiPlus.Parser
+namespace HL7api.Parser
 {
     public enum HL7Encoding
     {
