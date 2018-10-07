@@ -1,4 +1,5 @@
-﻿using NHapi.Base.Model;
+﻿using HL7api.Parser;
+using NHapi.Base.Model;
 using System;
 
 namespace HL7api.Model
@@ -28,7 +29,7 @@ namespace HL7api.Model
         /// <summary>
         /// The HL7 version
         /// </summary>
-        string MessageVersion { get;  }
+        String MessageVersion { get;  }
 
         /// <summary>
         /// The name of the expected response to this message
@@ -40,6 +41,16 @@ namespace HL7api.Model
         /// </summary>
         TransactionType TypeOfTransaction { get; set; }
 
+        /// <summary>
+        /// Encode with to the default ER7 encoding and default 
+        /// encoding characters
+        /// </summary>
+        /// <returns></returns>
         String Encode();
+        String Encode(HL7Encoding hL7Encoding);
+
+        String GetValue(string path);
+
+        void SetValue(string path, string newValue);
     }
 }

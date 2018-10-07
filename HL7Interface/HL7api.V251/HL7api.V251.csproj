@@ -79,13 +79,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="Message\EquipmentCommandResponse.cs" />
+    <Compile Include="Message\EquipmentCommandRequest.cs" />
     <Compile Include="Message\AdmitVisitNotification.cs" />
     <Compile Include="Message\GeneralAcknowledgment.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NHapiPlus\HL7api.csproj">
+    <ProjectReference Include="..\HL7api\HL7api.csproj">
       <Project>{160740A5-90C5-4A59-B358-65A4185CC753}</Project>
       <Name>HL7api</Name>
     </ProjectReference>

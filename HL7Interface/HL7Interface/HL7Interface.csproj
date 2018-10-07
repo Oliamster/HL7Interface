@@ -84,7 +84,7 @@
     <Folder Include="ClientProtocol\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NHapiPlus\HL7api.csproj">
+    <ProjectReference Include="Y:\HL7Interface\HL7Interface\HL7api\HL7api.csproj">
       <Project>{160740A5-90C5-4A59-B358-65A4185CC753}</Project>
       <Name>HL7api</Name>
     </ProjectReference>

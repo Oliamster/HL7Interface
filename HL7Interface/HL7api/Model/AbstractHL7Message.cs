@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NHapi.Base.Util;
 
 namespace HL7api.Model
 {
@@ -12,13 +13,16 @@ namespace HL7api.Model
     {
         protected IMessage m_Message;
         private HL7Parser hl7Parser;
+        protected Terser terser;
+   
 
         public AbstractHL7Message(IMessage message)
         {
             this.m_Message = message;
             this.hl7Parser = new HL7Parser();
+            this.terser = new Terser(m_Message);
         }
-        public string MessageName => this.GetType().Name;
+        public string MessageName => this.GetType().Name; //Change to RequestKey
 
         public abstract  DateTime MessageDateTime { get; }
 
@@ -26,7 +30,7 @@ namespace HL7api.Model
 
         public string MessageVersion => this.m_Message.Version;
 
-        public string ExpectedResponseName => throw new NotImplementedException();
+        public virtual string ExpectedResponseName => throw new NotImplementedException();
 
         public TransactionType TypeOfTransaction { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
@@ -39,6 +43,21 @@ namespace HL7api.Model
         public string Encode()
         {
             return hl7Parser.Encode(this);
+        }
+
+        public string GetValue(string path)
+        {
+            return terser.Get(path);
+        }
+
+        public void SetValue(string path, string newValue)
+        {
+            terser.Set(path, newValue);
+        }
+
+        public string Encode(HL7Encoding hL7Encoding)
+        {
+            throw new NotImplementedException();
         }
     }
 }

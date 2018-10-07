@@ -14,36 +14,36 @@ using System.Diagnostics;
 
 namespace HL7api.V251.Message
 {
-    public class AdmitVisitNotification : AbstractHL7Message
+   
+    public class EquipmentCommandResponse : AbstractHL7Message
     {
-        protected ADT_A01 aDT_A01;
+        protected EAR_U08 eAR_U08;
 
-        public ADT_A01 ADT_A01
+        public EAR_U08 EAR_U08
         {
             get
             {
-                return this.m_Message as ADT_A01;
+                return this.eAR_U08;
             }
         }
 
-        public AdmitVisitNotification() : this(new ADT_A01())
+        public EquipmentCommandResponse() : this(new EAR_U08())
         {
 
         }
 
-        public AdmitVisitNotification(ADT_A01 aDT_A01)
-            : base(aDT_A01)
+        public EquipmentCommandResponse(EAR_U08 eAR_U08)
+            : base(eAR_U08)
         {
-            this.aDT_A01 = this.m_Message as ADT_A01;
-            Debug.Print((new PipeParser()).Encode(aDT_A01));
-            this.aDT_A01.MSH.DateTimeOfMessage.Time.SetLongDateWithSecond(DateTime.Now);
-            this.aDT_A01.MSH.GetMessageProfileIdentifier(0).EntityIdentifier.Value = GetType().Name;
-            this.aDT_A01.MSH.MessageControlID.Value = Guid.NewGuid().ToString();
-            this.aDT_A01.MSH.MessageType.MessageCode.Value = "ADT";
-            this.aDT_A01.MSH.MessageType.TriggerEvent.Value = "A01";
+            this.eAR_U08 = this.m_Message as EAR_U08;
+            Debug.Print((new PipeParser()).Encode(eAR_U08));
+            this.eAR_U08.MSH.DateTimeOfMessage.Time.SetLongDateWithSecond(DateTime.Now);
+            this.eAR_U08.MSH.GetMessageProfileIdentifier(0).EntityIdentifier.Value = GetType().Name;
+            this.eAR_U08.MSH.MessageControlID.Value = Guid.NewGuid().ToString();
+            this.eAR_U08.MSH.MessageType.MessageCode.Value = "EAR";
+            this.eAR_U08.MSH.MessageType.TriggerEvent.Value = "U08";
 
         }
-
         public TS DateTimeOfMEssage
         {
             get
@@ -51,13 +51,16 @@ namespace HL7api.V251.Message
                 TS ret = null;
                 try
                 {
-                    ret = aDT_A01.MSH.DateTimeOfMessage;
+                    ret = eAR_U08.MSH.DateTimeOfMessage;
                 }
                 catch (HL7Exception he)
                 { throw new HL7apiException("", he); }
                 return ret;
             }
         }
+
+
+        //public override string ExpectedResponseName =>  default(string);
 
         public override DateTime MessageDateTime
         {
@@ -79,13 +82,15 @@ namespace HL7api.V251.Message
             get
             {
                 string ret = null;
-                ret = aDT_A01.MSH.MessageControlID.Value;
+                ret = eAR_U08.MSH.MessageControlID.Value;
                 return ret;
             }
         }
 
-        public override string Code => aDT_A01.MSH.MessageType.MessageCode.Value;
-        public override string Trigger => aDT_A01.MSH.MessageType.TriggerEvent.Value;
+        public override string Code => eAR_U08.MSH.MessageType.MessageCode.Value;
+        public override string Trigger => eAR_U08.MSH.MessageType.TriggerEvent.Value;
+
+
 
         
     }
