@@ -31,8 +31,9 @@ namespace HL7Interface
         }
 
        public virtual bool Initialise()
-        {
+       {
             log.Debug("Server is initializing");
+
             IBootstrap bootstrap = BootstrapFactory.CreateBootstrap();
             if (!bootstrap.Initialize())
                 return false;
@@ -40,6 +41,7 @@ namespace HL7Interface
             _hl7Server = item as HL7Server;
             if (_hl7Server == null)
                 return false;
+            _hl7Server.Logger.Debug("Server Initialized");
             return true;
         }
 
