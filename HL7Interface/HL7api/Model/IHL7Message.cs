@@ -49,6 +49,11 @@ namespace HL7api.Model
         String Encode();
         String Encode(HL7Encoding hL7Encoding);
 
+        /// <summary>
+        /// Get the value from pa
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         String GetValue(string path);
 
         void SetValue(string path, string newValue);

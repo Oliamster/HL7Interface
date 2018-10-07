@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using HL7Interface.ServerProtocol;
 using System.Linq;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
@@ -15,9 +16,10 @@ namespace HL7Interface.ServerProtocol
 {
     public class HL7Server : AppServer<HL7Session, HL7Request>
     {
-        public HL7Server(IReceiveFilterFactory<HL7Request> receiveFilterFactory)
+        public HL7Server()
+            : base(new DefaultReceiveFilterFactory<MLLPBeginEndMarkReceiveFilter, HL7Request>())
         {
-            ReceiveFilterFactory = receiveFilterFactory;
+            //ReceiveFilterFactory = receiveFilterFactory;
         }
 
         public override IReceiveFilterFactory<HL7Request> ReceiveFilterFactory { get => base.ReceiveFilterFactory; protected set => base.ReceiveFilterFactory = value; }

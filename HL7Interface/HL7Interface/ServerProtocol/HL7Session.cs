@@ -87,7 +87,7 @@ namespace HL7Interface.ServerProtocol
 
         protected override void HandleException(Exception e)
         {
-            base.HandleException(e);
+            throw e;
         }
 
        

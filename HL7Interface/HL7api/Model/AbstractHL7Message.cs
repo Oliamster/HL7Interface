@@ -44,6 +44,10 @@ namespace HL7api.Model
         {
             return hl7Parser.Encode(this);
         }
+        public string Encode(HL7Encoding hL7Encoding)
+        {
+            return hl7Parser.Encode(this, hL7Encoding, true);
+        }
 
         public string GetValue(string path)
         {
@@ -55,9 +59,6 @@ namespace HL7api.Model
             terser.Set(path, newValue);
         }
 
-        public string Encode(HL7Encoding hL7Encoding)
-        {
-            throw new NotImplementedException();
-        }
+       
     }
 }
