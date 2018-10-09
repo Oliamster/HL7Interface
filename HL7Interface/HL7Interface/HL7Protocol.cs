@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HL7Interface
 {
-    public class HL7Protocol
+    public class HL7Protocol 
     {
 
     }

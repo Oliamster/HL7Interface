@@ -66,6 +66,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseHL7Interface.cs" />
+    <Compile Include="ClientProtocol\PackageInfo.cs" />
+    <Compile Include="ClientProtocol\ReceiverFilter.cs" />
     <Compile Include="Configuration\HL7SocketServiceConfig.cs" />
     <Compile Include="Configuration\IProtocolConfig.cs" />
     <Compile Include="Configuration\ProtocolConfig.cs" />
@@ -73,8 +75,12 @@
     <Compile Include="IHL7Interface.cs" />
     <Compile Include="HL7Request.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServerProtocol\DefaultProtocol.cs" />
+    <Compile Include="ServerProtocol\HL7RequestParser.cs" />
     <Compile Include="ServerProtocol\HL7Server.cs" />
     <Compile Include="ServerProtocol\HL7Session.cs" />
+    <Compile Include="ServerProtocol\IHL7Protocol.cs" />
+    <Compile Include="ServerProtocol\IProtocol.cs" />
     <Compile Include="ServerProtocol\MLLPBeginEndMarkReceiveFilter.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -83,9 +89,7 @@
     <None Include="supersocket.cmd" />
     <None Include="supersocket.sh" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ClientProtocol\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="Y:\HL7Interface\HL7Interface\HL7api\HL7api.csproj">
       <Project>{160740A5-90C5-4A59-B358-65A4185CC753}</Project>

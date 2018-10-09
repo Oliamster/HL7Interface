@@ -25,7 +25,7 @@ namespace HL7api.Parser
             return DoParse(pipeParser.Parse(message));
         }
 
-        ParserResult Parse(IHL7Message message)
+        ParserResult Parse(string message)
         {
             throw new NotImplementedException();
         }
