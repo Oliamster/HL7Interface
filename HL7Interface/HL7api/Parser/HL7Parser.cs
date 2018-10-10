@@ -25,7 +25,7 @@ namespace HL7api.Parser
             return DoParse(pipeParser.Parse(message));
         }
 
-        ParserResult Parse(string message)
+        public ParserResult Parse(string message)
         {
             IMessage im = null;
             IHL7Message hl7Message = null;
@@ -34,14 +34,28 @@ namespace HL7api.Parser
             {
                 im = pipeParser.Parse(message);
                 hl7Message = DoParse(im);
-                pr = new ParserResult(hl7Message, null, false, null, "Message Accepted");
+                IHL7Message ack = GetAckForMessage(hl7Message);
+                pr = new ParserResult(hl7Message, ack, true, hl7Message.ExpectedAckName == null, "Message Accepted");
             }
-            catch (Exception se)
+            catch (Exception ex)
             {
-                pr = new ParserResult(null, null, false, null, se.Message);
+                pr = handleParserException(message, ex);
             }
             return pr;
         }
+
+        private IHL7Message GetAckForMessage(IHL7Message hl7Message)
+        {
+            string ackclass = hl7Message.ExpectedAckName;
+            string t = $"HL7api.V{hl7Message.MessageVersion.Replace(".", "")}.{ackclass}";
+            throw new NotImplementedException();
+        }
+
+        private ParserResult handleParserException(string invalidMessage, Exception ex)
+        {
+            return new ParserResult(null, null, false, null, ex.Message);
+        }
+
         internal IHL7Message DoParse(IMessage message)
         {
             if (message == null)
@@ -54,7 +68,6 @@ namespace HL7api.Parser
             if (HL7Encoding.XML == encoding)
                 return xmlParser.Encode(hl7Message.Message);
             return pipeParser.Encode(hl7Message.Message);
-
         }
 
         public PipeParser PipeParser => this.pipeParser;

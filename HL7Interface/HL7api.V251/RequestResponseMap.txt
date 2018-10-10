@@ -1,0 +1,15 @@
+﻿ACK,GeneralAcknowledgment
+ESR_U02,EquipmentStatusRequest ACK_U02 GeneralAcknowledgment
+ESR_U01,EquipmentStatusUpdate ACK_U01 GeneralAcknowledgment
+NMD_N02,ConnectionTestProfile ACK_N02 GeneralAcknowledgment
+SSR_U04,SpecimenStatusRequest ACK_U04 GeneralAcknowledgment
+SSU_U03,SpecimenStatusUpdate ACK_U03 GeneralAcknowledgment
+ORL_O22,LaboratoryOrderResponse
+OML_O21,LaboratoryOrderRequest ORL_O22 LaboratoryOrderResponse
+EAC_U07,EquipmentCommandRequest ACK_U07 GeneralAcknowledgment
+EAR_U08,EquipmentCommandResponse ACK_U08 GeneralAcknowledgment
+INR_U06,EquipmentInventoryRequest ACK_U06 GeneralAcknowledgment
+INU_U05,EquipmentInventoryUpdate ACK_U05 GeneralAcknowledgment
+
+
+

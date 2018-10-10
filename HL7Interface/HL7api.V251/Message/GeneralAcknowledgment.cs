@@ -22,6 +22,8 @@ namespace HL7api.V251.Message
 
         public override DateTime MessageDateTime => throw new NotImplementedException();
 
+        public override string ExpectedAckName => throw new NotImplementedException();
+
         public GeneralAcknowledgment() : this(new ACK())
         {
 

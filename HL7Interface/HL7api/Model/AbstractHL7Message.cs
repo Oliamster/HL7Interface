@@ -40,6 +40,8 @@ namespace HL7api.Model
 
         public IMessage Message => this.m_Message;
 
+        public abstract string ExpectedAckName { get; }
+
         public string Encode()
         {
             return hl7Parser.Encode(this);
@@ -58,7 +60,5 @@ namespace HL7api.Model
         {
             terser.Set(path, newValue);
         }
-
-       
     }
 }

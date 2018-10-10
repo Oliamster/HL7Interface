@@ -90,8 +90,6 @@ namespace HL7api.V251.Message
         public override string Code => eAR_U08.MSH.MessageType.MessageCode.Value;
         public override string Trigger => eAR_U08.MSH.MessageType.TriggerEvent.Value;
 
-
-
-        
+        public override string ExpectedAckName => throw new NotImplementedException();
     }
 }

@@ -34,7 +34,9 @@ namespace HL7api.Model
         /// <summary>
         /// The name of the expected response to this message
         /// </summary>
-        String ExpectedResponseName { get; } 
+        String ExpectedResponseName { get; }
+
+        String ExpectedAckName { get; }
 
         /// <summary>
         /// The type of transaction

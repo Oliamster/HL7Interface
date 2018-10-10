@@ -62,7 +62,7 @@ namespace HL7Interface
             HL7SocketServiceConfig config = bootstrap.Config as HL7SocketServiceConfig;
             if (config == null && config.ProtocolConfig == null)
                 return false;
-            //m_Protocol.Config = config.ProtocolConfig;
+            m_Protocol.Config = config.ProtocolConfig;
 
             log.Debug("the Client side is initializing");
             Client.Initialize(new ReceiverFilter(m_Protocol), (request) => {
