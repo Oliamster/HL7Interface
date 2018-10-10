@@ -1,4 +1,5 @@
-﻿using SuperSocket.SocketBase.Protocol;
+﻿using HL7api.Model;
+using SuperSocket.SocketBase.Protocol;
 
 namespace HL7Interface
 {
@@ -6,8 +7,11 @@ namespace HL7Interface
     {
         public HL7Request()
         {
+
         }
 
-        public string Key => throw new System.NotImplementedException();
+        public string Key { get; set; }
+
+        public IHL7Message RequestMessage { get; set; }
     }
 }

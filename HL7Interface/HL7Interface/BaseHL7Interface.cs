@@ -1,4 +1,6 @@
 ﻿using HL7api.Model;
+using Hl7Interface.ServerProtocol;
+using HL7Interface.ClientProtocol;
 using HL7Interface.Configuration;
 using HL7Interface.ServerProtocol;
 using SuperSocket.ClientEngine;
@@ -10,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace HL7Interface
@@ -17,14 +20,25 @@ namespace HL7Interface
     public class BaseHL7Interface : IHL7Interface
     {
         public static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        private HL7Server _hl7Server;
+        private HL7Server m_HL7Server;
+        private BaseHL7Protocol m_Protocol;
         private ConcurrentQueue<IHL7Message> incomingAcknowledgment;
+        public object incomingAckLock = new object();
+        private AutoResetEvent ackReceivedSignal = new AutoResetEvent(false);
+
+        public BaseHL7Interface()
+        {
+            incomingAcknowledgment = new ConcurrentQueue<IHL7Message>();
+            Client = new EasyClient();
+
+        }
+
 
         public virtual string Name => this.GetType().Name;
 
         public EasyClient Client { get;  }
 
-        HL7Protocol IHL7Interface.Protocol => throw new NotImplementedException();
+        IHL7Protocol IHL7Interface.Protocol => throw new NotImplementedException();
 
         string IHL7Interface.Name => throw new NotImplementedException();
 
@@ -39,8 +53,8 @@ namespace HL7Interface
             if (!bootstrap.Initialize())
                 return false;
             IWorkItem item = bootstrap.AppServers.FirstOrDefault(server => server.Name == Name);
-            _hl7Server = item as HL7Server;
-            if (_hl7Server == null)
+            m_HL7Server = item as HL7Server;
+            if (m_HL7Server == null)
                 return false;
             //_hl7Server.Logger.Debug("Server Initialized"); TODO: Exploit the AppServer Logger
             log.Debug("the Server side is initializing");
@@ -51,14 +65,12 @@ namespace HL7Interface
             //m_Protocol.Config = config.ProtocolConfig;
 
             log.Debug("the Client side is initializing");
-            Client.Initialize(new ReceiverFilter(messageProtocol), (request) => {
-                lock (incomingAckLocker)
+            Client.Initialize(new ReceiverFilter(m_Protocol), (request) => {
+                lock (incomingAckLock)
                     incomingAcknowledgment.Enqueue(request.RequestMessage);
                 ackReceivedSignal.Set();
             });
-
             return true;
-
         }
 
         Task<HL7Request> IHL7Interface.SendHL7MessageAsync(IHL7Message message)

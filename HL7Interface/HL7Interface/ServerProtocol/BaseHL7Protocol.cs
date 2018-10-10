@@ -11,10 +11,12 @@ using HL7api.Model;
 
 namespace Hl7Interface.ServerProtocol
 {
-    public class DefaultProtocol : IHL7Protocol
+    public class BaseHL7Protocol : IHL7Protocol
     {
         private IProtocolConfig config;
-       
+        private HL7Parser p = new HL7Parser();
+
+
         public IProtocolConfig Config { get; set; }
 
        
@@ -30,7 +32,7 @@ namespace Hl7Interface.ServerProtocol
         public virtual ParserResult Parse(string message)
         {
             message = Encoding.ASCII.GetString(Convert.FromBase64String(message));
-            HL7Parser p = new HL7Parser();
+            
             //return p.Parse(message);
             throw new NotImplementedException();
         } 

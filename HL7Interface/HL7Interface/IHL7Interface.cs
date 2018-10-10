@@ -1,4 +1,5 @@
 ﻿using HL7api.Model;
+using HL7Interface.ServerProtocol;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace HL7Interface
         /// </summary>
         String Name { get;}
 
-        HL7Protocol Protocol { get; }
+        IHL7Protocol Protocol { get; }
 
         /// <summary>
         /// Send the HL7Message to the remote system
