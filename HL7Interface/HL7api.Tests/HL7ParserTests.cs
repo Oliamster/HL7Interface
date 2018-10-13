@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace HL7api.Tests
 {
     [TestFixture]
-    public class AdmitVisitNotificationMessage
+    public class HL7ParserTests
     {
         [Test]
         public void CreateNewAdmitVisitNotification()
@@ -36,21 +36,8 @@ namespace HL7api.Tests
             string msg = avn.Encode();
 
             Debug.Print(msg);
+
         }
-
-        [Test]
-        public void ParseAdmitVisitNotification()
-        {
-            AdmitVisitNotification avn = new AdmitVisitNotification();
-
-            Assert.IsAssignableFrom(typeof(ADT_A01), avn.ADT_A01);
-
-            string msg = avn.Encode();
-
-            Debug.Print(msg);
-        }
-
-
     }
 }
 

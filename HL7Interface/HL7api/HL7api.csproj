@@ -7,8 +7,8 @@
     <ProjectGuid>{160740A5-90C5-4A59-B358-65A4185CC753}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NHapiPlus</RootNamespace>
-    <AssemblyName>NHapiPlus</AssemblyName>
+    <RootNamespace>HL7api</RootNamespace>
+    <AssemblyName>HL7api</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

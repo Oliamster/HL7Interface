@@ -41,7 +41,7 @@ namespace HL7api.Tests
         }
 
         [Test]
-        public void MyTestMethod()
+        public void ParseEquipmentCommandRequest()
         {
             HL7Parser p = new HL7Parser(); 
             string m = @"MSH|^~\&|||||20181004003016||EAC^U07|d241a178-b714-49ce-9177-52a572e2f419||2.5.1|||||||||EquipmentCommandRequestECD||CL^Prepare for specimen acquisition^ASTM|Y";
