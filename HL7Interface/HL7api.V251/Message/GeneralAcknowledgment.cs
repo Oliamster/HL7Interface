@@ -19,10 +19,12 @@ namespace HL7api.V251.Message
                 return this.m_Message as ACK;
             }
         }
-
+        public override bool IsAcknowledge => true;
         public override DateTime MessageDateTime => throw new NotImplementedException();
 
-        public override string ExpectedAckName => throw new NotImplementedException();
+        public override string ExpectedAckID => null;
+
+        public override string ExpectedResponseID => default(string);
 
         public GeneralAcknowledgment() : this(new ACK())
         {

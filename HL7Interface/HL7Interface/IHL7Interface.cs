@@ -15,6 +15,9 @@ namespace HL7Interface
         /// </summary>
         String Name { get;}
 
+        /// <summary>
+        /// The HL7 communication protocol 
+        /// </summary>
         IHL7Protocol Protocol { get; }
 
         /// <summary>
@@ -36,6 +39,7 @@ namespace HL7Interface
         /// </summary>
         /// <returns></returns>
         bool Initialise();
+
         /// <summary>
         /// because the interface  can run either as server o client, it need
         /// to be started.

@@ -1,6 +1,6 @@
 ﻿ACK,GeneralAcknowledgment
 ESR_U02,EquipmentStatusRequest ACK_U02 GeneralAcknowledgment
-ESR_U01,EquipmentStatusUpdate ACK_U01 GeneralAcknowledgment
+ESU_U01,EquipmentStatusUpdate ACK_U01 GeneralAcknowledgment
 NMD_N02,ConnectionTestProfile ACK_N02 GeneralAcknowledgment
 SSR_U04,SpecimenStatusRequest ACK_U04 GeneralAcknowledgment
 SSU_U03,SpecimenStatusUpdate ACK_U03 GeneralAcknowledgment

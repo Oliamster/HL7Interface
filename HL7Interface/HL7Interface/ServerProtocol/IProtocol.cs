@@ -9,6 +9,6 @@ namespace HL7Interface.ServerProtocol
 {
     public interface IProtocol
     {
-        IProtocolConfig Config { get; set; }
+        IProtocolConfig Config { get; }
     }
 }

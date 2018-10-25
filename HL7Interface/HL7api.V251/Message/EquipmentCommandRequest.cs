@@ -1,14 +1,8 @@
 ﻿using NHapi.Model.V251.Message;
 using HL7api.Model;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NHapi.Model.V251.Datatype;
-using NHapi.Base.Model.Primitive;
 using NHapi.Base;
-using System.Globalization;
 using NHapi.Base.Parser;
 using System.Diagnostics;
 
@@ -38,7 +32,11 @@ namespace HL7api.V251.Message
             Debug.Print((new PipeParser()).Encode(eAC_U07));
             this.eAC_U07.MSH.DateTimeOfMessage.Time.SetLongDateWithSecond(DateTime.Now);
             this.eAC_U07.MSH.GetMessageProfileIdentifier(0).EntityIdentifier.Value = GetType().Name;
-            this.eAC_U07.MSH.MessageControlID.Value = Guid.NewGuid().ToString();
+
+            string msh10 = this.eAC_U07.MSH.MessageControlID.Value;
+            if(string.IsNullOrEmpty(msh10))
+                 this.eAC_U07.MSH.MessageControlID.Value = Guid.NewGuid().ToString();
+
             this.eAC_U07.MSH.MessageType.MessageCode.Value = "EAC";
             this.eAC_U07.MSH.MessageType.TriggerEvent.Value = "U07";
 
@@ -58,7 +56,7 @@ namespace HL7api.V251.Message
             }
         }
 
-        public override string ExpectedResponseName => typeof(EquipmentCommandResponse).Name;
+        public override string ExpectedResponseID => typeof(EquipmentCommandResponse).Name;
 
         public override DateTime MessageDateTime
         {
@@ -75,7 +73,7 @@ namespace HL7api.V251.Message
             }
         }
 
-        public override string MessageID
+        public override string ControlID
         {
             get
             {
@@ -88,6 +86,10 @@ namespace HL7api.V251.Message
         public override string Code => eAC_U07.MSH.MessageType.MessageCode.Value;
         public override string Trigger => eAC_U07.MSH.MessageType.TriggerEvent.Value;
 
-        public override string ExpectedAckName => typeof(GeneralAcknowledgment).Name;
+       
+
+        public override string ExpectedAckID => typeof(GeneralAcknowledgment).Name;
+
+        public override bool IsAcknowledge => false;
     }
 }

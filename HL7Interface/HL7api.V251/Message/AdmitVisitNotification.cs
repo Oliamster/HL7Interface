@@ -1,14 +1,8 @@
 ﻿using NHapi.Model.V251.Message;
 using HL7api.Model;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NHapi.Model.V251.Datatype;
-using NHapi.Base.Model.Primitive;
 using NHapi.Base;
-using System.Globalization;
 using NHapi.Base.Parser;
 using System.Diagnostics;
 
@@ -76,7 +70,7 @@ namespace HL7api.V251.Message
             }
         }
 
-        public override string MessageID
+        public override string ControlID
         {
             get
             {
@@ -89,6 +83,8 @@ namespace HL7api.V251.Message
         public override string Code => aDT_A01.MSH.MessageType.MessageCode.Value;
         public override string Trigger => aDT_A01.MSH.MessageType.TriggerEvent.Value;
 
-        public override string ExpectedAckName => throw new NotImplementedException();
+        public override string ExpectedAckID => throw new NotImplementedException();
+
+        public override bool IsAcknowledge => false;
     }
 }

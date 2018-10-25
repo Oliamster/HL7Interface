@@ -11,10 +11,19 @@ namespace HL7api.Model
         /// </summary>
         String MessageName { get; }
 
+        /// <summary>
+        /// The trigger event
+        /// </summary>
         string Trigger { get; }
 
+        /// <summary>
+        /// the message code
+        /// </summary>
         string Code { get; }
 
+        /// <summary>
+        /// The original message
+        /// </summary>
         IMessage Message { get; }
         /// <summary>
         /// The date an time of message (MSH- )
@@ -24,7 +33,7 @@ namespace HL7api.Model
         /// <summary>
         /// The message control ID (MSH-10
         /// </summary>
-        String MessageID { get; }
+        String ControlID { get; }
 
         /// <summary>
         /// The HL7 version
@@ -34,9 +43,17 @@ namespace HL7api.Model
         /// <summary>
         /// The name of the expected response to this message
         /// </summary>
-        String ExpectedResponseName { get; }
+        String ExpectedResponseID { get; }
 
-        String ExpectedAckName { get; }
+        /// <summary>
+        /// Whether this message is an acknowledgment
+        /// </summary>
+        bool IsAcknowledge { get; }
+
+        /// <summary>
+        /// the expected ack ID
+        /// </summary>
+        String ExpectedAckID { get; }
 
         /// <summary>
         /// The type of transaction
@@ -44,20 +61,31 @@ namespace HL7api.Model
         TransactionType TypeOfTransaction { get; set; }
 
         /// <summary>
-        /// Encode with to the default ER7 encoding and default 
+        /// Encode to the default ER7 encoding using the default 
         /// encoding characters
         /// </summary>
         /// <returns></returns>
         String Encode();
+
+        /// <summary>
+        /// Encode
+        /// </summary>
+        /// <param name="hL7Encoding"></param>
+        /// <returns></returns>
         String Encode(HL7Encoding hL7Encoding);
 
         /// <summary>
-        /// Get the value from pa
+        /// Get the value from path
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
         String GetValue(string path);
 
+        /// <summary>
+        /// Set the value at path
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="newValue"></param>
         void SetValue(string path, string newValue);
     }
 }

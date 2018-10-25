@@ -9,6 +9,7 @@ using SuperSocket.SocketEngine;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -24,12 +25,14 @@ namespace HL7Interface
         private BaseHL7Protocol m_Protocol;
         private ConcurrentQueue<IHL7Message> incomingAcknowledgment;
         public object incomingAckLock = new object();
+        EasyClient m_Client;
         private AutoResetEvent ackReceivedSignal = new AutoResetEvent(false);
 
         public BaseHL7Interface()
         {
             incomingAcknowledgment = new ConcurrentQueue<IHL7Message>();
             Client = new EasyClient();
+            m_Protocol = new BaseHL7Protocol();
 
         }
 
@@ -91,3 +94,4 @@ namespace HL7Interface
         }
     }
 }
+

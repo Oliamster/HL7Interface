@@ -29,7 +29,7 @@ namespace HL7api.Tests
             Assert.AreEqual("A01", avn.Trigger);
 
             Guid g = new Guid();
-            Assert.IsTrue(Guid.TryParse(avn.MessageID, out g));
+            Assert.IsTrue(Guid.TryParse(avn.ControlID, out g));
 
             Assert.IsFalse(g.ToString() == "00000000-0000-0000-0000-000000000000");
 

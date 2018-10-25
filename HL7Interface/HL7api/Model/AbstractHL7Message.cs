@@ -14,7 +14,7 @@ namespace HL7api.Model
         protected IMessage m_Message;
         private HL7Parser hl7Parser;
         protected Terser terser;
-   
+
 
         public AbstractHL7Message(IMessage message)
         {
@@ -24,13 +24,13 @@ namespace HL7api.Model
         }
         public string MessageName => this.GetType().Name; //Change to RequestKey
 
-        public abstract  DateTime MessageDateTime { get; }
+        public abstract DateTime MessageDateTime { get; }
 
-        public virtual string MessageID => throw new NotImplementedException();
+        public virtual string ControlID => throw new NotImplementedException();
 
         public string MessageVersion => this.m_Message.Version;
 
-        public virtual string ExpectedResponseName => throw new NotImplementedException();
+        public virtual string ExpectedResponseID => throw new NotImplementedException();
 
         public TransactionType TypeOfTransaction { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
@@ -40,7 +40,7 @@ namespace HL7api.Model
 
         public IMessage Message => this.m_Message;
 
-        public abstract string ExpectedAckName { get; }
+        public abstract string ExpectedAckID { get; }
 
         public string Encode()
         {
@@ -50,6 +50,8 @@ namespace HL7api.Model
         {
             return hl7Parser.Encode(this, hL7Encoding, true);
         }
+
+        public abstract bool IsAcknowledge { get; }
 
         public string GetValue(string path)
         {

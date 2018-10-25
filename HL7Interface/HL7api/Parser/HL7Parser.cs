@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Collections.Specialized;
 using System.IO;
 using NHapi.Base.Util;
+using System.Diagnostics;
 
 namespace HL7api.Parser
 {
@@ -35,30 +36,15 @@ namespace HL7api.Parser
 
         public ParserResult Parse(string message)
         {
-            IMessage im = null;
-            IHL7Message hl7Message = null;
-            ParserResult pr = null;
-            try
-            {
-                im = pipeParser.Parse(message);
-                hl7Message = DoParse(im);
-                IHL7Message ack = GetAckForMessage(hl7Message);
-                pr = new ParserResult(hl7Message, ack, true, hl7Message.ExpectedAckName == null, "Message Accepted");
-            }
-            catch (Exception ex)
-            {
-                pr = handleParserException(message, ex);
-            }
-            return pr;
+            Validator val = new Validator();
+            return val.Validate(message);
         }
 
-        private IHL7Message GetAckForMessage(IHL7Message hl7Message)
+        public IHL7Message GetAckForMessage(IHL7Message hl7Message)
         {
-            string ackName = hl7Message.ExpectedAckName;
+            string ackName = hl7Message.ExpectedAckID;
             string version = hl7Message.MessageVersion;
             return InstantiateMessage(ackName, version);
-
-
         }
 
 
@@ -69,13 +55,6 @@ namespace HL7api.Parser
 
             IHL7Message hl7Message = null;
             Type messageType = null;
-
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            var a =  AppDomain.CurrentDomain.GetAssemblies().
-                       SingleOrDefault(assembly => assembly.GetName().Name == assemblyName);
-            
-            Assembly.Load(assemblyName);
-
             String classToTry = $"{className},{assemblyName}";
            
             messageType = Type.GetType(classToTry); //GetType from the specified assembly
@@ -96,6 +75,60 @@ namespace HL7api.Parser
             return hl7Message;
         }
 
+
+        internal static string GetAckTypeFromRequest(string name, string version)
+        {
+            if (string.IsNullOrEmpty(name))
+                return null;
+
+            if (name.StartsWith("ACK"))
+                return null;
+
+            string responseType = null;
+
+            if (!PipeParser.ValidVersion(version))
+                throw new HL7apiException("Invalid HL7 Version");
+
+            NameValueCollection p = GetMapFromRequest(name, version);
+            if (!p.AllKeys.Contains(name))
+                return "ACK";
+            responseType = p.Get(name);
+            if (responseType == null)
+                return null;
+            else
+            {
+                if (responseType.Split(' ').Length > 1)
+                {
+                    responseType = responseType.Split(' ')[1];
+                }
+                else
+                    return null;
+            }
+
+            return responseType;
+        }
+
+        internal static string correctName(string ret)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal IMessage InstantiateMessage(String theName, String theVersion, bool isExplicit)
+        {
+            IMessage result = null;
+            IModelClassFactory myFactory = new DefaultModelClassFactory();
+            if (theName.StartsWith("ACK"))
+                theName = "ACK";
+            Type messageClass = myFactory.GetMessageClass(theName, theVersion, isExplicit);
+            if (messageClass == null)
+            {
+                throw new HL7apiException("Can't find message class in current package list: " + theName);
+            }
+            ConstructorInfo constructor = messageClass.GetConstructor(
+                new Type[] { typeof(IModelClassFactory) });
+            result = (IMessage)constructor.Invoke(new Object[] { myFactory });
+            return result;
+        }
 
         public static Type FindType(string qualifiedTypeName, string assemblyName)
         {
@@ -143,7 +176,7 @@ namespace HL7api.Parser
             }
             catch (Exception e)
             {
-                throw new HL7apiException("Unable to instantiate the class" + messageID);
+                throw new HL7apiException("Unable to instantiate the class" + messageID, e);
             }
             return message;
         }
@@ -155,23 +188,24 @@ namespace HL7api.Parser
 
         internal IHL7Message DoParse(IMessage message)
         {
-            IHL7Message ret = null;
             if (message == null)
-                throw new HL7apiException("Cannot parse an invalid message"); // HL7Exception.APPLICATION_INTERNAL_ERROR);
+                throw new HL7apiException("Cannot parse an invalid message");
+
+            IHL7Message ret = null;
+
             Terser t = new Terser(message);
+          
 
+            string messageID = t.Get("/MSH-21(0)-1-1");
 
-            string profileName = t.Get("/MSH-21(0)-1-1");
-            if (string.IsNullOrEmpty(profileName))
+            if (string.IsNullOrEmpty(messageID))
             {
-                string code = t.Get("MSH-9-1");
-                string trigger = t.Get("MSH-9-2");
-                profileName = GetMessageIDFromMessageType($"{code}_{trigger}", message.Version);
-                if (string.IsNullOrEmpty(profileName))
+                messageID = GetMessageIDFromMessageType(message.GetMessageType(), message.Version);
+                if (string.IsNullOrEmpty(messageID))
                     throw new HL7apiException("Invalid Message type");
             }
 
-            ret = (IHL7Message)InstantiateMessage(profileName, message.Version, message);
+            ret = (IHL7Message)InstantiateMessage(messageID, message.Version, message);
           
             return ret;
         }
@@ -181,8 +215,8 @@ namespace HL7api.Parser
 
         internal static NameValueCollection GetMapFromRequest(String name, String version)
         {
-            NameValueCollection p = null;
-            string assemblyName = $"HL7api.V{version.Replace(" ", "")}";
+            version = version.Replace(".", "");
+            string assemblyName = $"HL7api.V{version}";
             Assembly assembly = Assembly.Load(assemblyName);
             NameValueCollection map = null;
             try
@@ -194,9 +228,9 @@ namespace HL7api.Parser
                 throw new HL7apiException($"Unable to access the application acknowledgment" +
                     $" message type, Cause: {ioe.Message}");
             }
-            if (p == null)
+            if (map == null)
                 throw new HL7apiException("No map found for version " + version);
-            return p;
+            return map;
         }
 
 
@@ -207,7 +241,8 @@ namespace HL7api.Parser
                 throw new ArgumentNullException("The name was null or empty");
 
             if (name.StartsWith("ACK"))
-                return null;
+                return "GeneralAcknowledgment";
+            
             //return typeof(GeneralAcknowledgment).Name;
 
             string responseType = null;
@@ -271,5 +306,18 @@ namespace HL7api.Parser
         {
             return Encode(message, HL7Encoding.ER7, true);
         }
+    }
+
+    public class MapClass
+    {
+        string MessageType;
+
+        string AckType;
+
+        string AckID;
+
+        string expectedAck;
+
+        string MessageID;
     }
 }
