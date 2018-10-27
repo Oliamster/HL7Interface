@@ -10,6 +10,6 @@ namespace HL7Interface.ClientProtocol
 {
     public class PackageInfo :  HL7Request, SuperSocket.ProtoBase.IPackageInfo
     {
-
+        public string OriginalRequest { get; set; }
     }
 }

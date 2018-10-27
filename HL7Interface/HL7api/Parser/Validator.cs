@@ -309,10 +309,8 @@ namespace HL7api.Parser
 
         private ISegment TryToRecoverCriticalDataFromMessage(string message)
         {
-
             ISegment msh = null;
 
-            //PipeParser parser = new PipeParser();
             if (!message.StartsWith("MSH|"))
                 return null;
             //try to get MSH segment

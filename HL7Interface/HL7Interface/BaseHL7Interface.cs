@@ -15,6 +15,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using NHapiTools.Base.Util;
 
 namespace HL7Interface
 {
@@ -24,8 +25,13 @@ namespace HL7Interface
         private HL7Server m_HL7Server;
         private BaseHL7Protocol m_Protocol;
         private ConcurrentQueue<IHL7Message> incomingAcknowledgment;
-        public object incomingAckLock = new object();
-        EasyClient m_Client;
+        private object incomingAckLock = new object();
+
+        public void Stop()
+        {
+            m_HL7Server.Stop();
+        }
+
         private AutoResetEvent ackReceivedSignal = new AutoResetEvent(false);
 
         public BaseHL7Interface()
@@ -33,6 +39,7 @@ namespace HL7Interface
             incomingAcknowledgment = new ConcurrentQueue<IHL7Message>();
             Client = new EasyClient();
             m_Protocol = new BaseHL7Protocol();
+            m_HL7Server = new HL7Server();
 
         }
 
@@ -45,12 +52,28 @@ namespace HL7Interface
 
         string IHL7Interface.Name => throw new NotImplementedException();
 
-        Task<bool> IHL7Interface.ConnectAsync(EndPoint remoteEndPoint)
+        public ServerState State => (ServerState)m_HL7Server.State;
+
+        async Task<bool> IHL7Interface.ConnectAsync(EndPoint remoteEndPoint)
         {
-            throw new NotImplementedException();
+            CancellationTokenSource cts = new CancellationTokenSource();
+            bool ret = false;
+            var t = await Task.Factory.StartNew(async () =>
+            {
+                while (!ret && !cts.Token.IsCancellationRequested)
+                {
+                    ret = await Client.ConnectAsync(remoteEndPoint);
+                }
+            }, cts.Token);
+            t.Wait(5000);
+            if (ret)
+                return ret;
+            else cts.Cancel();
+            Task.WaitAll(new Task[] { t });
+               throw new OperationCanceledException("Unable to connect to the remote endpoint:!");
         }
 
-       public virtual bool Initialise()
+       public virtual bool Initialize()
        {
             IBootstrap bootstrap = BootstrapFactory.CreateBootstrap();
             if (!bootstrap.Initialize())
@@ -78,14 +101,19 @@ namespace HL7Interface
 
         Task<HL7Request> IHL7Interface.SendHL7MessageAsync(IHL7Message message)
         {
-            throw new NotImplementedException();
+            Client.Send(Encoding.UTF8.GetBytes(MLLP.CreateMLLPMessage(message.Encode())));
+
+            throw new NotImplementedException();   
         }
 
-      
-
-        bool IHL7Interface.Start()
+        public HL7Server HL7Server
         {
-            throw new NotImplementedException();
+            get { return m_HL7Server; }
+        }
+
+        public bool Start()
+        {
+            return m_HL7Server.Start();
         }
 
         bool IHL7Interface.Stop()

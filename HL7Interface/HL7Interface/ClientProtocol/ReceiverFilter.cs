@@ -13,14 +13,19 @@ namespace HL7Interface.ClientProtocol
 {
     public class ReceiverFilter : BeginEndMarkReceiveFilter<PackageInfo>
     {
-        private readonly static byte[] beginMark = new byte[] { 2 }; // HEX 0x02
-        private readonly static byte[] endMark = new byte[] { 3 }; // HEX 0x03
+        private readonly static byte[] beginMark = new byte[] { 11 };
+        private readonly static byte[] endMark = new byte[] { 28, 13}; 
         private IHL7Protocol m_Protocol;
 
-        public ReceiverFilter(IHL7Protocol protocol) : base(beginMark, endMark)
+        public ReceiverFilter(IHL7Protocol protocol) : this(protocol, beginMark, endMark)
+        {
+            
+        }
+
+        public ReceiverFilter(IHL7Protocol protocol, byte[] begin, byte[] end) : base (begin,  end)
         {
             this.m_Protocol = protocol;
-        } 
+        }
         public override bool Equals(object obj)
         {
             return base.Equals(obj);
@@ -40,14 +45,21 @@ namespace HL7Interface.ClientProtocol
         {
             byte[] data = new byte[bufferStream.Length];
             bufferStream.Read(data, 0, Convert.ToInt32(bufferStream.Length));
-            string message = Encoding.ASCII.GetString(data);
+            string message = Encoding.UTF8.GetString(data);
 
             PackageInfo package = new PackageInfo();
 
             ParserResult result = m_Protocol.Parse(message);
             if (result.IsAccepted)
+            {
                 package.RequestMessage = result.ParsedMessage;
-            package.Key = result.ParsedMessage.ControlID;
+                package.Key = result.ParsedMessage.ControlID;
+            }
+            else
+            {
+                package.OriginalRequest = message;
+            }
+                
             return package;
         }
 

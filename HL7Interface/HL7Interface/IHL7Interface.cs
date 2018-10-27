@@ -1,5 +1,6 @@
 ﻿using HL7api.Model;
 using HL7Interface.ServerProtocol;
+using SuperSocket.SocketBase;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace HL7Interface
 {
-    public interface IHL7Interface
+    public interface IHL7Interface : ICommunication<IHL7Message>
     {
         /// <summary>
         /// The interface name
@@ -38,7 +39,7 @@ namespace HL7Interface
         /// Initialise the server side
         /// </summary>
         /// <returns></returns>
-        bool Initialise();
+        bool Initialize();
 
         /// <summary>
         /// because the interface  can run either as server o client, it need
@@ -47,8 +48,14 @@ namespace HL7Interface
         /// <returns></returns>
         bool Start();
 
+
         /// <summary>
-        /// stop the server side
+        /// The server side state
+        /// </summary>
+        ServerState State { get; }
+
+        /// <summary>
+        /// Stop the server side
         /// </summary>
         /// <returns></returns>
         bool Stop();
