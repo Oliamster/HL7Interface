@@ -108,6 +108,7 @@ namespace HL7Interface.ServerProtocol
             base.OnStarted();
         }
 
+        [Obsolete]
         protected override void OnStartup()
         {
             base.OnStartup();

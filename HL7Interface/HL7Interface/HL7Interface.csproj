@@ -152,6 +152,7 @@
     <Compile Include="ICommunicationInterface.cs" />
     <Compile Include="IHL7Interface.cs" />
     <Compile Include="HL7Request.cs" />
+    <Compile Include="MLLPReceiveFilterFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerProtocol\BaseHL7Protocol.cs" />
     <Compile Include="ServerProtocol\HL7RequestParser.cs" />

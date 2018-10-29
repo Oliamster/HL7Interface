@@ -54,7 +54,7 @@ namespace HL7Interface
 
         public ServerState State => (ServerState)m_HL7Server.State;
 
-        async Task<bool> IHL7Interface.ConnectAsync(EndPoint remoteEndPoint)
+        public async Task<bool> ConnectAsync(EndPoint remoteEndPoint)
         {
             CancellationTokenSource cts = new CancellationTokenSource();
             bool ret = false;
@@ -99,11 +99,12 @@ namespace HL7Interface
             return true;
         }
 
-        Task<HL7Request> IHL7Interface.SendHL7MessageAsync(IHL7Message message)
+        public Task SendHL7MessageAsync(IHL7Message message)
         {
-            Client.Send(Encoding.UTF8.GetBytes(MLLP.CreateMLLPMessage(message.Encode())));
-
-            throw new NotImplementedException();   
+            return Task.Run(() =>
+            {
+                Client.Send(Encoding.UTF8.GetBytes(MLLP.CreateMLLPMessage(message.Encode())));
+            });
         }
 
         public HL7Server HL7Server
