@@ -26,7 +26,7 @@ namespace HL7Interface.ServerProtocol
 
         public override int SessionCount => base.SessionCount;
 
-        public override event RequestHandler<HL7Session, HL7Request> NewRequestReceived;
+       //public override event RequestHandler<HL7Session, HL7Request> NewRequestReceived;
 
         public override bool Equals(object obj)
         {

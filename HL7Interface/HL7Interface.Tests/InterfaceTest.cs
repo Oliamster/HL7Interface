@@ -96,13 +96,18 @@ namespace HL7Interface.Tests
                 => await hl7Interface.ConnectAsync(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 2012)));
 
             Assert.That(connectTask.Result);
+
+            server.Stop();
+
+            hl7Interface.Stop();
         }
 
         [Test]
-        public void SendMessageAsyncTest()
+        public async Task SendMessageAsyncTest()
         {
             BaseHL7Interface hl7Interface = new BaseHL7Interface();
             HL7Server server = new HL7Server();
+            AutoResetEvent requestReceived = new AutoResetEvent(false);
 
             server.Setup("127.0.0.1", 2012);
             server.Start();
@@ -110,12 +115,23 @@ namespace HL7Interface.Tests
             hl7Interface.Initialize();
             hl7Interface.Start();
 
-            Task<bool> connectTask = Task.Run(async ()
-               => await hl7Interface.ConnectAsync(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 2012)));
+            server.NewRequestReceived += (e, s) =>
+            {
+                Assert.That(s.RequestMessage is EquipmentCommandRequest);
+                requestReceived.Set();
+            };
+
+            bool connected = await hl7Interface.ConnectAsync(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 2012));
+
+            Assert.That(connected);
 
              hl7Interface.SendHL7MessageAsync(new EquipmentCommandRequest()).Wait();
 
-            while (true) ;
+            requestReceived.WaitOne();
+
+            server.Stop();
+
+            hl7Interface.Stop();
         }
     }
 }
