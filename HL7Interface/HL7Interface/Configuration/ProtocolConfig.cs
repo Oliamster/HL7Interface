@@ -14,12 +14,12 @@ using SuperSocket.SocketBase.Config;
 namespace  HL7Interface.Configuration
 {
     /// <summary>
-    /// Server configuration
+    /// protocol configuration
     /// </summary>
     public  class ProtocolConfig : ConfigurationElementBase, IProtocolConfig
     {
         /// <summary>
-        /// Gets the name of the server type this appServer want to use.
+        /// Gets the name of the protocol 
         /// </summary>
         /// <value>
         /// The name of the server type.
@@ -125,6 +125,19 @@ namespace  HL7Interface.Configuration
         public bool IsResponseBlocking
         {
             get { return (bool)this["IsResponseBlocking"]; }
+        }
+
+
+        /// <summary>
+        /// Either the response is required or not
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [sync send]; otherwise, <c>false</c>.
+        /// </value>
+        [ConfigurationProperty("IsResponseRequired", IsRequired = false, DefaultValue = false)]
+        public bool IsResponseRequired
+        {
+            get { return (bool)this["IsResponseRequired"]; }
         }
 
 

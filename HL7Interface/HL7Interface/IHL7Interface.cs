@@ -26,7 +26,7 @@ namespace HL7Interface
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
-        Task SendHL7MessageAsync(IHL7Message message);
+        Task<HL7Request> SendHL7MessageAsync(IHL7Message message);
 
         /// <summary>
         /// connect to the actor's remote end point.
@@ -58,6 +58,6 @@ namespace HL7Interface
         /// Stop the server side
         /// </summary>
         /// <returns></returns>
-        bool Stop();
+        void Stop();
     }
 }

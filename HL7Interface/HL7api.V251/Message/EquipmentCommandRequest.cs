@@ -91,5 +91,9 @@ namespace HL7api.V251.Message
         public override string ExpectedAckID => typeof(GeneralAcknowledgment).Name;
 
         public override bool IsAcknowledge => false;
+
+        public override string ExpectedResponseType => typeof(EquipmentCommandResponse).Name;
+
+        public override string ExpectedAckType => "ACK_U07";
     }
 }

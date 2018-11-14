@@ -16,6 +16,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using NHapiTools.Base.Util;
+using HL7api.Parser;
 
 namespace HL7Interface
 {
@@ -43,12 +44,20 @@ namespace HL7Interface
 
         }
 
+        
 
         public virtual string Name => this.GetType().Name;
 
         public EasyClient Client { get;  }
 
-        IHL7Protocol IHL7Interface.Protocol => throw new NotImplementedException();
+        public IHL7Protocol Protocol
+        {
+            get
+            {
+                return m_Protocol;
+
+            }
+        }
 
         string IHL7Interface.Name => throw new NotImplementedException();
 
@@ -96,14 +105,49 @@ namespace HL7Interface
                     incomingAcknowledgment.Enqueue(request.RequestMessage);
                 ackReceivedSignal.Set();
             });
+
             return true;
         }
 
-        public Task SendHL7MessageAsync(IHL7Message message)
+
+        public virtual bool Initialize(HL7Server server, IHL7Protocol protocol)
         {
-            return Task.Run(() =>
+            if (protocol.Config == null)
+                throw new ArgumentNullException("The configuration proprty is missing for this protocol");
+            m_Protocol = protocol as BaseHL7Protocol;
+
+            if(m_Protocol == null)
+                return false;
+
+            m_HL7Server = server;
+
+            Client.Initialize(new ReceiverFilter(m_Protocol), (request) => {
+                lock (incomingAckLock)
+                    incomingAcknowledgment.Enqueue(request.RequestMessage);
+                ackReceivedSignal.Set();
+            });
+
+            return true;
+        }
+
+        public Task<HL7Request> SendHL7MessageAsync(IHL7Message message)
+        {
+            return Task.Run( async () =>
             {
                 Client.Send(Encoding.UTF8.GetBytes(MLLP.CreateMLLPMessage(message.Encode())));
+
+                IHL7Message ack = null;
+
+                if (Protocol.Config.IsAckRequired)
+                {
+                    ack = await WaitForAcknowlwdgment(message, new CancellationToken());
+                }
+
+                return new HL7Request()
+                {
+                    RequestMessage = message,
+                    Acknowledgment = ack,
+                };
             });
         }
 
@@ -117,10 +161,29 @@ namespace HL7Interface
             return m_HL7Server.Start();
         }
 
-        bool IHL7Interface.Stop()
+        private Task<IHL7Message> WaitForAcknowlwdgment(IHL7Message request, CancellationToken token)
         {
-            throw new NotImplementedException();
+            IHL7Message ack = null;
+            return Task.Run(() =>
+            {
+                ackReceivedSignal.WaitOne();
+                lock (incomingAckLock)
+                {
+                    if (incomingAcknowledgment.TryPeek(out ack))
+                    {
+                        if (HL7Parser.IsAckForRequest(request, ack))
+                        {
+                            if (incomingAcknowledgment.TryDequeue(out ack))
+                            {
+                                return ack;
+                            }
+                        }
+                    }
+                }
+                return null;
+            });
         }
+        
     }
 }
 

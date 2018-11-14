@@ -9,7 +9,7 @@ namespace HL7api.Model
         /// <summary>
         /// The message class Name
         /// </summary>
-        String MessageName { get; }
+        String MessageID { get; }
 
         /// <summary>
         /// The trigger event
@@ -46,6 +46,11 @@ namespace HL7api.Model
         String ExpectedResponseID { get; }
 
         /// <summary>
+        /// expected response Type
+        /// </summary>
+        String ExpectedResponseType { get; }
+
+        /// <summary>
         /// Whether this message is an acknowledgment
         /// </summary>
         bool IsAcknowledge { get; }
@@ -54,6 +59,11 @@ namespace HL7api.Model
         /// the expected ack ID
         /// </summary>
         String ExpectedAckID { get; }
+
+        /// <summary>
+        /// expected ack type
+        /// </summary>
+        string ExpectedAckType { get; }
 
         /// <summary>
         /// The type of transaction

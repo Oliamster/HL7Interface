@@ -11,11 +11,14 @@ using SuperSocket.SocketBase.Command;
 using SuperSocket.SocketBase.Config;
 using SuperSocket.SocketBase.Logging;
 using SuperSocket.SocketBase.Protocol;
+using NHapiTools.Base.Util;
 
 namespace HL7Interface.ServerProtocol
 {
     public class HL7Server : AppServer<HL7Session, HL7Request>
     {
+
+        public static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public HL7Server()
             : base(new DefaultReceiveFilterFactory<MLLPBeginEndMarkReceiveFilter, HL7Request>())
         {
@@ -80,7 +83,21 @@ namespace HL7Interface.ServerProtocol
 
         protected override void ExecuteCommand(HL7Session session, HL7Request requestInfo)
         {
-            base.ExecuteCommand(session, requestInfo);
+            try
+            {
+                log.Debug($"Message received: {requestInfo.RequestMessage.Encode()}");
+                base.ExecuteCommand(session, requestInfo);
+                log.Debug($"The command {requestInfo.RequestMessage.MessageID} has been executed");
+
+                byte[] ack = Encoding.UTF8.GetBytes(MLLP.CreateMLLPMessage(requestInfo.Acknowledgment.Encode()));
+                session.Send(ack, 0, ack.Length);
+
+            }
+            catch (Exception e)
+            {
+                log.Debug($"ERROR: {e.Message}");
+                throw e;
+            }
         }
 
         protected override X509Certificate GetCertificate(ICertificateConfig certificate)

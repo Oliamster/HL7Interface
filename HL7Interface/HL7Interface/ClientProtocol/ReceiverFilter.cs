@@ -1,6 +1,7 @@
 ﻿
 using HL7api.Parser;
 using HL7Interface.ServerProtocol;
+using NHapiTools.Base.Util;
 using SuperSocket.ProtoBase;
 using System;
 using System.Collections.Generic;
@@ -13,11 +14,12 @@ namespace HL7Interface.ClientProtocol
 {
     public class ReceiverFilter : BeginEndMarkReceiveFilter<PackageInfo>
     {
-        private readonly static byte[] beginMark = new byte[] { 11 };
-        private readonly static byte[] endMark = new byte[] { 28, 13}; 
+        private  static byte[] beginMark;
+        private  static byte[] endMark;
         private IHL7Protocol m_Protocol;
 
-        public ReceiverFilter(IHL7Protocol protocol) : this(protocol, beginMark, endMark)
+        public ReceiverFilter(IHL7Protocol protocol) 
+            : this(protocol, new byte[] { 11 }, new byte[] { 28, 13 })
         {
             
         }
@@ -25,6 +27,8 @@ namespace HL7Interface.ClientProtocol
         public ReceiverFilter(IHL7Protocol protocol, byte[] begin, byte[] end) : base (begin,  end)
         {
             this.m_Protocol = protocol;
+            beginMark = begin;
+            endMark = end;
         }
         public override bool Equals(object obj)
         {
@@ -47,13 +51,20 @@ namespace HL7Interface.ClientProtocol
             bufferStream.Read(data, 0, Convert.ToInt32(bufferStream.Length));
             string message = Encoding.UTF8.GetString(data);
 
+           
+
+            if (ValidateBeginEndFilteredMarkMessage(message))
+                 StripBeginEndMarkContainer(ref message);
+
+          
+
             PackageInfo package = new PackageInfo();
 
             ParserResult result = m_Protocol.Parse(message);
             if (result.IsAccepted)
             {
                 package.RequestMessage = result.ParsedMessage;
-                package.Key = result.ParsedMessage.ControlID;
+                package.Key = result.ParsedMessage.MessageID;
             }
             else
             {
@@ -67,6 +78,42 @@ namespace HL7Interface.ClientProtocol
         {
             return base.ToString();
         }
+
+        static void StripBeginEndMarkContainer(ref string message)
+        {
+            StringBuilder sb = new StringBuilder(message);
+            if (ValidateBeginEndFilteredMarkMessage(message) == true)
+            {
+                // Strip the message of the begin and end mark container characters
+                sb.Remove(0, beginMark.Length);
+                sb.Remove(sb.Length - endMark.Length, endMark.Length);
+                message = sb.ToString();
+            }
+        }
+
+        public static bool ValidateBeginEndFilteredMarkMessage(string message)
+        {
+            StringBuilder sb = new StringBuilder(message);
+         
+
+            if (sb.Length > beginMark.Length + endMark.Length)
+            {
+                for (int i = 0; i < beginMark.Length; i++)
+                {
+                    if (message[i] != (char)beginMark[i])
+                        return false;
+                }
+                for (int i = message.Length -1; i > message.Length - endMark.Length; i--)
+                {
+                    if (message[i] != (char)endMark[i- (message.Length - endMark.Length)])
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
+
     }
 
 }

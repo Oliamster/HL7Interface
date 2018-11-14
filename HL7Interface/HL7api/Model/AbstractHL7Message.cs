@@ -22,7 +22,7 @@ namespace HL7api.Model
             this.hl7Parser = new HL7Parser();
             this.terser = new Terser(m_Message);
         }
-        public string MessageName => this.GetType().Name; //Change to RequestKey
+        public string MessageID => this.GetType().Name; //Change to RequestKey
 
         public abstract DateTime MessageDateTime { get; }
 
@@ -52,6 +52,8 @@ namespace HL7api.Model
         }
 
         public abstract bool IsAcknowledge { get; }
+        public abstract string ExpectedResponseType { get; }
+        public abstract string ExpectedAckType { get; }
 
         public string GetValue(string path)
         {

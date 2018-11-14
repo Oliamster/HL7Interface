@@ -17,6 +17,15 @@ namespace Hl7Interface.ServerProtocol
         private IProtocolConfig config;
         private HL7Parser p = new HL7Parser();
 
+        public BaseHL7Protocol()
+        {
+
+        }
+
+        public BaseHL7Protocol(IProtocolConfig Config)
+        {
+            this.Config = Config;
+        }
         public IProtocolConfig Config { get; set; }
 
         #region IProtocol Interface

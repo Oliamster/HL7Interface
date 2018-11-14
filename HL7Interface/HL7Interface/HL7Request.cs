@@ -13,5 +13,7 @@ namespace HL7Interface
         public string Key { get; set; }
 
         public IHL7Message RequestMessage { get; set; }
+
+        public IHL7Message Acknowledgment { get; set; }
     }
 }

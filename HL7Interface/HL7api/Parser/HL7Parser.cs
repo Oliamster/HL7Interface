@@ -76,6 +76,44 @@ namespace HL7api.Parser
         }
 
 
+
+        public static bool IsAckForRequest(IHL7Message request, IHL7Message ack)
+        {
+            if (request == null)
+                throw new ArgumentNullException("Please provide a non-null value for the request");
+
+            if (ack == null)
+                return false;
+
+            if (string.IsNullOrEmpty(request.ExpectedAckID))
+                throw new HL7apiException("The request should not be an acknowledgment");
+
+            string msa2 = ack.GetValue("/MSA-2");
+            string msh10 = request.ControlID;
+
+            if (string.IsNullOrEmpty(msa2) || string.IsNullOrEmpty(msh10))
+                throw new HL7apiException("The MSH-10 and MSA-2 are mandatory in the messages:"
+                    + request.MessageID + "and" + ack.MessageID);
+
+            if (String.Compare(msa2, msh10) != 0)
+                return false;
+
+            //if the trigger event is provided then check aigain
+            if (!string.IsNullOrEmpty(ack.Trigger))
+            {
+                if (!request.ExpectedAckType.Equals($"{ack.Code}_{ack.Trigger}"))
+                    return false;
+            }
+            else
+            {
+                if (!ack.Code.Equals("ACK"))
+                    return false;
+            }
+            return true;
+        }
+
+
+
         internal static string GetAckTypeFromRequest(string name, string version)
         {
             if (string.IsNullOrEmpty(name))

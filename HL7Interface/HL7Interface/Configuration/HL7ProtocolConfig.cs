@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace HL7Interface.Configuration
 {
-    public interface IProtocolConfig
+    public class HL7ProtocolConfig : IProtocolConfig
     {
         /// <summary>
         /// Gets the name of the protocol you want to use
@@ -15,7 +15,7 @@ namespace HL7Interface.Configuration
         /// <value>
         /// The name of the server type.
         /// </value>
-        string ProtocolName { get; }
+        public string ProtocolName { get; set; }
 
         /// <summary>
         /// Gets the type of the protocol
@@ -23,90 +23,94 @@ namespace HL7Interface.Configuration
         /// <value>
         /// The type of the server.
         /// </value>
-        string ProtocolType { get; }
+        public string ProtocolType { get; set; }
 
 
         /// <summary>
         /// Max ack retry number
         /// </summary>
-        int MaxAckRetriesNumber { get; }
+        public int MaxAckRetriesNumber { get; set; }
 
         /// <summary>
         /// MAx response retry number
         /// </summary>
-        int MaxResponseRetriesNumber { get; }
+        public int MaxResponseRetriesNumber { get; set; }
 
         /// <summary>
         /// Ack time out
         /// </summary>
-        int AckTimeout { get; }
+        public int AckTimeout { get; set; }
 
         /// <summary>
         /// Response time out
         /// </summary>
-        int ResponseTimeout { get; }
+        public int ResponseTimeout { get; set; }
 
         /// <summary>
         /// Either the acknowledgment is required
         /// </summary>
-        bool IsAckRequired { get; }
+        public bool IsAckRequired { get; set; }
 
         /// <summary>
         /// Either the ack is blocking
         /// </summary>
-        bool IsAckBlocking { get; }
+        public bool IsAckBlocking { get; set; }
 
 
         /// <summary>
         /// Either the acknowledgment is required
         /// </summary>
-        bool IsResponseBlocking { get; }
+        public bool IsResponseBlocking { get; set; }
+
 
         /// <summary>
         /// Either the response is required
         /// </summary>
-        bool IsResponseRequired { get; }
+        public bool IsResponseRequired { get; set; }
 
         /// <summary>
         /// Retry on negative acknowledgment
         /// </summary>
-        bool RetryOnNack { get; }
+        public bool RetryOnNack { get; set; }
 
 
         /// <summary>
         /// Gets the send time out.
         /// </summary>
-        int SendTimeOut { get; }
+        public int SendTimeOut { get; set; }
 
 
         /// <summary>
         /// Gets the start keep alive time, in seconds
         /// </summary>
-        int KeepAliveTime { get; }
+        public int KeepAliveTime { get; set; }
 
 
         /// <summary>
         /// Gets the keep alive interval, in seconds.
         /// </summary>
-        int KeepAliveInterval { get; }
+        public int KeepAliveInterval { get; set; }
 
- 
+
         /// <summary>
         /// Gets the child config.
         /// </summary>
         /// <typeparam name="TConfig">The type of the config.</typeparam>
         /// <param name="childConfigName">Name of the child config.</param>
         /// <returns></returns>
-        TConfig GetChildConfig<TConfig>(string childConfigName)
-            where TConfig : ConfigurationElement, new();
-  
+        public TConfig GetChildConfig<TConfig>(string childConfigName)
+            where TConfig : ConfigurationElement, new()
+        {
+            return null;
+        }
+
         /// <summary>
         /// Gets the default text encoding.
         /// </summary>
         /// <value>
         /// The text encoding.
         /// </value>
-        string TextEncoding { get; }
+        public string TextEncoding { get; set; }
     }
 }
 

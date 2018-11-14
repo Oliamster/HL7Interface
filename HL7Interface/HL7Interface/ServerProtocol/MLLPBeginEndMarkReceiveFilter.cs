@@ -71,9 +71,9 @@ namespace HL7Interface.ServerProtocol
             HL7Request request = new HL7Request();
             if (result.IsAccepted)
             {
-
                 request.RequestMessage = result.ParsedMessage;
-                request.Key = result.ParsedMessage.MessageName;
+                request.Acknowledgment = result.Acknowledge;
+                request.Key = result.ParsedMessage.MessageID;
             }
             return request;
         }
