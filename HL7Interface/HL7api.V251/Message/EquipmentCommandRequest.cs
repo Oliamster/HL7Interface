@@ -86,14 +86,17 @@ namespace HL7api.V251.Message
         public override string Code => eAC_U07.MSH.MessageType.MessageCode.Value;
         public override string Trigger => eAC_U07.MSH.MessageType.TriggerEvent.Value;
 
-       
-
         public override string ExpectedAckID => typeof(GeneralAcknowledgment).Name;
 
         public override bool IsAcknowledge => false;
 
-        public override string ExpectedResponseType => typeof(EquipmentCommandResponse).Name;
+        public override string ExpectedResponseType => "EAR_U08";
 
         public override string ExpectedAckType => "ACK_U07";
+
+        public override bool IsResponseForRequest(IHL7Message request)
+        {
+            return false;
+        }
     }
 }

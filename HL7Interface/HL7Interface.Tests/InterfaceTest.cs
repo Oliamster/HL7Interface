@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 namespace HL7Interface.Tests
 {
     [TestFixture]
-    public class InterfaceTest
+    public class InterfaceTest : BaseTests
     {
 
         System.Net.EndPoint clientEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 50050);
@@ -94,6 +94,7 @@ namespace HL7Interface.Tests
             Assert.That(server.Start());
 
             Assert.That(hl7Interface.Initialize());
+
             Assert.That(hl7Interface.Start());
 
             Task<bool> connectTask = Task.Run( async () 
@@ -118,7 +119,7 @@ namespace HL7Interface.Tests
 
             BaseHL7Protocol protocol = new BaseHL7Protocol(new HL7ProtocolConfig()
             {
-                IsAckRequired = true,
+                IsAckRequired = false,
                 IsResponseRequired = false
             });
 
@@ -135,7 +136,7 @@ namespace HL7Interface.Tests
 
             server.NewRequestReceived += (e, s) =>
             {
-                Assert.That(s.RequestMessage is EquipmentCommandRequest);
+                Assert.That(s.Request is EquipmentCommandRequest);
                 requestReceived.Set();
             };
 
@@ -159,15 +160,24 @@ namespace HL7Interface.Tests
             HL7Server server = new HL7Server();
             AutoResetEvent requestReceived = new AutoResetEvent(false);
 
+            BaseHL7Protocol protocol = new BaseHL7Protocol(new HL7ProtocolConfig()
+            {
+                IsAckRequired = true,
+                IsResponseRequired = false
+            });
+
+            HL7Server serverSide = new HL7Server();
+            serverSide.Setup("127.0.0.1", 50060);
+
             server.Setup("127.0.0.1", 2012);
             server.Start();
 
-            hl7Interface.Initialize();
+            hl7Interface.Initialize(serverSide, protocol);
             hl7Interface.Start();
 
             server.NewRequestReceived += (e, s) =>
             {
-                Assert.That(s.RequestMessage is EquipmentCommandRequest);
+                Assert.That(s.Request is EquipmentCommandRequest);
                 requestReceived.Set();
             };
 
@@ -177,11 +187,11 @@ namespace HL7Interface.Tests
 
             HL7Request req = await  hl7Interface.SendHL7MessageAsync(new EquipmentCommandRequest());
 
-            Assert.IsNotNull(req != null);
+            Assert.IsNotNull(req);
 
             Assert.That(req.Acknowledgment is GeneralAcknowledgment);
 
-            Assert.That(HL7Parser.IsAckForRequest(req.RequestMessage, req.Acknowledgment));
+            Assert.That(HL7Parser.IsAckForRequest(req.Request, req.Acknowledgment));
 
             requestReceived.WaitOne();
 
@@ -199,16 +209,39 @@ namespace HL7Interface.Tests
             HL7Server server = new HL7Server();
             AutoResetEvent requestReceived = new AutoResetEvent(false);
 
+            BaseHL7Protocol protocol = new BaseHL7Protocol(new HL7ProtocolConfig()
+            {
+                IsAckRequired = true,
+                IsResponseRequired = true
+            });
+
+            HL7Server serverSide = new HL7Server();
+            serverSide.Setup("127.0.0.1", 50060);
+
             server.Setup("127.0.0.1", 2012);
             server.Start();
 
-            hl7Interface.Initialize();
+            hl7Interface.Initialize(serverSide, protocol);
             hl7Interface.Start();
 
             server.NewRequestReceived += (e, s) =>
             {
-                Assert.That(s.RequestMessage is EquipmentCommandRequest);
+                Assert.That(s.Request is EquipmentCommandRequest);
                 requestReceived.Set();
+                Thread.Sleep(500);
+
+                EasyClient client = new EasyClient();
+                client.Initialize(new ReceiverFilter(new BaseHL7Protocol()), (packageInfo) =>
+                {
+                    Assert.That(packageInfo.Request is GeneralAcknowledgment);            
+                });
+
+                client.ConnectAsync(serverEndpoint).Wait();
+
+                byte[] bytesToSend = Encoding.UTF8.GetBytes(MLLP.CreateMLLPMessage((new EquipmentCommandResponse()).Encode()));
+                client.Send(bytesToSend);
+
+                //client.Close().Wait();
             };
 
             bool connected = await hl7Interface.ConnectAsync(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 2012));
@@ -217,17 +250,25 @@ namespace HL7Interface.Tests
 
             HL7Request req = await hl7Interface.SendHL7MessageAsync(new EquipmentCommandRequest());
 
-            Assert.IsNotNull(req != null);
+            Assert.IsNotNull(req);
 
             Assert.That(req.Acknowledgment is GeneralAcknowledgment);
 
-            Assert.That(HL7Parser.IsAckForRequest(req.RequestMessage, req.Acknowledgment));
+            Assert.That(HL7Parser.IsAckForRequest(req.Request, req.Acknowledgment));
+
+            Assert.That(req.Acknowledgment.GetValue("MSA-1") == "AA");
+
+            Assert.IsNotNull(req.Response);
+
+            Assert.That(req.Response.IsResponseForRequest(req.Request));
 
             requestReceived.WaitOne();
 
             server.Stop();
 
             hl7Interface.Stop();
+
+            
         }
     }
 }

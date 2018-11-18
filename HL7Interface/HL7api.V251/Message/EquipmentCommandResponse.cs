@@ -27,6 +27,44 @@ namespace HL7api.V251.Message
             }
         }
 
+        public override bool IsResponseForRequest(IHL7Message request)
+        {
+            if (request == null)
+                throw new ArgumentNullException("the request and the response should be both non-null");
+
+            if (string.IsNullOrEmpty(request.ExpectedResponseType))
+                throw new ArgumentException("the request cannot be a type of response message or acknowledgment");
+
+            if (string.IsNullOrEmpty(this.Trigger) || string.IsNullOrEmpty(this.Code))
+                throw new HL7apiException($"The message code and trigger event of the message: " +
+                    $" {this.MessageID} are mandatory fields");
+
+            // to avoid situation in which response is actually a request
+            if (!string.IsNullOrEmpty(this.ExpectedResponseType))
+                return false;
+
+            if (request.ExpectedResponseType != $"{this.Code}_{this.Trigger}")
+                return false;
+
+            if ((request.ExpectedResponseID != this.MessageID))
+                return false;
+
+            if (request is EquipmentCommandRequest)
+            {
+                //if (!(this is EquipmentCommandResponse))
+                //    return false;
+
+                //if (request.GetValue("COMMAND(0)/ECD-2-1")
+                //    != this.GetValue("COMMAND_RESPONSE(0)/ECD-2-1"))
+                //    return false;
+
+                //if (request.GetValue("COMMAND(0)/SPECIMEN_CONTAINER/SAC-3-1")
+                //    != this.GetValue("COMMAND_RESPONSE(0)/SPECIMEN_CONTAINER/SAC-3-1"))
+                //    return false;
+            }
+            return true;
+        }
+
         public EquipmentCommandResponse() : this(new EAR_U08())
         {
 

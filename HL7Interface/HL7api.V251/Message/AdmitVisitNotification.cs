@@ -90,5 +90,10 @@ namespace HL7api.V251.Message
         public override string ExpectedResponseType => throw new NotImplementedException();
 
         public override string ExpectedAckType => throw new NotImplementedException();
+
+        public override bool IsResponseForRequest(IHL7Message request)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

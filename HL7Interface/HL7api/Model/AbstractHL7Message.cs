@@ -64,5 +64,6 @@ namespace HL7api.Model
         {
             terser.Set(path, newValue);
         }
+        public abstract bool IsResponseForRequest(IHL7Message request);
     }
 }

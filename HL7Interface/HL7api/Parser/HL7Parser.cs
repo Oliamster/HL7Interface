@@ -88,6 +88,9 @@ namespace HL7api.Parser
             if (string.IsNullOrEmpty(request.ExpectedAckID))
                 throw new HL7apiException("The request should not be an acknowledgment");
 
+            if (!string.IsNullOrEmpty(ack.ExpectedAckID))
+                throw new HL7apiException("The ack should be an acknowledgment");
+
             string msa2 = ack.GetValue("/MSA-2");
             string msh10 = request.ControlID;
 

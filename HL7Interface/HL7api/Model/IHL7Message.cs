@@ -50,6 +50,9 @@ namespace HL7api.Model
         /// </summary>
         String ExpectedResponseType { get; }
 
+
+        bool IsResponseForRequest(IHL7Message request);
+
         /// <summary>
         /// Whether this message is an acknowledgment
         /// </summary>

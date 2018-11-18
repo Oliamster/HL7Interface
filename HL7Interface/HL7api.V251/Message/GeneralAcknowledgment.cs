@@ -58,5 +58,10 @@ namespace HL7api.V251.Message
         {
             this.ack = this.m_Message as ACK;
         }
+
+        public override bool IsResponseForRequest(IHL7Message request)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
