@@ -10,6 +10,8 @@ namespace HL7Interface.ServerProtocol
 {
     public class HL7Session : AppSession<HL7Session, HL7Request>
     {
+        public override AppServerBase<HL7Session, HL7Request> AppServer => base.AppServer;
+
         public override void Close(CloseReason reason)
         {
             base.Close(reason);
@@ -28,6 +30,11 @@ namespace HL7Interface.ServerProtocol
         public override int GetHashCode()
         {
             return base.GetHashCode();
+        }
+
+        public override void Initialize(IAppServer<HL7Session, HL7Request> appServer, ISocketSession socketSession)
+        {
+            base.Initialize(appServer, socketSession);
         }
 
         public override void Send(byte[] data, int offset, int length)
@@ -90,7 +97,10 @@ namespace HL7Interface.ServerProtocol
             throw e;
         }
 
-       
+        protected override void HandleUnknownRequest(HL7Request requestInfo)
+        {
+            base.HandleUnknownRequest(requestInfo);
+        }
 
         protected override void OnInit()
         {

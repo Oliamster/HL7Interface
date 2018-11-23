@@ -48,7 +48,6 @@ namespace HL7Interface
         /// <returns></returns>
         bool Start();
 
-
         /// <summary>
         /// The server side state
         /// </summary>

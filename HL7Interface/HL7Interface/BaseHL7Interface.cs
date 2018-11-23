@@ -109,18 +109,26 @@ namespace HL7Interface
 
             log.Debug("the Client side is initializing");
             Client.Initialize(new ReceiverFilter(m_Protocol), (request) => {
+                if (request.Request.IsAcknowledge)
+                {
+                    lock (responseQueueLock)
+                        incomingAcknowledgmentQueue.Enqueue(request.Request);
+                    ackReceivedSignal.Set();
+                }
+
                 lock (responseQueueLock)
-                    incomingAcknowledgmentQueue.Enqueue(request.Request);
-                ackReceivedSignal.Set();
+                    incomingMessageQueue.Push(request.Request);
+                responseReceivedSignal.Set();
+
             });
 
-            m_HL7Server.NewRequestReceived += (s, e) =>
-            {
-                lock (responseQueueLock)
-                    incomingMessageQueue.Push(e.Request);
-                responseReceivedSignal.Set();
-                
-            };
+            //m_HL7Server.NewRequestReceived += (s, e) =>
+            //{
+            //    lock (responseQueueLock)
+            //        incomingMessageQueue.Push(e.Request);
+
+            //    responseReceivedSignal.Set();
+            //};
 
             return true;
         }
@@ -138,19 +146,26 @@ namespace HL7Interface
             m_HL7Server = server;
 
             Client.Initialize(new ReceiverFilter(m_Protocol), (request) => {
-                lock (responseQueueLock)
-                    incomingAcknowledgmentQueue.Enqueue(request.Request);
-                ackReceivedSignal.Set();
-            });
-
-            m_HL7Server.NewRequestReceived += (s, e) =>
-            {
-                lock (responseQueueLock)
+                if(request.Request.IsAcknowledge)
                 {
-                    incomingMessageQueue.Push(e.Request);
+                    lock (responseQueueLock)
+                        incomingAcknowledgmentQueue.Enqueue(request.Request);
+                    ackReceivedSignal.Set();
+                }
+                else
+                {
+                    lock (responseQueueLock)
+                        incomingMessageQueue.Push(request.Request);
                     responseReceivedSignal.Set();
                 }
-            };
+            });
+
+            //m_HL7Server.NewRequestReceived += (s, e) =>
+            //{
+            //    lock (responseQueueLock)
+            //        incomingMessageQueue.Push(e.Request);
+            //    responseReceivedSignal.Set();
+            //};
             return true;
         }
 

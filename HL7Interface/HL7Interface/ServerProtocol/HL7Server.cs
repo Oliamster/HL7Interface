@@ -86,11 +86,12 @@ namespace HL7Interface.ServerProtocol
             try
             {
                 log.Debug($"Message received: {requestInfo.Request.Encode()}");
-                base.ExecuteCommand(session, requestInfo);
-                log.Debug($"The command {requestInfo.Request.MessageID} has been executed");
 
                 byte[] ack = Encoding.UTF8.GetBytes(MLLP.CreateMLLPMessage(requestInfo.Acknowledgment.Encode()));
                 session.Send(ack, 0, ack.Length);
+
+                base.ExecuteCommand(session, requestInfo);
+                log.Debug($"The command {requestInfo.Request.MessageID} has been executed");
 
             }
             catch (Exception e)

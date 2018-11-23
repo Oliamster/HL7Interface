@@ -4,7 +4,6 @@ using Hl7Interface.ServerProtocol;
 using NHapiTools.Base.Util;
 using SuperSocket.Facility.Protocol;
 using SuperSocket.SocketBase.Protocol;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,7 +72,9 @@ namespace HL7Interface.ServerProtocol
             {
                 request.Request = result.ParsedMessage;
                 request.Acknowledgment = result.Acknowledge;
-                request.Key = result.ParsedMessage.MessageID;
+
+                request.Key = "V" + result.ParsedMessage.MessageVersion.Replace(".", "");
+                request.Key += result.ParsedMessage.MessageID;
             }
             return request;
         }
