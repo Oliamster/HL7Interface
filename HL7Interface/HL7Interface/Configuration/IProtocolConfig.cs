@@ -10,10 +10,10 @@ namespace HL7Interface.Configuration
     public interface IProtocolConfig
     {
         /// <summary>
-        /// Gets the name of the protocol you want to use
+        /// Gets the name of the protocol you use
         /// </summary>
         /// <value>
-        /// The name of the server type.
+        /// The name of the protocol.
         /// </value>
         string ProtocolName { get; }
 
@@ -21,10 +21,9 @@ namespace HL7Interface.Configuration
         /// Gets the type of the protocol
         /// </summary>
         /// <value>
-        /// The type of the server.
+        /// The type of the protocol.
         /// </value>
         string ProtocolType { get; }
-
 
         /// <summary>
         /// Max ack retry number
@@ -32,7 +31,7 @@ namespace HL7Interface.Configuration
         int MaxAckRetriesNumber { get; }
 
         /// <summary>
-        /// MAx response retry number
+        /// Max response retry number
         /// </summary>
         int MaxResponseRetriesNumber { get; }
 
@@ -47,6 +46,12 @@ namespace HL7Interface.Configuration
         int ResponseTimeout { get; }
 
         /// <summary>
+        /// whether the response is send back to the sender using the same connection.
+        /// i.e, the same session the default value is true.
+        /// </summary>
+        bool RespondOnCurrentSession { get; }
+
+        /// <summary>
         /// Either the acknowledgment is required
         /// </summary>
         bool IsAckRequired { get; }
@@ -55,7 +60,6 @@ namespace HL7Interface.Configuration
         /// Either the ack is blocking
         /// </summary>
         bool IsAckBlocking { get; }
-
 
         /// <summary>
         /// Either the acknowledgment is required
@@ -72,25 +76,21 @@ namespace HL7Interface.Configuration
         /// </summary>
         bool RetryOnNack { get; }
 
-
         /// <summary>
         /// Gets the send time out.
         /// </summary>
         int SendTimeOut { get; }
-
 
         /// <summary>
         /// Gets the start keep alive time, in seconds
         /// </summary>
         int KeepAliveTime { get; }
 
-
         /// <summary>
         /// Gets the keep alive interval, in seconds.
         /// </summary>
         int KeepAliveInterval { get; }
 
- 
         /// <summary>
         /// Gets the child config.
         /// </summary>

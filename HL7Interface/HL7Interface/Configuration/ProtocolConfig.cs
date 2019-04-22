@@ -79,6 +79,19 @@ namespace  HL7Interface.Configuration
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [sync send]; otherwise, <c>false</c>.
+        /// </value>
+        [ConfigurationProperty("respondOnCurrentSession", IsRequired = false, DefaultValue = true)]
+        public bool RespondOnCurrentSession
+        {
+            get { return (bool)this["respondOnCurrentSession"]; }
+        }
+
+
+        /// <summary>
         /// Gets the send time out.
         /// </summary>
         [ConfigurationProperty("sendTimeOut", IsRequired = false, DefaultValue = ServerConfig.DefaultSendTimeout)]

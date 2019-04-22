@@ -111,6 +111,8 @@ namespace HL7Interface.Configuration
         /// The text encoding.
         /// </value>
         public string TextEncoding { get; set; }
+
+        public bool RespondOnCurrentSession => throw new NotImplementedException();
     }
 }
 

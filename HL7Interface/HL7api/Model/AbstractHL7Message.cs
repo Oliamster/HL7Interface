@@ -11,6 +11,7 @@ namespace HL7api.Model
 {
     public abstract class AbstractHL7Message : IHL7Message
     {
+
         protected IMessage m_Message;
         private HL7Parser hl7Parser;
         protected Terser terser;

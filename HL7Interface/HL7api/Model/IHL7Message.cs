@@ -9,7 +9,7 @@ namespace HL7api.Model
         /// <summary>
         /// The message class Name
         /// </summary>
-        String MessageID { get; }
+        string MessageID { get; }
 
         /// <summary>
         /// The trigger event
@@ -50,7 +50,11 @@ namespace HL7api.Model
         /// </summary>
         String ExpectedResponseType { get; }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         bool IsResponseForRequest(IHL7Message request);
 
         /// <summary>
@@ -61,7 +65,7 @@ namespace HL7api.Model
         /// <summary>
         /// the expected ack ID
         /// </summary>
-        String ExpectedAckID { get; }
+        string ExpectedAckID { get; }
 
         /// <summary>
         /// expected ack type

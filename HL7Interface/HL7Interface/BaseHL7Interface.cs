@@ -1,4 +1,13 @@
-﻿using HL7api.Model;
+﻿using System;
+using System.Linq;
+using System.Net;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Collections.Concurrent;
+using NHapiTools.Base.Util;
+using HL7api.Parser;
+using HL7api.Model;
 using Hl7Interface.ServerProtocol;
 using HL7Interface.ClientProtocol;
 using HL7Interface.Configuration;
@@ -6,24 +15,14 @@ using HL7Interface.ServerProtocol;
 using SuperSocket.ClientEngine;
 using SuperSocket.SocketBase;
 using SuperSocket.SocketEngine;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using NHapiTools.Base.Util;
-using HL7api.Parser;
 
 namespace HL7Interface
 {
     public class BaseHL7Interface : IHL7Interface
     {
-        public static readonly log4net.ILog log 
-            = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        #region Public Properties
+        public static readonly log4net.ILog log
+           = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private HL7Server m_HL7Server;
         private BaseHL7Protocol m_Protocol;
 
@@ -32,10 +31,11 @@ namespace HL7Interface
 
         private object AckQueueLock = new object();
         private object responseQueueLock = new object();
-        
-        
+
+
         private AutoResetEvent ackReceivedSignal = new AutoResetEvent(false);
-        private AutoResetEvent responseReceivedSignal = new AutoResetEvent(false);
+        private AutoResetEvent responseReceivedSignal = new AutoResetEvent(false); 
+        #endregion
 
         public void Stop()
         {
@@ -115,11 +115,12 @@ namespace HL7Interface
                         incomingAcknowledgmentQueue.Enqueue(request.Request);
                     ackReceivedSignal.Set();
                 }
-
-                lock (responseQueueLock)
-                    incomingMessageQueue.Push(request.Request);
-                responseReceivedSignal.Set();
-
+                else
+                {
+                    lock (responseQueueLock)
+                        incomingMessageQueue.Push(request.Request);
+                    responseReceivedSignal.Set();
+                }
             });
 
             //m_HL7Server.NewRequestReceived += (s, e) =>
