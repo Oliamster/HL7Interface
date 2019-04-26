@@ -386,56 +386,6 @@ namespace HL7Interface.Tests
 
             hl7Interface.Stop();
         }
-
-
-       
-        [Test]//, Repeat(2)]
-        [Timeout(30000)]
-        public async Task TestMEthod()
-        {
-            BaseHL7Interface hl7Interface = new BaseHL7Interface();
-            AutoResetEvent ackReceived = new AutoResetEvent(false);
-            AutoResetEvent commandResponseReceived = new AutoResetEvent(false);
-
-            BaseHL7Protocol protocol = new BaseHL7Protocol(new HL7ProtocolConfig()
-            {
-                IsAckRequired = true,
-                IsResponseRequired = true
-            });
-
-            HL7Server serverSide = new HL7Server();
-            serverSide.Setup("127.0.0.1", 50060);
-            hl7Interface.Initialize(serverSide, protocol);
-
-            hl7Interface.Start();
-
-            EquipmentCommandRequest request = new EquipmentCommandRequest();
-            EasyClient client = new EasyClient();
-            client.Initialize(new ReceiverFilter(new BaseHL7Protocol()), (packageInfo) =>
-            {
-                if (packageInfo.Request.IsAcknowledge)
-                {
-                    Assert.That(packageInfo.Request is GeneralAcknowledgment);
-                    Assert.That(HL7Parser.IsAckForRequest(request, packageInfo.Request));
-                    ackReceived.Set();
-                }
-                else
-                    commandResponseReceived.Set();
-            });
-
-            await client.ConnectAsync(serverEndpoint);
-
-            Assert.That(client.IsConnected);
-
-            byte[] bytesToSend = Encoding.UTF8.GetBytes(MLLP.CreateMLLPMessage(request.Encode()));
-            client.Send(bytesToSend);
-
-            Assert.That(ackReceived.WaitOne());
-
-            Assert.That(commandResponseReceived.WaitOne());
-
-            hl7Interface.Stop();
-        }
     }
 }
 
