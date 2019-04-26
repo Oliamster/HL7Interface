@@ -20,31 +20,18 @@ namespace HL7Interface
 {
     public class BaseHL7Interface : IHL7Interface
     {
-        #region Public Properties
-        public static readonly log4net.ILog log
-           = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        #region Private Properties
         private HL7Server m_HL7Server;
         private BaseHL7Protocol m_Protocol;
-
         private ConcurrentQueue<IHL7Message> incomingAcknowledgmentQueue;
         private ConcurrentStack<IHL7Message> incomingMessageQueue;
-
         private object AckQueueLock = new object();
         private object responseQueueLock = new object();
-
-
         private AutoResetEvent ackReceivedSignal = new AutoResetEvent(false);
-        private AutoResetEvent responseReceivedSignal = new AutoResetEvent(false); 
+        private AutoResetEvent responseReceivedSignal = new AutoResetEvent(false);
         #endregion
 
-        public void Stop()
-        {
-            m_HL7Server.Stop();
-        }
-
-        
-        
-
+        #region Constructor
         public BaseHL7Interface()
         {
             incomingAcknowledgmentQueue = new ConcurrentQueue<IHL7Message>();
@@ -53,17 +40,28 @@ namespace HL7Interface
             m_Protocol = new BaseHL7Protocol();
             m_HL7Server = new HL7Server();
         }
+        #endregion
+
+        #region Public Properties
+        public static readonly log4net.ILog log
+           = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public virtual string Name => this.GetType().Name;
 
-        public EasyClient Client { get;  }
+        public EasyClient Client { get; }
+        #endregion
+
+        public void Stop()
+        {
+            m_HL7Server.Stop();
+        }
+        
 
         public IHL7Protocol Protocol
         {
             get
             {
                 return m_Protocol;
-
             }
         }
 
@@ -93,22 +91,32 @@ namespace HL7Interface
        public virtual bool Initialize()
        {
             IBootstrap bootstrap = BootstrapFactory.CreateBootstrap();
+
             if (!bootstrap.Initialize())
                 return false;
+
             IWorkItem item = bootstrap.AppServers.FirstOrDefault(server => server.Name == Name);
+
             m_HL7Server = item as HL7Server;
+
             if (m_HL7Server == null)
                 return false;
-            //_hl7Server.Logger.Debug("Server Initialized"); TODO: Exploit the AppServer Logger
+
+            //TODO: Exploit the AppServer Logger
+            //_hl7Server.Logger.Debug("Server Initialized");
             log.Debug("the Server side is initializing");
 
             HL7SocketServiceConfig config = bootstrap.Config as HL7SocketServiceConfig;
+
             if (config == null && config.ProtocolConfig == null)
                 return false;
+
             m_Protocol.Config = config.ProtocolConfig;
 
             log.Debug("the Client side is initializing");
-            Client.Initialize(new ReceiverFilter(m_Protocol), (request) => {
+
+            Client.Initialize(new ReceiverFilter(m_Protocol), (request) =>
+            {
                 if (request.Request.IsAcknowledge)
                 {
                     lock (responseQueueLock)
@@ -122,23 +130,14 @@ namespace HL7Interface
                     responseReceivedSignal.Set();
                 }
             });
-
-            //m_HL7Server.NewRequestReceived += (s, e) =>
-            //{
-            //    lock (responseQueueLock)
-            //        incomingMessageQueue.Push(e.Request);
-
-            //    responseReceivedSignal.Set();
-            //};
-
             return true;
         }
-
 
         public virtual bool Initialize(HL7Server server, IHL7Protocol protocol)
         {
             if (protocol.Config == null)
                 throw new ArgumentNullException("The configuration proprty is missing for this protocol");
+
             m_Protocol = protocol as BaseHL7Protocol;
 
             if(m_Protocol == null)
@@ -160,13 +159,6 @@ namespace HL7Interface
                     responseReceivedSignal.Set();
                 }
             });
-
-            //m_HL7Server.NewRequestReceived += (s, e) =>
-            //{
-            //    lock (responseQueueLock)
-            //        incomingMessageQueue.Push(e.Request);
-            //    responseReceivedSignal.Set();
-            //};
             return true;
         }
 
@@ -208,8 +200,6 @@ namespace HL7Interface
                 {
                     do
                     {
-                        //token.Token.ThrowIfCancellationRequested();
-                        //log.Debug($"Waiting for incoming message: {request.HL7MessageProfileID}");
                         responseReceivedSignal.WaitOne();
                         lock (responseQueueLock)
                         {
@@ -274,4 +264,3 @@ namespace HL7Interface
         }
     }
 }
-
