@@ -11,7 +11,7 @@ A generic interface for HL7 communications
 
 ## Introduction 
 
-The `HL7Interface` is a finite product that let the `NHapi`, `NHapiTools`, the `HL7api`, `SuperSocket`, `SuperSocket.Client.Engine` work togheder. 
+The `HL7Interface` is a finite product that let the `NHapi`, the `NHapiTools`, the `HL7api`, the `SuperSocket`, and the `SuperSocket.Client.Engine` work together. 
 
 ~~~csharp
 IHL7Message command = new EquipmentCommandRequest();
