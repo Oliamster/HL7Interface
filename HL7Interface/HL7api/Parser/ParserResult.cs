@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace HL7api.Parser
 {
-    public class ParserResult
+    public class ParserResult : IParserResult<IHL7Message>
     {
 
         #region Fields
@@ -32,7 +32,7 @@ namespace HL7api.Parser
         #endregion
 
         #region Public Proprieties
-        public bool IsAccepted
+        public bool MessageAccepted
         {
             get { return isAccepted; }
             set { isAccepted = value; }
@@ -76,7 +76,7 @@ namespace HL7api.Parser
         {
             get
             {
-                if (IsAccepted)
+                if (MessageAccepted)
                     return this._parsedMessage;
                 return null;
             }

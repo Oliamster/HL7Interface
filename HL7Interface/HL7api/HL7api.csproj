@@ -125,6 +125,7 @@
     <Compile Include="HL7apiException.cs" />
     <Compile Include="Model\IHL7Request.cs" />
     <Compile Include="Model\IHL7Response.cs" />
+    <Compile Include="Parser\IParserResult.cs" />
     <Compile Include="Validation\HL7apiConfigurableContext.cs" />
     <Compile Include="Parser\HL7Encoding.cs" />
     <Compile Include="Parser\HL7Parser.cs" />

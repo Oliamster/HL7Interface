@@ -1,17 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Configuration;
-using System.IO;
-using System.Security.Authentication;
-using System.Text;
-using System.Xml;
-using System.Linq;
 using SuperSocket.Common;
-using SuperSocket.SocketBase;
 using SuperSocket.SocketBase.Config;
 
-namespace  HL7Interface.Configuration
+namespace HL7Interface.Configuration
 {
     /// <summary>
     /// protocol configuration

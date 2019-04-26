@@ -151,7 +151,7 @@
     <Compile Include="Configuration\IProtocolConfig.cs" />
     <Compile Include="Configuration\ProtocolConfig.cs" />
     <Compile Include="HL7Commands.cs" />
-    <Compile Include="ICommunicationInterface.cs" />
+    <Compile Include="ICommunication.cs" />
     <Compile Include="IHL7Interface.cs" />
     <Compile Include="HL7Request.cs" />
     <Compile Include="MLLPReceiveFilterFactory.cs" />

@@ -61,7 +61,7 @@ namespace HL7Interface.ClientProtocol
             PackageInfo package = new PackageInfo();
 
             ParserResult result = m_Protocol.Parse(message);
-            if (result.IsAccepted)
+            if (result.MessageAccepted)
             {
                 package.Request = result.ParsedMessage;
                 package.Key = result.ParsedMessage.MessageID;

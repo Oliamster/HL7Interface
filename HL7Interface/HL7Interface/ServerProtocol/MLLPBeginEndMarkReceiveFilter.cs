@@ -68,7 +68,7 @@ namespace HL7Interface.ServerProtocol
         
 
             HL7Request request = new HL7Request();
-            if (result.IsAccepted)
+            if (result.MessageAccepted)
             {
                 request.Request = result.ParsedMessage;
                 request.Acknowledgment = result.Acknowledge;

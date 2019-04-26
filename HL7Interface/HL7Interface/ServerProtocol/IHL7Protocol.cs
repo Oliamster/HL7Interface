@@ -10,7 +10,18 @@ namespace HL7Interface.ServerProtocol
 {
     public interface IHL7Protocol : IProtocol
     {
+        /// <summary>
+        /// Parse
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
         ParserResult Parse(string message);
+
+        /// <summary>
+        /// Encode
+        /// </summary>
+        /// <param name="hl7Message"></param>
+        /// <returns></returns>
         byte[] Encode(IHL7Message hl7Message);
     }
 }

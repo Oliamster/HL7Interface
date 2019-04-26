@@ -1,11 +1,5 @@
-﻿using SuperSocket.SocketBase.Config;
-using SuperSocket.SocketEngine.Configuration;
-using System;
-using System.Collections.Generic;
+﻿using SuperSocket.SocketEngine.Configuration;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HL7Interface.Configuration
 {

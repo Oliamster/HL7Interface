@@ -33,22 +33,22 @@ namespace HL7api.Model
         /// <summary>
         /// The message control ID (MSH-10
         /// </summary>
-        String ControlID { get; }
+        string ControlID { get; }
 
         /// <summary>
         /// The HL7 version
         /// </summary>
-        String MessageVersion { get;  }
+        string MessageVersion { get;  }
 
         /// <summary>
         /// The name of the expected response to this message
         /// </summary>
-        String ExpectedResponseID { get; }
+        string ExpectedResponseID { get; }
 
         /// <summary>
         /// expected response Type
         /// </summary>
-        String ExpectedResponseType { get; }
+        string ExpectedResponseType { get; }
 
         /// <summary>
         /// 
@@ -82,21 +82,21 @@ namespace HL7api.Model
         /// encoding characters
         /// </summary>
         /// <returns></returns>
-        String Encode();
+        string Encode();
 
         /// <summary>
         /// Encode
         /// </summary>
         /// <param name="hL7Encoding"></param>
         /// <returns></returns>
-        String Encode(HL7Encoding hL7Encoding);
+        string Encode(HL7Encoding hL7Encoding);
 
         /// <summary>
         /// Get the value from path
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        String GetValue(string path);
+        string GetValue(string path);
 
         /// <summary>
         /// Set the value at path
