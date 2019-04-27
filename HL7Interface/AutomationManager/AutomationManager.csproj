@@ -41,8 +41,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DeviceInterface.cs" />
     <Compile Include="DeviceManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HL7Interface\HL7Interface.csproj">
+      <Project>{DB0F4680-50B7-4062-AC4A-8A57BC3D7B82}</Project>
+      <Name>HL7Interface</Name>
+    </ProjectReference>
+    <ProjectReference Include="Y:\HL7Interface\HL7Interface\HL7api.V251\HL7api.V251.csproj">
+      <Project>{1DC2BF49-6257-4B95-895B-111DE7BA5A89}</Project>
+      <Name>HL7api.V251</Name>
+    </ProjectReference>
+    <ProjectReference Include="Y:\HL7Interface\HL7Interface\HL7api\HL7api.csproj">
+      <Project>{160740A5-90C5-4A59-B358-65A4185CC753}</Project>
+      <Name>HL7api</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

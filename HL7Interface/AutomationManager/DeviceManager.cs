@@ -8,5 +8,6 @@ namespace AutomationManager
 {
     public class DeviceManager
     {
+        DeviceInterface deviceInterface = new DeviceInterface();
     }
 }

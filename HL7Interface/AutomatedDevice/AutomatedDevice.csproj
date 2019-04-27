@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{891B3351-E85B-42A2-A8B6-A0D4BE8B76AA}</ProjectGuid>
+    <ProjectGuid>{5B65072A-5C5D-4728-AAE2-A8A2BC9967A1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>HL7DeviceSimulator</RootNamespace>
@@ -54,7 +54,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="Command\PrepareCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="State\Running.cs" />
