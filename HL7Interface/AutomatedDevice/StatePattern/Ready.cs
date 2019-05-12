@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HL7DeviceSimulator.State
+namespace HL7DeviceSimulator.StatePattern
 {
-    class Running : State
+    class Ready : State
     {
+        public Ready()
+        {
+        }
     }
 }

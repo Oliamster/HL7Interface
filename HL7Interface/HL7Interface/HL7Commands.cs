@@ -7,7 +7,7 @@ using System.Text;
 
 namespace HL7Interface
 {
-    public class V251EquipmentCommandRequest : CommandBase<HL7Session, HL7Request>
+    public class V251EquipmentCommandRequestMLLP : CommandBase<HL7Session, HL7Request>
     {
         public override void ExecuteCommand(HL7Session session, HL7Request packageInfo)
         {
@@ -16,8 +16,6 @@ namespace HL7Interface
 
             HL7SocketServiceConfig config = session.AppServer.Config as HL7SocketServiceConfig;
             
-            //config.ProtocolConfig
-
             session.Send(bytesToSend, 0, bytesToSend.Length);
         }
 

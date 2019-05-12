@@ -14,7 +14,6 @@ using System.Diagnostics;
 
 namespace HL7api.V251.Message
 {
-   
     public class EquipmentCommandResponse : AbstractHL7Message
     {
         protected EAR_U08 eAR_U08;

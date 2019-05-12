@@ -277,6 +277,7 @@ namespace HL7Interface.Tests
             server.Start();
 
             hl7Interface.Initialize(serverSide, protocol);
+
             hl7Interface.Start();
 
             server.NewRequestReceived += (e, s) =>
@@ -284,17 +285,7 @@ namespace HL7Interface.Tests
                 Assert.That(s.Request is EquipmentCommandRequest);
                 requestReceived.Set();
                 Thread.Sleep(500);
-
-                //EasyClient client = new EasyClient();
-                //client.Initialize(new ReceiverFilter(new BaseHL7Protocol()), (packageInfo) =>
-                //{
-                //    Assert.That(packageInfo.Request is GeneralAcknowledgment);
-                //});
-
-                //client.ConnectAsync(serverEndpoint).Wait();
-
                 byte[] bytesToSend = Encoding.UTF8.GetBytes(MLLP.CreateMLLPMessage((new EquipmentCommandResponse()).Encode()));
-                //client.Send(bytesToSend);
                 e.Send(bytesToSend, 0, bytesToSend.Length);
             };
 
@@ -324,6 +315,97 @@ namespace HL7Interface.Tests
         }
 
 
+        // <summary>
+        // Easy client sends message  to HL7Server and receves ack
+        // </summary>
+        // <returns></returns>
+        [Test]//, Repeat(2)]
+        //[Timeout(30000)]
+        public async Task ClientSendsCommandToHl7ServerAndWaitAck()
+        {
+            AutoResetEvent ackReceived = new AutoResetEvent(false);
+
+            HL7Server hl7Server = new HL7Server();
+
+            hl7Server.Setup("127.0.0.1", 50060);
+
+            hl7Server.Start();
+
+            EquipmentCommandRequest request = new EquipmentCommandRequest();
+
+            EasyClient client = new EasyClient();
+
+            client.Initialize(new ReceiverFilter(new BaseHL7Protocol()), (packageInfo) =>
+            {
+                if (packageInfo.Request.IsAcknowledge)
+                {
+                    Assert.That(packageInfo.Request is GeneralAcknowledgment);
+                    Assert.That(HL7Parser.IsAckForRequest(request, packageInfo.Request));
+                    ackReceived.Set();
+                }
+            });
+
+            await client.ConnectAsync(serverEndpoint);
+
+            Assert.That(client.IsConnected);
+
+            byte[] bytesToSend = Encoding.UTF8.GetBytes(MLLP.CreateMLLPMessage(request.Encode()));
+            client.Send(bytesToSend);
+
+            Assert.That(ackReceived.WaitOne());
+
+            hl7Server.Stop();
+        }
+
+        /// <summary>
+        /// Easy client sends A command to HL7Interface who should acknowledge it
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task ClientSendCommandToHL7InterfaceAndWaitAck()
+        {
+            BaseHL7Interface hl7Interface = new BaseHL7Interface();
+            AutoResetEvent ackReceived = new AutoResetEvent(false);
+            AutoResetEvent commandResponseReceived = new AutoResetEvent(false);
+            BaseHL7Protocol protocol = new BaseHL7Protocol(new HL7ProtocolConfig()
+            {
+                IsAckRequired = true,
+                IsResponseRequired = true
+            });
+
+            HL7Server serverSide = new HL7Server();
+            serverSide.Setup("127.0.0.1", 50060);
+            hl7Interface.Initialize(serverSide, protocol);
+
+            Assert.That(hl7Interface.Start());
+
+            EquipmentCommandRequest request = new EquipmentCommandRequest();
+
+            EasyClient client = new EasyClient();
+
+            client.Initialize(new ReceiverFilter(new BaseHL7Protocol()), (packageInfo) =>
+            {
+                if (packageInfo.Request.IsAcknowledge)
+                {
+                    Assert.That(packageInfo.Request is GeneralAcknowledgment);
+                    Assert.That(HL7Parser.IsAckForRequest(request, packageInfo.Request));
+                    ackReceived.Set();
+                }
+                else
+                    Assert.Fail();
+            });
+
+            await client.ConnectAsync(serverEndpoint);
+
+            Assert.That(client.IsConnected);
+
+            byte[] bytesToSend = Encoding.UTF8.GetBytes(MLLP.CreateMLLPMessage(request.Encode()));
+            client.Send(bytesToSend);
+
+            Assert.That(ackReceived.WaitOne());
+
+            hl7Interface.Stop();
+        }
 
 
         // <summary>
@@ -341,8 +423,8 @@ namespace HL7Interface.Tests
         // </summary>
         // <returns></returns>
         [Test]//, Repeat(2)]
-        [Timeout(30000)]
-        public async Task SendSollicitedCommandToInterface()
+        //[Timeout(30000)]
+        public async Task Hl7InterfaceSendsCommandToAnotherHL7InterfaceWaitAckAndResponse()
         {
             BaseHL7Interface hl7Interface = new BaseHL7Interface();
             AutoResetEvent ackReceived = new AutoResetEvent(false);
@@ -357,20 +439,22 @@ namespace HL7Interface.Tests
             serverSide.Setup("127.0.0.1", 50060);
             hl7Interface.Initialize(serverSide, protocol);
 
-            hl7Interface.Start();
+            Assert.That(hl7Interface.Start());
 
             EquipmentCommandRequest request = new EquipmentCommandRequest();
+
             EasyClient client = new EasyClient();
+
             client.Initialize(new ReceiverFilter(new BaseHL7Protocol()), (packageInfo) =>
             {
-                if(packageInfo.Request.IsAcknowledge)
+                if (packageInfo.Request.IsAcknowledge)
                 {
                     Assert.That(packageInfo.Request is GeneralAcknowledgment);
                     Assert.That(HL7Parser.IsAckForRequest(request, packageInfo.Request));
                     ackReceived.Set();
                 }
                 else
-                commandResponseReceived.Set();
+                    commandResponseReceived.Set();
             });
 
             await client.ConnectAsync(serverEndpoint);
