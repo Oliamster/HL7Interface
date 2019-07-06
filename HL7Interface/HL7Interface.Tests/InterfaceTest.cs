@@ -67,7 +67,7 @@ namespace HL7Interface.Tests
 
             byte[] begin = Encoding.UTF8.GetBytes("#");
             byte[] end = Encoding.UTF8.GetBytes("##");
-            client.Initialize(new ReceiverFilter(new BaseHL7Protocol(), begin, end), (packageInfo) =>
+            client.Initialize(new ReceiverFilter(new HL7ProtocolBase(), begin, end), (packageInfo) =>
             {
                 Assert.That(packageInfo.OriginalRequest.Equals("Welcome"));
                 welcomMessageReceived.Set();
@@ -132,7 +132,7 @@ namespace HL7Interface.Tests
 
             EasyClient client = new EasyClient();
 
-            client.Initialize(new ReceiverFilter(new BaseHL7Protocol()), (packageInfo) =>
+            client.Initialize(new ReceiverFilter(new HL7ProtocolBase()), (packageInfo) =>
             {
                 acknowledgmentReceivedSignal.Set();
             });
@@ -164,7 +164,7 @@ namespace HL7Interface.Tests
 
             AutoResetEvent requestReceived = new AutoResetEvent(false);
 
-            BaseHL7Protocol protocol = new BaseHL7Protocol(new HL7ProtocolConfig()
+            HL7ProtocolBase protocol = new HL7ProtocolBase(new HL7ProtocolConfig()
             {
                 IsAckRequired = false,
                 IsResponseRequired = false
@@ -211,7 +211,7 @@ namespace HL7Interface.Tests
             HL7Server server = new HL7Server();
             AutoResetEvent requestReceived = new AutoResetEvent(false);
 
-            BaseHL7Protocol protocol = new BaseHL7Protocol(new HL7ProtocolConfig()
+            HL7ProtocolBase protocol = new HL7ProtocolBase(new HL7ProtocolConfig()
             {
                 IsAckRequired = true,
                 IsResponseRequired = false
@@ -264,7 +264,7 @@ namespace HL7Interface.Tests
             HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
             HL7Server server = new HL7Server();
             AutoResetEvent requestReceived = new AutoResetEvent(false);
-            BaseHL7Protocol protocol = new BaseHL7Protocol(new HL7ProtocolConfig()
+            HL7ProtocolBase protocol = new HL7ProtocolBase(new HL7ProtocolConfig()
             {
                 IsAckRequired = true,
                 IsResponseRequired = true
@@ -333,7 +333,7 @@ namespace HL7Interface.Tests
 
             EasyClient client = new EasyClient();
 
-            client.Initialize(new ReceiverFilter(new BaseHL7Protocol()), (packageInfo) =>
+            client.Initialize(new ReceiverFilter(new HL7ProtocolBase()), (packageInfo) =>
             {
                 if (packageInfo.Request.IsAcknowledge)
                 {
@@ -366,7 +366,7 @@ namespace HL7Interface.Tests
             HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
             AutoResetEvent ackReceived = new AutoResetEvent(false);
             AutoResetEvent commandResponseReceived = new AutoResetEvent(false);
-            BaseHL7Protocol protocol = new BaseHL7Protocol(new HL7ProtocolConfig()
+            HL7ProtocolBase protocol = new HL7ProtocolBase(new HL7ProtocolConfig()
             {
                 IsAckRequired = true,
                 IsResponseRequired = true
@@ -374,6 +374,7 @@ namespace HL7Interface.Tests
 
             HL7Server serverSide = new HL7Server();
             serverSide.Setup("127.0.0.1", 50060);
+
             hl7Interface.Initialize(serverSide, protocol);
 
             Assert.That(hl7Interface.Start());
@@ -382,7 +383,7 @@ namespace HL7Interface.Tests
 
             EasyClient client = new EasyClient();
 
-            client.Initialize(new ReceiverFilter(new BaseHL7Protocol()), (packageInfo) =>
+            client.Initialize(new ReceiverFilter(new HL7ProtocolBase()), (packageInfo) =>
             {
                 if (packageInfo.Request.IsAcknowledge)
                 {
@@ -428,7 +429,7 @@ namespace HL7Interface.Tests
             HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
             AutoResetEvent ackReceived = new AutoResetEvent(false);
             AutoResetEvent commandResponseReceived = new AutoResetEvent(false);
-            BaseHL7Protocol protocol = new BaseHL7Protocol(new HL7ProtocolConfig()
+            HL7ProtocolBase protocol = new HL7ProtocolBase(new HL7ProtocolConfig()
             {
                 IsAckRequired = true,
                 IsResponseRequired = true
@@ -444,7 +445,7 @@ namespace HL7Interface.Tests
 
             EasyClient client = new EasyClient();
 
-            client.Initialize(new ReceiverFilter(new BaseHL7Protocol()), (packageInfo) =>
+            client.Initialize(new ReceiverFilter(new HL7ProtocolBase()), (packageInfo) =>
             {
                 if (packageInfo.Request.IsAcknowledge)
                 {

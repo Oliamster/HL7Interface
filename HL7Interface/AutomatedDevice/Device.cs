@@ -18,7 +18,7 @@ namespace HL7DeviceSimulator
 
             HL7Server server = new HL7Server();
 
-            BaseHL7Protocol protocol = new BaseHL7Protocol(new HL7ProtocolConfig()
+            HL7ProtocolBase protocol = new HL7ProtocolBase(new HL7ProtocolConfig()
             {
                 IsAckRequired = false,
                 IsResponseRequired = false
