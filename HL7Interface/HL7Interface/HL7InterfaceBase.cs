@@ -18,13 +18,13 @@ using SuperSocket.SocketEngine;
 
 namespace HL7Interface
 {
-    public class BaseHL7Interface : IHL7Interface
+    public class HL7InterfaceBase : IHL7Interface
     {
         #region Private Properties
         private HL7Server m_HL7Server;
         private BaseHL7Protocol m_Protocol;
-        private ConcurrentQueue<IHL7Message> incomingAcknowledgmentQueue;
-        private ConcurrentStack<IHL7Message> incomingMessageQueue;
+        private ConcurrentQueue<IHL7Message> m_IncomingAcknowledgmentQueue;
+        private ConcurrentStack<IHL7Message> m_IncomingMessageQueue;
         private object AckQueueLock = new object();
         private object responseQueueLock = new object();
         private AutoResetEvent ackReceivedSignal = new AutoResetEvent(false);
@@ -32,10 +32,10 @@ namespace HL7Interface
         #endregion
 
         #region Constructor
-        public BaseHL7Interface()
+        public HL7InterfaceBase()
         {
-            incomingAcknowledgmentQueue = new ConcurrentQueue<IHL7Message>();
-            incomingMessageQueue = new ConcurrentStack<IHL7Message>();
+            m_IncomingAcknowledgmentQueue = new ConcurrentQueue<IHL7Message>();
+            m_IncomingMessageQueue = new ConcurrentStack<IHL7Message>(); 
             Client = new EasyClient();
             m_Protocol = new BaseHL7Protocol();
             m_HL7Server = new HL7Server();
@@ -120,13 +120,13 @@ namespace HL7Interface
                 if (request.Request.IsAcknowledge)
                 {
                     lock (responseQueueLock)
-                        incomingAcknowledgmentQueue.Enqueue(request.Request);
+                        m_IncomingAcknowledgmentQueue.Enqueue(request.Request);
                     ackReceivedSignal.Set();
                 }
                 else
                 {
                     lock (responseQueueLock)
-                        incomingMessageQueue.Push(request.Request);
+                        m_IncomingMessageQueue.Push(request.Request);
                     responseReceivedSignal.Set();
                 }
             });
@@ -149,13 +149,13 @@ namespace HL7Interface
                 if(request.Request.IsAcknowledge)
                 {
                     lock (responseQueueLock)
-                        incomingAcknowledgmentQueue.Enqueue(request.Request);
+                        m_IncomingAcknowledgmentQueue.Enqueue(request.Request);
                     ackReceivedSignal.Set();
                 }
                 else
                 {
                     lock (responseQueueLock)
-                        incomingMessageQueue.Push(request.Request);
+                        m_IncomingMessageQueue.Push(request.Request);
                     responseReceivedSignal.Set();
                 }
             });
@@ -203,21 +203,16 @@ namespace HL7Interface
                         responseReceivedSignal.WaitOne();
                         lock (responseQueueLock)
                         {
-                            foreach (var item in incomingMessageQueue)
+                            if (m_IncomingMessageQueue.TryPeek(out response))
                             {
-                                if (item.IsResponseForRequest(request))
-                                    return item;
+                                if (response.IsResponseForRequest(request))
+                                {
+                                    if (m_IncomingMessageQueue.TryPop(out response))
+                                    {
+                                        return response;
+                                    }
+                                }
                             }
-                            //if (incomingMessageQueue.TryPeek(out response))
-                            //{
-                            //    if (HL7Parser.IsResponseForRequest(request, response))
-                            //    {
-                            //        if (incomingMessageQueue.TryPop(out response))
-                            //        {
-                            //            return response;
-                            //        }
-                            //    }
-                            //}
                         }
                     }
                     while (true);
@@ -248,11 +243,11 @@ namespace HL7Interface
                 ackReceivedSignal.WaitOne();
                 lock (AckQueueLock)
                 {
-                    if (incomingAcknowledgmentQueue.TryPeek(out ack))
+                    if (m_IncomingAcknowledgmentQueue.TryPeek(out ack))
                     {
                         if (HL7Parser.IsAckForRequest(request, ack))
                         {
-                            if (incomingAcknowledgmentQueue.TryDequeue(out ack))
+                            if (m_IncomingAcknowledgmentQueue.TryDequeue(out ack))
                             {
                                 return ack;
                             }

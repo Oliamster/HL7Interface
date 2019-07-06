@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 namespace HL7Interface.Tests
 {
     [TestFixture]
-    public class InterfaceTest //: BaseTests
+    public class InterfaceTest : BaseTests
     {
         System.Net.EndPoint clientEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 50050);
         System.Net.EndPoint serverEndpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 50060);
@@ -28,7 +28,7 @@ namespace HL7Interface.Tests
         [Test]
         public void InterfaceInitializeStartStop()
         {
-            BaseHL7Interface hl7Interface = new BaseHL7Interface();
+            HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
 
             Assert.That(hl7Interface.State == ServerState.NotInitialized);
 
@@ -49,7 +49,7 @@ namespace HL7Interface.Tests
         [Test]
         public void ConnectClientToInterface()
         {
-            BaseHL7Interface hl7Interface = new BaseHL7Interface();
+            HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
             AutoResetEvent newSessionConnectedSignal = new AutoResetEvent(false);
             AutoResetEvent welcomMessageReceived = new AutoResetEvent(false);
 
@@ -91,7 +91,7 @@ namespace HL7Interface.Tests
         [Test]
         public void ConnectInterfaceToServer()
         {
-            BaseHL7Interface hl7Interface = new BaseHL7Interface();
+            HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
             HL7Server server = new HL7Server();
 
             Assert.That(server.Setup("127.0.0.1", 2012));
@@ -118,7 +118,7 @@ namespace HL7Interface.Tests
         [Test]
         public void SendMessageToHL7Interface()
         {
-            BaseHL7Interface hl7Interface = new BaseHL7Interface();
+            HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
             AutoResetEvent newRequestReceivedConnectedSignal = new AutoResetEvent(false);
             AutoResetEvent acknowledgmentReceivedSignal = new AutoResetEvent(false);
 
@@ -158,7 +158,7 @@ namespace HL7Interface.Tests
         [Test]
         public async Task SendMessageAsyncTest()
         {
-            BaseHL7Interface hl7Interface = new BaseHL7Interface();
+            HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
 
             HL7Server server = new HL7Server();
 
@@ -207,7 +207,7 @@ namespace HL7Interface.Tests
         [Test]
         public async Task SendMessageAsyncWaitAckTest()
         {
-            BaseHL7Interface hl7Interface = new BaseHL7Interface();
+            HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
             HL7Server server = new HL7Server();
             AutoResetEvent requestReceived = new AutoResetEvent(false);
 
@@ -261,7 +261,7 @@ namespace HL7Interface.Tests
         [Test]
         public async Task SendMessageAsyncWaitAckAndResponseTest()
         {
-            BaseHL7Interface hl7Interface = new BaseHL7Interface();
+            HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
             HL7Server server = new HL7Server();
             AutoResetEvent requestReceived = new AutoResetEvent(false);
             BaseHL7Protocol protocol = new BaseHL7Protocol(new HL7ProtocolConfig()
@@ -319,8 +319,7 @@ namespace HL7Interface.Tests
         // Easy client sends message  to HL7Server and receves ack
         // </summary>
         // <returns></returns>
-        [Test]//, Repeat(2)]
-        //[Timeout(30000)]
+        [Test]
         public async Task ClientSendsCommandToHl7ServerAndWaitAck()
         {
             AutoResetEvent ackReceived = new AutoResetEvent(false);
@@ -328,7 +327,6 @@ namespace HL7Interface.Tests
             HL7Server hl7Server = new HL7Server();
 
             hl7Server.Setup("127.0.0.1", 50060);
-
             hl7Server.Start();
 
             EquipmentCommandRequest request = new EquipmentCommandRequest();
@@ -342,7 +340,8 @@ namespace HL7Interface.Tests
                     Assert.That(packageInfo.Request is GeneralAcknowledgment);
                     Assert.That(HL7Parser.IsAckForRequest(request, packageInfo.Request));
                     ackReceived.Set();
-                }
+                } else
+                Assert.Fail();
             });
 
             await client.ConnectAsync(serverEndpoint);
@@ -364,7 +363,7 @@ namespace HL7Interface.Tests
         [Test]
         public async Task ClientSendCommandToHL7InterfaceAndWaitAck()
         {
-            BaseHL7Interface hl7Interface = new BaseHL7Interface();
+            HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
             AutoResetEvent ackReceived = new AutoResetEvent(false);
             AutoResetEvent commandResponseReceived = new AutoResetEvent(false);
             BaseHL7Protocol protocol = new BaseHL7Protocol(new HL7ProtocolConfig()
@@ -426,7 +425,7 @@ namespace HL7Interface.Tests
         //[Timeout(30000)]
         public async Task Hl7InterfaceSendsCommandToAnotherHL7InterfaceWaitAckAndResponse()
         {
-            BaseHL7Interface hl7Interface = new BaseHL7Interface();
+            HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
             AutoResetEvent ackReceived = new AutoResetEvent(false);
             AutoResetEvent commandResponseReceived = new AutoResetEvent(false);
             BaseHL7Protocol protocol = new BaseHL7Protocol(new HL7ProtocolConfig()

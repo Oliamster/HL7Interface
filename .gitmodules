@@ -1,0 +1,3 @@
+[submodule "HL7Interface/SuperSocket"]
+	path = HL7Interface/SuperSocket
+	url = https://github.com/kerryjiang/SuperSocket.git

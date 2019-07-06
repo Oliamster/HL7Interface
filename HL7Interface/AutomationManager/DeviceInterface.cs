@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AutomationManager
 {
-    class DeviceInterface : BaseHL7Interface
+    class DeviceInterface : HL7InterfaceBase
     {
         public DeviceInterface()
         {

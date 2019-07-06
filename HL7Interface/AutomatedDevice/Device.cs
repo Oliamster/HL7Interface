@@ -9,12 +9,12 @@ namespace HL7DeviceSimulator
     public class Device
     {
         internal State State;
-        public BaseHL7Interface HL7Interface;
+        public HL7InterfaceBase HL7Interface;
 
         public void Init()
         {
             State = new Ready();
-            HL7Interface = new HL7Interface.BaseHL7Interface();
+            HL7Interface = new HL7Interface.HL7InterfaceBase();
 
             HL7Server server = new HL7Server();
 
