@@ -22,7 +22,7 @@ namespace HL7Interface
     {
         #region Private Properties
         private HL7Server m_HL7Server;
-        private BaseHL7Protocol m_Protocol;
+        private HL7ProtocolBase m_Protocol;
         private ConcurrentQueue<IHL7Message> m_IncomingAcknowledgmentQueue;
         private ConcurrentStack<IHL7Message> m_IncomingMessageQueue;
         private object AckQueueLock = new object();
@@ -37,7 +37,7 @@ namespace HL7Interface
             m_IncomingAcknowledgmentQueue = new ConcurrentQueue<IHL7Message>();
             m_IncomingMessageQueue = new ConcurrentStack<IHL7Message>(); 
             Client = new EasyClient();
-            m_Protocol = new BaseHL7Protocol();
+            m_Protocol = new HL7ProtocolBase();
             m_HL7Server = new HL7Server();
         }
         #endregion
@@ -138,7 +138,7 @@ namespace HL7Interface
             if (protocol.Config == null)
                 throw new ArgumentNullException("The configuration proprty is missing for this protocol");
 
-            m_Protocol = protocol as BaseHL7Protocol;
+            m_Protocol = protocol as HL7ProtocolBase;
 
             if(m_Protocol == null)
                 return false;

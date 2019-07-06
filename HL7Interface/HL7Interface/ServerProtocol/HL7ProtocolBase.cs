@@ -12,7 +12,7 @@ using HL7api.Model;
 
 namespace Hl7Interface.ServerProtocol
 {
-    public class BaseHL7Protocol : IHL7Protocol
+    public class HL7ProtocolBase : IHL7Protocol
     {
         #region Private Properties
         private IProtocolConfig config;
@@ -20,11 +20,11 @@ namespace Hl7Interface.ServerProtocol
         #endregion
 
         #region Constructors
-        public BaseHL7Protocol()
+        public HL7ProtocolBase()
         {
         }
 
-        public BaseHL7Protocol(IProtocolConfig Config)
+        public HL7ProtocolBase(IProtocolConfig Config)
         {
             this.Config = Config;
         }

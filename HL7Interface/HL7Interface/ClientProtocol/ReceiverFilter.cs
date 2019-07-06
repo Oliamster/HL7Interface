@@ -12,6 +12,9 @@ using static SuperSocket.ProtoBase.Extensions;
 
 namespace HL7Interface.ClientProtocol
 {
+    /// <summary>
+    /// The Easy client Receiver filter
+    /// </summary>
     public class ReceiverFilter : BeginEndMarkReceiveFilter<PackageInfo>
     {
         private  static byte[] beginMark;
@@ -23,6 +26,7 @@ namespace HL7Interface.ClientProtocol
         {
             
         }
+
 
         public ReceiverFilter(IHL7Protocol protocol, byte[] begin, byte[] end) : base (begin,  end)
         {

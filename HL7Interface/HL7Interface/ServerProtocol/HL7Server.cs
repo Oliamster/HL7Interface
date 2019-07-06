@@ -12,9 +12,11 @@ using NHapiTools.Base.Util;
 
 namespace HL7Interface.ServerProtocol
 {
+    /// <summary>
+    /// The HL7 MLLP server
+    /// </summary>
     public class HL7Server : AppServer<HL7Session, HL7Request>
     {
-
         public static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public HL7Server()
             : base(new DefaultReceiveFilterFactory<MLLPBeginEndMarkReceiveFilter, HL7Request>())
@@ -25,8 +27,6 @@ namespace HL7Interface.ServerProtocol
         public override IReceiveFilterFactory<HL7Request> ReceiveFilterFactory { get => base.ReceiveFilterFactory; protected set => base.ReceiveFilterFactory = value; }
 
         public override int SessionCount => base.SessionCount;
-
-       //public override event RequestHandler<HL7Session, HL7Request> NewRequestReceived;
 
         public override bool Equals(object obj)
         {
@@ -78,6 +78,11 @@ namespace HL7Interface.ServerProtocol
             return base.CreateLogger(loggerName);
         }
 
+        /// <summary>
+        /// Execute the command convayed by the HL7Request
+        /// </summary>
+        /// <param name="session"></param>
+        /// <param name="requestInfo"></param>
         protected override void ExecuteCommand(HL7Session session, HL7Request requestInfo)
         {
             try

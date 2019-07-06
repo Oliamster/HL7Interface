@@ -156,7 +156,7 @@
     <Compile Include="HL7Request.cs" />
     <Compile Include="MLLPReceiveFilterFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServerProtocol\BaseHL7Protocol.cs" />
+    <Compile Include="ServerProtocol\HL7ProtocolBase.cs" />
     <Compile Include="ServerProtocol\HL7RequestParser.cs" />
     <Compile Include="ServerProtocol\HL7Server.cs" />
     <Compile Include="ServerProtocol\HL7Session.cs" />

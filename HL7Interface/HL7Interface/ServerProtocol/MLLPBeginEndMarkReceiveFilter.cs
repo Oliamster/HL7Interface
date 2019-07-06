@@ -20,7 +20,7 @@ namespace HL7Interface.ServerProtocol
 
         public MLLPBeginEndMarkReceiveFilter() : base(beginMark, endMark)
         {
-            m_Protocol = new BaseHL7Protocol();
+            m_Protocol = new HL7ProtocolBase();
         }
 
         public MLLPBeginEndMarkReceiveFilter(IHL7Protocol protocol, byte[] begin, byte[] end) : base(begin, end)
