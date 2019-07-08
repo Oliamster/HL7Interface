@@ -22,6 +22,13 @@ namespace HL7Interface.Tests
         System.Net.EndPoint clientEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 50050);
         System.Net.EndPoint serverEndpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 50060);
 
+
+        [Test]
+        public void EasyClientInitializationCallBack()
+        {
+            EasyClient easyClient = new EasyClient();
+        }
+
         /// <summary>
         /// Start the HL7Interface, initialize it and stop
         /// </summary>
@@ -53,8 +60,9 @@ namespace HL7Interface.Tests
             AutoResetEvent newSessionConnectedSignal = new AutoResetEvent(false);
             AutoResetEvent welcomMessageReceived = new AutoResetEvent(false);
 
-            hl7Interface.Initialize();
-            hl7Interface.Start();
+            Assert.IsTrue(hl7Interface.Initialize());
+
+            Assert.IsTrue(hl7Interface.Start());
 
             hl7Interface.HL7Server.NewSessionConnected += (hl7Session) =>
             {
@@ -370,12 +378,12 @@ namespace HL7Interface.Tests
             {
                 IsAckRequired = true,
                 IsResponseRequired = true
-            });
+            }) ;
 
             HL7Server serverSide = new HL7Server();
-            serverSide.Setup("127.0.0.1", 50060);
+            Assert.IsTrue(serverSide.Setup("127.0.0.1", 50060));
 
-            hl7Interface.Initialize(serverSide, protocol);
+            Assert.IsTrue(hl7Interface.Initialize(serverSide, protocol));
 
             Assert.That(hl7Interface.Start());
 
@@ -402,7 +410,7 @@ namespace HL7Interface.Tests
             byte[] bytesToSend = Encoding.UTF8.GetBytes(MLLP.CreateMLLPMessage(request.Encode()));
             client.Send(bytesToSend);
 
-            Assert.That(ackReceived.WaitOne());
+            Assert.That(ackReceived.WaitOne(500000));
 
             hl7Interface.Stop();
         }

@@ -94,7 +94,6 @@ namespace HL7Interface.ServerProtocol
 
                 base.ExecuteCommand(session, requestInfo);
                 log.Debug($"The command {requestInfo.Request.MessageID} has been executed");
-
             }
             catch (Exception e)
             {

@@ -1,14 +1,9 @@
 ﻿
 using HL7api.Parser;
 using HL7Interface.ServerProtocol;
-using NHapiTools.Base.Util;
 using SuperSocket.ProtoBase;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using static SuperSocket.ProtoBase.Extensions;
 
 namespace HL7Interface.ClientProtocol
 {
@@ -17,16 +12,15 @@ namespace HL7Interface.ClientProtocol
     /// </summary>
     public class ReceiverFilter : BeginEndMarkReceiveFilter<PackageInfo>
     {
-        private  static byte[] beginMark;
-        private  static byte[] endMark;
+        private  static byte[] beginMark = new byte[] { 11 };
+        private  static byte[] endMark = new byte[] { 28, 13 };
         private IHL7Protocol m_Protocol;
 
         public ReceiverFilter(IHL7Protocol protocol) 
-            : this(protocol, new byte[] { 11 }, new byte[] { 28, 13 })
+            : this(protocol, beginMark, endMark)
         {
             
         }
-
 
         public ReceiverFilter(IHL7Protocol protocol, byte[] begin, byte[] end) : base (begin,  end)
         {
@@ -55,12 +49,8 @@ namespace HL7Interface.ClientProtocol
             bufferStream.Read(data, 0, Convert.ToInt32(bufferStream.Length));
             string message = Encoding.UTF8.GetString(data);
 
-           
-
             if (ValidateBeginEndFilteredMarkMessage(message))
                  StripBeginEndMarkContainer(ref message);
-
-          
 
             PackageInfo package = new PackageInfo();
 
@@ -88,7 +78,7 @@ namespace HL7Interface.ClientProtocol
             StringBuilder sb = new StringBuilder(message);
             if (ValidateBeginEndFilteredMarkMessage(message) == true)
             {
-                // Strip the message of the begin and end mark container characters
+                // Strip the message of the begin and end mark container characters                
                 sb.Remove(0, beginMark.Length);
                 sb.Remove(sb.Length - endMark.Length, endMark.Length);
                 message = sb.ToString();
@@ -98,26 +88,30 @@ namespace HL7Interface.ClientProtocol
         public static bool ValidateBeginEndFilteredMarkMessage(string message)
         {
             StringBuilder sb = new StringBuilder(message);
-         
 
-            if (sb.Length > beginMark.Length + endMark.Length)
+            //Should I accept blank message? if no change to "<="
+            if (sb.Length < beginMark.Length + endMark.Length)
+                return false;
+
+            try
             {
                 for (int i = 0; i < beginMark.Length; i++)
                 {
                     if (message[i] != (char)beginMark[i])
                         return false;
                 }
-                for (int i = message.Length -1; i > message.Length - endMark.Length; i--)
+                for (int i = 0; i < endMark.Length; i++)
                 {
-                    if (message[i] != (char)endMark[i- (message.Length - endMark.Length)])
+                    if (message[message.Length - endMark.Length + i] != (char)endMark[i])
                         return false;
                 }
             }
-
+            catch (IndexOutOfRangeException)
+            {
+                return false;
+            }
+            
             return true;
         }
-
-
     }
-
 }

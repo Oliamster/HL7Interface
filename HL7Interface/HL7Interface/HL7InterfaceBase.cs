@@ -113,28 +113,14 @@ namespace HL7Interface
 
             m_Protocol.Config = config.ProtocolConfig;
 
-            log.Debug("the Client side is initializing");
 
-            Client.Initialize(new ReceiverFilter(m_Protocol), (request) =>
-            {
-                if (request.Request.IsAcknowledge)
-                {
-                    lock (responseQueueLock)
-                        m_IncomingAcknowledgmentQueue.Enqueue(request.Request);
-                    ackReceivedSignal.Set();
-                }
-                else
-                {
-                    lock (responseQueueLock)
-                        m_IncomingMessageQueue.Push(request.Request);
-                    responseReceivedSignal.Set();
-                }
-            });
-            return true;
+            return Initialize(m_HL7Server, m_Protocol);
         }
 
         public virtual bool Initialize(HL7Server server, IHL7Protocol protocol)
         {
+            log.Debug("the Client side is initializing");
+
             if (protocol.Config == null)
                 throw new ArgumentNullException("The configuration proprty is missing for this protocol");
 
