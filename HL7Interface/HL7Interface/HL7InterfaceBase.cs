@@ -43,9 +43,6 @@ namespace HL7Interface
         #endregion
 
         #region Public Properties
-        public static readonly log4net.ILog log
-           = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
         public virtual string Name => this.GetType().Name;
 
         public EasyClient Client { get; }
@@ -102,9 +99,7 @@ namespace HL7Interface
             if (m_HL7Server == null)
                 return false;
 
-            //TODO: Exploit the AppServer Logger
-            //_hl7Server.Logger.Debug("Server Initialized");
-            log.Debug("the Server side is initializing");
+            m_HL7Server.Logger.Debug("the Server side is initializing");
 
             HL7SocketServiceConfig config = bootstrap.Config as HL7SocketServiceConfig;
 
@@ -119,7 +114,7 @@ namespace HL7Interface
 
         public virtual bool Initialize(HL7Server server, IHL7Protocol protocol)
         {
-            log.Debug("the Client side is initializing");
+            m_HL7Server.Logger.Debug("the Client side is initializing");
 
             if (protocol.Config == null)
                 throw new ArgumentNullException("The configuration proprty is missing for this protocol");
