@@ -403,6 +403,8 @@ namespace HL7Interface.Tests
                     Assert.Fail();
             });
 
+            
+
             await client.ConnectAsync(serverEndpoint);
 
             Assert.That(client.IsConnected);

@@ -9,6 +9,7 @@ using SuperSocket.SocketBase.Config;
 using SuperSocket.SocketBase.Logging;
 using SuperSocket.SocketBase.Protocol;
 using NHapiTools.Base.Util;
+using HL7api.V251.Message;
 
 namespace HL7Interface.ServerProtocol
 {
@@ -17,30 +18,23 @@ namespace HL7Interface.ServerProtocol
     /// </summary>
     public class HL7Server : AppServer<HL7Session, HL7Request>
     {
-        public static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public HL7Server()
             : base(new DefaultReceiveFilterFactory<MLLPBeginEndMarkReceiveFilter, HL7Request>())
         {
-            //ReceiveFilterFactory = receiveFilterFactory;
+            
         }
 
-        public override IReceiveFilterFactory<HL7Request> ReceiveFilterFactory { get => base.ReceiveFilterFactory; protected set => base.ReceiveFilterFactory = value; }
+        public override IReceiveFilterFactory<HL7Request> ReceiveFilterFactory
+        {
+            get => base.ReceiveFilterFactory;
+            protected set => base.ReceiveFilterFactory = value;
+        }
 
         public override int SessionCount => base.SessionCount;
-
-        public override bool Equals(object obj)
-        {
-            return base.Equals(obj);
-        }
 
         public override IEnumerable<HL7Session> GetAllSessions()
         {
             return base.GetAllSessions();
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
         }
 
         public override HL7Session GetSessionByID(string sessionID)
@@ -63,11 +57,6 @@ namespace HL7Interface.ServerProtocol
             base.Stop();
         }
 
-        public override string ToString()
-        {
-            return base.ToString();
-        }
-
         protected override HL7Session CreateAppSession(ISocketSession socketSession)
         {
             return base.CreateAppSession(socketSession);
@@ -87,17 +76,18 @@ namespace HL7Interface.ServerProtocol
         {
             try
             {
-                log.Debug($"Message received: {requestInfo.Request.Encode()}");
+                Logger.Debug($"Message received: {requestInfo.Request.Encode()}");
 
-                byte[] ack = Encoding.UTF8.GetBytes(MLLP.CreateMLLPMessage(requestInfo.Acknowledgment.Encode()));
-                session.Send(ack, 0, ack.Length);
+                var ack = MLLP.CreateMLLPMessage(requestInfo.Acknowledgment.Encode());
+
+                session.Send(ack);
 
                 base.ExecuteCommand(session, requestInfo);
-                log.Debug($"The command {requestInfo.Request.MessageID} has been executed");
+                Logger.Debug($"The command {requestInfo.Request.MessageID} has been executed");
             }
             catch (Exception e)
             {
-                log.Debug($"ERROR: {e.Message}");
+                Logger.Debug($"ERROR: {e.Message}");
                 throw e;
             }
         }
@@ -109,6 +99,7 @@ namespace HL7Interface.ServerProtocol
 
         protected override void OnNewSessionConnected(HL7Session session)
         {
+            //session.Send(MLLP.CreateMLLPMessage((new GeneralAcknowledgment()).Encode()));
             base.OnNewSessionConnected(session);
         }
 
