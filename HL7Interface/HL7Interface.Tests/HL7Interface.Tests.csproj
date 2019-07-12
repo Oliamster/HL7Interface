@@ -118,23 +118,14 @@
     <Reference Include="nunit.framework, Version=3.11.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\packages\NUnit.3.11.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="SuperSocket.ClientEngine, Version=0.10.0.0, Culture=neutral, PublicKeyToken=ee9af13f57f00acc, processorArchitecture=MSIL">
-      <HintPath>..\packages\SuperSocket.ClientEngine.0.10.0\lib\net45\SuperSocket.ClientEngine.dll</HintPath>
-    </Reference>
     <Reference Include="SuperSocket.Common, Version=1.6.6.1, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
       <HintPath>..\packages\SuperSocket.1.6.6.1\lib\net45\SuperSocket.Common.dll</HintPath>
     </Reference>
     <Reference Include="SuperSocket.Facility, Version=1.6.6.1, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
       <HintPath>..\packages\SuperSocket.1.6.6.1\lib\net45\SuperSocket.Facility.dll</HintPath>
     </Reference>
-    <Reference Include="SuperSocket.ProtoBase, Version=1.7.0.17, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
-      <HintPath>..\packages\SuperSocket.ProtoBase.1.7.0.17\lib\net45\SuperSocket.ProtoBase.dll</HintPath>
-    </Reference>
     <Reference Include="SuperSocket.SocketBase, Version=1.6.6.1, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
       <HintPath>..\packages\SuperSocket.1.6.6.1\lib\net45\SuperSocket.SocketBase.dll</HintPath>
-    </Reference>
-    <Reference Include="SuperSocket.SocketEngine, Version=1.6.6.1, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
-      <HintPath>..\packages\SuperSocket.Engine.1.6.6.1\lib\net45\SuperSocket.SocketEngine.dll</HintPath>
     </Reference>
     <Reference Include="SuperSocket.SocketService, Version=1.6.6.1, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
       <HintPath>..\packages\SuperSocket.Engine.1.6.6.1\lib\net45\SuperSocket.SocketService.exe</HintPath>
@@ -170,6 +161,14 @@
     <ProjectReference Include="..\HL7Interface\HL7Interface.csproj">
       <Project>{db0f4680-50b7-4062-ac4a-8a57bc3d7b82}</Project>
       <Name>HL7Interface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SuperSocket.ClientEngine\SuperSocket.ClientEngine.Net45.csproj">
+      <Project>{8BBFBE4A-B91A-4DCC-92D5-FB0436E2544F}</Project>
+      <Name>SuperSocket.ClientEngine.Net45</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SuperSocket.ProtoBase\src\SuperSocket.ProtoBase.Net45.csproj">
+      <Project>{092DFE24-997A-41E3-9602-B5D52D3749DD}</Project>
+      <Name>SuperSocket.ProtoBase.Net45</Name>
     </ProjectReference>
     <ProjectReference Include="Y:\HL7Interface\HL7Interface\HL7api.V251\HL7api.V251.csproj">
       <Project>{1DC2BF49-6257-4B95-895B-111DE7BA5A89}</Project>

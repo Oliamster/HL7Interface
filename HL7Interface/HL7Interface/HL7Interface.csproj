@@ -111,17 +111,11 @@
     <Reference Include="NHapiTools.Model.V281, Version=1.0.0.0, Culture=neutral, PublicKeyToken=8cc2ca07deb72b3d, processorArchitecture=MSIL">
       <HintPath>..\packages\NHapiTools.1.10.0.0\lib\NHapiTools.Model.V281.dll</HintPath>
     </Reference>
-    <Reference Include="SuperSocket.ClientEngine, Version=0.10.0.0, Culture=neutral, PublicKeyToken=ee9af13f57f00acc, processorArchitecture=MSIL">
-      <HintPath>..\packages\SuperSocket.ClientEngine.0.10.0\lib\net45\SuperSocket.ClientEngine.dll</HintPath>
-    </Reference>
     <Reference Include="SuperSocket.Common, Version=1.6.6.1, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
       <HintPath>..\packages\SuperSocket.1.6.6.1\lib\net45\SuperSocket.Common.dll</HintPath>
     </Reference>
     <Reference Include="SuperSocket.Facility, Version=1.6.6.1, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
       <HintPath>..\packages\SuperSocket.1.6.6.1\lib\net45\SuperSocket.Facility.dll</HintPath>
-    </Reference>
-    <Reference Include="SuperSocket.ProtoBase, Version=1.7.0.17, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
-      <HintPath>..\packages\SuperSocket.ProtoBase.1.7.0.17\lib\net45\SuperSocket.ProtoBase.dll</HintPath>
     </Reference>
     <Reference Include="SuperSocket.SocketBase, Version=1.6.6.1, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
       <HintPath>..\packages\SuperSocket.1.6.6.1\lib\net45\SuperSocket.SocketBase.dll</HintPath>
@@ -172,6 +166,14 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\SuperSocket.ClientEngine\SuperSocket.ClientEngine.Net45.csproj">
+      <Project>{8bbfbe4a-b91a-4dcc-92d5-fb0436e2544f}</Project>
+      <Name>SuperSocket.ClientEngine.Net45</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SuperSocket.ProtoBase\src\SuperSocket.ProtoBase.Net45.csproj">
+      <Project>{092dfe24-997a-41e3-9602-b5d52d3749dd}</Project>
+      <Name>SuperSocket.ProtoBase.Net45</Name>
+    </ProjectReference>
     <ProjectReference Include="Y:\HL7Interface\HL7Interface\HL7api.V251\HL7api.V251.csproj">
       <Project>{1DC2BF49-6257-4B95-895B-111DE7BA5A89}</Project>
       <Name>HL7api.V251</Name>

@@ -12,9 +12,9 @@ using Hl7Interface.ServerProtocol;
 using HL7Interface.ClientProtocol;
 using HL7Interface.Configuration;
 using HL7Interface.ServerProtocol;
-using SuperSocket.ClientEngine;
 using SuperSocket.SocketBase;
 using SuperSocket.SocketEngine;
+
 
 namespace HL7Interface
 {
@@ -36,7 +36,7 @@ namespace HL7Interface
         {
             m_IncomingAcknowledgmentQueue = new ConcurrentQueue<IHL7Message>();
             m_IncomingMessageQueue = new ConcurrentStack<IHL7Message>(); 
-            Client = new EasyClient();
+            Client = new SuperSocket.ClientEngine.EasyClient();
             m_HL7Protocol = new HL7ProtocolBase();
             m_HL7Server = new HL7Server();
             //m_HL7Server.LogFactory.GetLog(m_HL7Server.Name);
@@ -55,7 +55,7 @@ namespace HL7Interface
         #region Public Properties
         public virtual string Name => this.GetType().Name;
 
-        public EasyClient Client { get; }
+        public SuperSocket.ClientEngine.EasyClient Client { get; }
         #endregion
 
         public void Stop()

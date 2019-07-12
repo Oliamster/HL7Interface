@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2047
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29025.244
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HL7Interface", "HL7Interface\HL7Interface.csproj", "{DB0F4680-50B7-4062-AC4A-8A57BC3D7B82}"
 EndProject
@@ -18,6 +18,16 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutomatedDevice", "AutomatedDevice\AutomatedDevice.csproj", "{5B65072A-5C5D-4728-AAE2-A8A2BC9967A1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutomatedDevice.Tests", "AutomatedDevice.Tests\AutomatedDevice.Tests.csproj", "{9473EC9B-3C05-4C1A-BA63-48E192B58FBD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SuperSocket", "SuperSocket", "{0A274E05-906C-48B8-A032-AA09A5A4C925}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ClientEngine", "ClientEngine", "{EFDBAD1B-EA3E-4EC9-8267-748A97DEBE48}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperSocket.ClientEngine.Net45", "SuperSocket.ClientEngine\SuperSocket.ClientEngine.Net45.csproj", "{8BBFBE4A-B91A-4DCC-92D5-FB0436E2544F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProtoBase", "ProtoBase", "{727552C7-35F1-44FF-B666-05B82CF24834}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperSocket.ProtoBase.Net45", "SuperSocket.ProtoBase\src\SuperSocket.ProtoBase.Net45.csproj", "{092DFE24-997A-41E3-9602-B5D52D3749DD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -125,9 +135,37 @@ Global
 		{9473EC9B-3C05-4C1A-BA63-48E192B58FBD}.Release|x64.Build.0 = Release|Any CPU
 		{9473EC9B-3C05-4C1A-BA63-48E192B58FBD}.Release|x86.ActiveCfg = Release|Any CPU
 		{9473EC9B-3C05-4C1A-BA63-48E192B58FBD}.Release|x86.Build.0 = Release|Any CPU
+		{8BBFBE4A-B91A-4DCC-92D5-FB0436E2544F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BBFBE4A-B91A-4DCC-92D5-FB0436E2544F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BBFBE4A-B91A-4DCC-92D5-FB0436E2544F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8BBFBE4A-B91A-4DCC-92D5-FB0436E2544F}.Debug|x64.Build.0 = Debug|Any CPU
+		{8BBFBE4A-B91A-4DCC-92D5-FB0436E2544F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8BBFBE4A-B91A-4DCC-92D5-FB0436E2544F}.Debug|x86.Build.0 = Debug|Any CPU
+		{8BBFBE4A-B91A-4DCC-92D5-FB0436E2544F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BBFBE4A-B91A-4DCC-92D5-FB0436E2544F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BBFBE4A-B91A-4DCC-92D5-FB0436E2544F}.Release|x64.ActiveCfg = Release|Any CPU
+		{8BBFBE4A-B91A-4DCC-92D5-FB0436E2544F}.Release|x64.Build.0 = Release|Any CPU
+		{8BBFBE4A-B91A-4DCC-92D5-FB0436E2544F}.Release|x86.ActiveCfg = Release|Any CPU
+		{8BBFBE4A-B91A-4DCC-92D5-FB0436E2544F}.Release|x86.Build.0 = Release|Any CPU
+		{092DFE24-997A-41E3-9602-B5D52D3749DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{092DFE24-997A-41E3-9602-B5D52D3749DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{092DFE24-997A-41E3-9602-B5D52D3749DD}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{092DFE24-997A-41E3-9602-B5D52D3749DD}.Debug|x64.Build.0 = Debug|Any CPU
+		{092DFE24-997A-41E3-9602-B5D52D3749DD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{092DFE24-997A-41E3-9602-B5D52D3749DD}.Debug|x86.Build.0 = Debug|Any CPU
+		{092DFE24-997A-41E3-9602-B5D52D3749DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{092DFE24-997A-41E3-9602-B5D52D3749DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{092DFE24-997A-41E3-9602-B5D52D3749DD}.Release|x64.ActiveCfg = Release|Any CPU
+		{092DFE24-997A-41E3-9602-B5D52D3749DD}.Release|x64.Build.0 = Release|Any CPU
+		{092DFE24-997A-41E3-9602-B5D52D3749DD}.Release|x86.ActiveCfg = Release|Any CPU
+		{092DFE24-997A-41E3-9602-B5D52D3749DD}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8BBFBE4A-B91A-4DCC-92D5-FB0436E2544F} = {EFDBAD1B-EA3E-4EC9-8267-748A97DEBE48}
+		{092DFE24-997A-41E3-9602-B5D52D3749DD} = {727552C7-35F1-44FF-B666-05B82CF24834}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {47689B69-364A-484D-B177-079D76A81D67}
