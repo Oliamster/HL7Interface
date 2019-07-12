@@ -1,11 +1,4 @@
-﻿using HL7api.V251.Message;
-using HL7Interface.Configuration;
-using HL7Interface.ServerProtocol;
-using NHapiTools.Base.Util;
-using SuperSocket.SocketBase.Command;
-using System.Text;
-
-namespace HL7Interface
+﻿namespace HL7Interface
 {
     //public class V251EquipmentCommandRequestMLLP : CommandBase<HL7Session, HL7Request>
     //{
@@ -15,7 +8,7 @@ namespace HL7Interface
     //        byte[] bytesToSend = Encoding.UTF8.GetBytes(MLLP.CreateMLLPMessage(response.Encode()));
 
     //        HL7SocketServiceConfig config = session.AppServer.Config as HL7SocketServiceConfig;
-            
+
     //        session.Send(bytesToSend, 0, bytesToSend.Length);
     //    }
 

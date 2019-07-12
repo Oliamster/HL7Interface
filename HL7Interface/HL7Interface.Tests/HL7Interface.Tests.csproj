@@ -158,17 +158,25 @@
     <None Include="supersocket.sh" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\HL7Interface\HL7Interface.csproj">
-      <Project>{db0f4680-50b7-4062-ac4a-8a57bc3d7b82}</Project>
-      <Name>HL7Interface</Name>
+    <ProjectReference Include="..\..\SuperSocket.ClientEngine\SuperSocket.ClientEngine.Net45.csproj">
+      <Project>{8BBFBE4A-B91A-4DCC-92D5-FB0436E2544F}</Project>
+      <Name>SuperSocket.ClientEngine.Net45</Name>
     </ProjectReference>
-    <ProjectReference Include="Y:\HL7Interface\HL7Interface\HL7api.V251\HL7api.V251.csproj">
+    <ProjectReference Include="..\..\SuperSocket.ProtoBase\src\SuperSocket.ProtoBase.Net45.csproj">
+      <Project>{092DFE24-997A-41E3-9602-B5D52D3749DD}</Project>
+      <Name>SuperSocket.ProtoBase.Net45</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HL7api.V251\HL7api.V251.csproj">
       <Project>{1DC2BF49-6257-4B95-895B-111DE7BA5A89}</Project>
       <Name>HL7api.V251</Name>
     </ProjectReference>
-    <ProjectReference Include="Y:\HL7Interface\HL7Interface\HL7api\HL7api.csproj">
+    <ProjectReference Include="..\HL7api\HL7api.csproj">
       <Project>{160740A5-90C5-4A59-B358-65A4185CC753}</Project>
       <Name>HL7api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HL7Interface\HL7Interface.csproj">
+      <Project>{db0f4680-50b7-4062-ac4a-8a57bc3d7b82}</Project>
+      <Name>HL7Interface</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

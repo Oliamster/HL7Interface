@@ -9,7 +9,6 @@ using SuperSocket.SocketBase.Config;
 using SuperSocket.SocketBase.Logging;
 using SuperSocket.SocketBase.Protocol;
 using NHapiTools.Base.Util;
-using HL7api.V251.Message;
 
 namespace HL7Interface.ServerProtocol
 {

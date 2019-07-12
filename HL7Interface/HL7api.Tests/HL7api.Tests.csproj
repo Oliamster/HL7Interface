@@ -134,12 +134,12 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Y:\HL7Interface\HL7Interface\HL7api.V251\HL7api.V251.csproj">
+    <ProjectReference Include="..\HL7api.V251\HL7api.V251.csproj">
       <Project>{1DC2BF49-6257-4B95-895B-111DE7BA5A89}</Project>
       <Name>HL7api.V251</Name>
     </ProjectReference>
-    <ProjectReference Include="Y:\HL7Interface\HL7Interface\HL7api\HL7api.csproj">
-      <Project>{160740A5-90C5-4A59-B358-65A4185CC753}</Project>
+    <ProjectReference Include="..\HL7api\HL7api.csproj">
+      <Project>{160740a5-90c5-4a59-b358-65a4185cc753}</Project>
       <Name>HL7api</Name>
     </ProjectReference>
   </ItemGroup>
