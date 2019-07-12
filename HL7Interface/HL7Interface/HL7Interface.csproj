@@ -166,14 +166,6 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\SuperSocket.ClientEngine\SuperSocket.ClientEngine.Net45.csproj">
-      <Project>{8bbfbe4a-b91a-4dcc-92d5-fb0436e2544f}</Project>
-      <Name>SuperSocket.ClientEngine.Net45</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SuperSocket.ProtoBase\src\SuperSocket.ProtoBase.Net45.csproj">
-      <Project>{092dfe24-997a-41e3-9602-b5d52d3749dd}</Project>
-      <Name>SuperSocket.ProtoBase.Net45</Name>
-    </ProjectReference>
     <ProjectReference Include="Y:\HL7Interface\HL7Interface\HL7api.V251\HL7api.V251.csproj">
       <Project>{1DC2BF49-6257-4B95-895B-111DE7BA5A89}</Project>
       <Name>HL7api.V251</Name>
