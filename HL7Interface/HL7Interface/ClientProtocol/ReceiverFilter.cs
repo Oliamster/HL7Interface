@@ -47,7 +47,7 @@ namespace HL7Interface.ClientProtocol
         {
             byte[] data = new byte[bufferStream.Length];
             bufferStream.Read(data, 0, Convert.ToInt32(bufferStream.Length));
-            string message = Encoding.UTF8.GetString(data);
+            string message = Encoding.ASCII.GetString(data);
 
             if (ValidateBeginEndFilteredMarkMessage(message))
                  StripBeginEndMarkContainer(ref message);

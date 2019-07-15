@@ -18,10 +18,14 @@ using SuperSocket.SocketEngine;
 
 namespace HL7Interface
 {
+    /// <summary>
+    /// The base HL7 Interface for use in the application 
+    /// </summary>
     public class HL7InterfaceBase : IHL7Interface
     {
         #region Private Properties
         private HL7Server m_HL7Server;
+        private SuperSocket.ClientEngine.EasyClient m_Client;
         private HL7ProtocolBase m_HL7Protocol;
         private ConcurrentQueue<IHL7Message> m_IncomingAcknowledgmentQueue;
         private ConcurrentStack<IHL7Message> m_IncomingMessageQueue;
@@ -36,7 +40,7 @@ namespace HL7Interface
         {
             m_IncomingAcknowledgmentQueue = new ConcurrentQueue<IHL7Message>();
             m_IncomingMessageQueue = new ConcurrentStack<IHL7Message>(); 
-            Client = new SuperSocket.ClientEngine.EasyClient();
+            m_Client = new SuperSocket.ClientEngine.EasyClient();
             m_HL7Protocol = new HL7ProtocolBase();
             m_HL7Server = new HL7Server();
             //m_HL7Server.LogFactory.GetLog(m_HL7Server.Name);
@@ -55,13 +59,13 @@ namespace HL7Interface
         #region Public Properties
         public virtual string Name => this.GetType().Name;
 
-        public SuperSocket.ClientEngine.EasyClient Client { get; }
+       
         #endregion
 
         public void Stop()
         {
-            if (Client.IsConnected)
-                Client.Close();
+            if (m_Client.IsConnected)
+                m_Client.Close().Wait();
 
             m_HL7Server.Stop();
         }
@@ -87,7 +91,7 @@ namespace HL7Interface
             {
                 while (!ret && !cts.Token.IsCancellationRequested)
                 {
-                    ret = await Client.ConnectAsync(remoteEndPoint);
+                    ret = await m_Client.ConnectAsync(remoteEndPoint);
                 }
             }, cts.Token);
             t.Wait(5000);
@@ -139,7 +143,7 @@ namespace HL7Interface
 
             m_HL7Server = server;
 
-            Client.Initialize(new ReceiverFilter(m_HL7Protocol), (request) => {
+            m_Client.Initialize(new ReceiverFilter(m_HL7Protocol), (request) => {
                 if(request.Request.IsAcknowledge)
                 {
                     lock (responseQueueLock)
@@ -170,7 +174,7 @@ namespace HL7Interface
         {
             return Task.Run( async () =>
             {
-                Client.Send(Encoding.UTF8.GetBytes(MLLP.CreateMLLPMessage(message.Encode())));
+                m_Client.Send(Encoding.ASCII.GetBytes(MLLP.CreateMLLPMessage(message.Encode())));
 
                 HL7Request hl7Request = new HL7Request()
                 {

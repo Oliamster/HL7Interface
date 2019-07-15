@@ -37,7 +37,7 @@ namespace Hl7Interface.ServerProtocol
         #region IProtocol Interface
         public virtual byte[] Encode(IHL7Message hl7Message)
         {
-            return  Encoding.UTF8.GetBytes(MLLP.CreateMLLPMessage(hl7Message.Encode()));
+            return  Encoding.ASCII.GetBytes(MLLP.CreateMLLPMessage(hl7Message.Encode()));
         }
 
         public virtual ParserResult Parse(string message)

@@ -5,7 +5,7 @@
     //    public override void ExecuteCommand(HL7Session session, HL7Request packageInfo)
     //    {
     //        EquipmentCommandResponse response = ExecuteCommand(packageInfo);
-    //        byte[] bytesToSend = Encoding.UTF8.GetBytes(MLLP.CreateMLLPMessage(response.Encode()));
+    //        byte[] bytesToSend = Encoding.ASCII.GetBytes(MLLP.CreateMLLPMessage(response.Encode()));
 
     //        HL7SocketServiceConfig config = session.AppServer.Config as HL7SocketServiceConfig;
 

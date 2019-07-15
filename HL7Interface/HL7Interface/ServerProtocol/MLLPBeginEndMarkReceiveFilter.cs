@@ -59,7 +59,7 @@ namespace HL7Interface.ServerProtocol
             Array.Copy(readBuffer, offset, msg, offset, length);
 
 
-            string message = Encoding.UTF8.GetString(msg);
+            string message = Encoding.ASCII.GetString(msg);
             StringBuilder sb = new StringBuilder(message);
             MLLP.StripMLLPContainer(sb);
 

@@ -73,8 +73,8 @@ namespace HL7Interface.Tests
             };
             EasyClient client = new EasyClient();
 
-            byte[] begin = Encoding.UTF8.GetBytes("#");
-            byte[] end = Encoding.UTF8.GetBytes("##");
+            byte[] begin = Encoding.ASCII.GetBytes("#");
+            byte[] end = Encoding.ASCII.GetBytes("##");
             client.Initialize(new ReceiverFilter(new HL7ProtocolBase(), begin, end), (packageInfo) =>
             {
                 Assert.That(packageInfo.OriginalRequest.Equals("Welcome"));
@@ -147,7 +147,7 @@ namespace HL7Interface.Tests
 
             client.ConnectAsync(serverEndpoint).Wait();
 
-            byte[] bytesToSend = Encoding.UTF8.GetBytes(MLLP.CreateMLLPMessage((new EquipmentCommandRequest()).Encode()));
+            byte[] bytesToSend = Encoding.ASCII.GetBytes(MLLP.CreateMLLPMessage((new EquipmentCommandRequest()).Encode()));
             client.Send(bytesToSend);
 
             Assert.That(newRequestReceivedConnectedSignal.WaitOne());
@@ -293,7 +293,7 @@ namespace HL7Interface.Tests
                 Assert.That(s.Request is EquipmentCommandRequest);
                 requestReceived.Set();
                 Thread.Sleep(500);
-                byte[] bytesToSend = Encoding.UTF8.GetBytes(MLLP.CreateMLLPMessage((new EquipmentCommandResponse()).Encode()));
+                byte[] bytesToSend = Encoding.ASCII.GetBytes(MLLP.CreateMLLPMessage((new EquipmentCommandResponse()).Encode()));
                 e.Send(bytesToSend, 0, bytesToSend.Length);
             };
 
@@ -356,7 +356,7 @@ namespace HL7Interface.Tests
 
             Assert.That(client.IsConnected);
 
-            byte[] bytesToSend = Encoding.UTF8.GetBytes(MLLP.CreateMLLPMessage(request.Encode()));
+            byte[] bytesToSend = Encoding.ASCII.GetBytes(MLLP.CreateMLLPMessage(request.Encode()));
             client.Send(bytesToSend);
 
             Assert.That(ackReceived.WaitOne());
@@ -409,7 +409,7 @@ namespace HL7Interface.Tests
 
             Assert.That(client.IsConnected);
 
-            byte[] bytesToSend = Encoding.UTF8.GetBytes(MLLP.CreateMLLPMessage(request.Encode()));
+            byte[] bytesToSend = Encoding.ASCII.GetBytes(MLLP.CreateMLLPMessage(request.Encode()));
             client.Send(bytesToSend);
 
             Assert.That(ackReceived.WaitOne(500000));
@@ -471,7 +471,7 @@ namespace HL7Interface.Tests
 
             Assert.That(client.IsConnected);
 
-            byte[] bytesToSend = Encoding.UTF8.GetBytes(MLLP.CreateMLLPMessage(request.Encode()));
+            byte[] bytesToSend = Encoding.ASCII.GetBytes(MLLP.CreateMLLPMessage(request.Encode()));
             client.Send(bytesToSend);
 
             Assert.That(ackReceived.WaitOne());

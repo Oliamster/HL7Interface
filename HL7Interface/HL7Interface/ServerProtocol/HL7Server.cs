@@ -20,7 +20,6 @@ namespace HL7Interface.ServerProtocol
         public HL7Server()
             : base(new DefaultReceiveFilterFactory<MLLPBeginEndMarkReceiveFilter, HL7Request>())
         {
-            
         }
 
         public override IReceiveFilterFactory<HL7Request> ReceiveFilterFactory
@@ -98,7 +97,6 @@ namespace HL7Interface.ServerProtocol
 
         protected override void OnNewSessionConnected(HL7Session session)
         {
-            //session.Send(MLLP.CreateMLLPMessage((new GeneralAcknowledgment()).Encode()));
             base.OnNewSessionConnected(session);
         }
 
