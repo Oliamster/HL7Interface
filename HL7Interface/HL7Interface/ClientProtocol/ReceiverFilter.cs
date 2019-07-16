@@ -45,27 +45,42 @@ namespace HL7Interface.ClientProtocol
 
         public override PackageInfo ResolvePackage(IBufferStream bufferStream)
         {
-            byte[] data = new byte[bufferStream.Length];
-            bufferStream.Read(data, 0, Convert.ToInt32(bufferStream.Length));
-            string message = Encoding.ASCII.GetString(data);
-
-            if (ValidateBeginEndFilteredMarkMessage(message))
-                 StripBeginEndMarkContainer(ref message);
-
             PackageInfo package = new PackageInfo();
 
-            ParserResult result = m_Protocol.Parse(message);
+            byte[] data = new byte[bufferStream.Length];
+            bufferStream.Read(data, 0, Convert.ToInt32(bufferStream.Length));
+
+            ParserResult result = m_Protocol.Parse(Convert.ToBase64String(data));
             if (result.MessageAccepted)
             {
                 package.Request = result.ParsedMessage;
                 package.Key = result.ParsedMessage.MessageID;
+                package.Acknowledgment = result.Acknowledge;
             }
-            else
-            {
-                package.OriginalRequest = message;
-            }
-                
             return package;
+
+
+
+          
+            //string message = Encoding.ASCII.GetString(data);
+
+            //if (ValidateBeginEndFilteredMarkMessage(message))
+            //     StripBeginEndMarkContainer(ref message);
+
+            //PackageInfo package = new PackageInfo();
+
+            //ParserResult result = m_Protocol.Parse(message);
+            //if (result.MessageAccepted)
+            //{
+            //    package.Request = result.ParsedMessage;
+            //    package.Key = result.ParsedMessage.MessageID;
+            //}
+            //else
+            //{
+            //    package.OriginalRequest = message;
+            //}
+                
+            //return package;
         }
 
         public override string ToString()
