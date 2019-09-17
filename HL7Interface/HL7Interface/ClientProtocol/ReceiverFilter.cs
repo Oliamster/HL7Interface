@@ -38,19 +38,18 @@ namespace HL7Interface.ClientProtocol
             return base.Filter(data, out rest);
         }
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-
         public override PackageInfo ResolvePackage(IBufferStream bufferStream)
+        {
+            byte[] data = new byte[bufferStream.Length];
+            bufferStream.Read(data, 0, Convert.ToInt32(bufferStream.Length));
+            string message = Encoding.ASCII.GetString(data);
+            return ResolvePackage(data);
+        }
+        public PackageInfo ResolvePackage(byte[] buffer)
         {
             PackageInfo package = new PackageInfo();
 
-            byte[] data = new byte[bufferStream.Length];
-            bufferStream.Read(data, 0, Convert.ToInt32(bufferStream.Length));
-
-            ParserResult result = m_Protocol.Parse(Convert.ToBase64String(data));
+            ParserResult result = m_Protocol.Parse(buffer);
             if (result.MessageAccepted)
             {
                 package.Request = result.ParsedMessage;
@@ -58,35 +57,31 @@ namespace HL7Interface.ClientProtocol
                 package.Acknowledgment = result.Acknowledge;
             }
             return package;
-
-
-
-          
-            //string message = Encoding.ASCII.GetString(data);
-
-            //if (ValidateBeginEndFilteredMarkMessage(message))
-            //     StripBeginEndMarkContainer(ref message);
-
-            //PackageInfo package = new PackageInfo();
-
-            //ParserResult result = m_Protocol.Parse(message);
-            //if (result.MessageAccepted)
-            //{
-            //    package.Request = result.ParsedMessage;
-            //    package.Key = result.ParsedMessage.MessageID;
-            //}
-            //else
-            //{
-            //    package.OriginalRequest = message;
-            //}
-                
-            //return package;
         }
 
-        public override string ToString()
-        {
-            return base.ToString();
-        }
+
+
+        //string message = Encoding.ASCII.GetString(data);
+
+        //if (ValidateBeginEndFilteredMarkMessage(message))
+        //     StripBeginEndMarkContainer(ref message);
+
+        //PackageInfo package = new PackageInfo();
+
+        //ParserResult result = m_Protocol.Parse(message);
+        //if (result.MessageAccepted)
+        //{
+        //    package.Request = result.ParsedMessage;
+        //    package.Key = result.ParsedMessage.MessageID;
+        //}
+        //else
+        //{
+        //    package.OriginalRequest = message;
+        //}
+
+        //return package;
+    
+
 
         static void StripBeginEndMarkContainer(ref string message)
         {

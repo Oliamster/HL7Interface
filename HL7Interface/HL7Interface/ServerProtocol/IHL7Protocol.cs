@@ -15,7 +15,7 @@ namespace HL7Interface.ServerProtocol
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
-        ParserResult Parse(string message);
+        ParserResult Parse(byte[] message);
 
         /// <summary>
         /// Encode

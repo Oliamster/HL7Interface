@@ -27,10 +27,6 @@ namespace HL7Interface.ServerProtocol
         {
             this.m_Protocol = protocol;
         }
-
-
-
-     
         public override HL7Request Filter(byte[] readBuffer, int offset, int length, bool toBeCopied, out int rest)
         {
             return base.Filter(readBuffer, offset, length, toBeCopied, out rest);
@@ -55,18 +51,11 @@ namespace HL7Interface.ServerProtocol
         {
             byte[] msg = new byte[length];
             Array.Copy(readBuffer, offset, msg, offset, length);
-            string message = Convert.ToBase64String(msg);
-            //return parser.ParseRequest(r, protocol, "MLLP");
 
-           
-            StringBuilder sb = new StringBuilder(message);
-            //MLLP.StripMLLPContainer(sb);
-
-
-            ParserResult result = m_Protocol.Parse(sb.ToString());
-        
+            ParserResult result = m_Protocol.Parse(msg);
 
             HL7Request request = new HL7Request();
+
             if (result.MessageAccepted)
             {
                 request.Request = result.ParsedMessage;

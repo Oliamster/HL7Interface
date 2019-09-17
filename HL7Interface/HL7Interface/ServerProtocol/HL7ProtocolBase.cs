@@ -16,7 +16,7 @@ namespace Hl7Interface.ServerProtocol
     {
         #region Private Properties
         private IProtocolConfig config;
-        private HL7Parser p = new HL7Parser();
+        private HL7Parser m_HL7Parser = new HL7Parser();
         #endregion
 
         #region Constructors
@@ -31,33 +31,33 @@ namespace Hl7Interface.ServerProtocol
         #endregion
 
         #region  Public Properties
-        public IProtocolConfig Config { get; set; } 
+        public IProtocolConfig Config { get; set; }
         #endregion
 
         #region IProtocol Interface
         public virtual byte[] Encode(IHL7Message hl7Message)
         {
-
             string mllpMessage = MLLP.CreateMLLPMessage(hl7Message.Encode());
 
-            
+            byte[] bytesMessge = Encoding.ASCII.GetBytes(mllpMessage);
 
-            return Encoding.ASCII.GetBytes(Convert.ToBase64String(mllpMessage));
+            string base64Message = Convert.ToBase64String(bytesMessge);
 
-
-            //return  Encoding.ASCII.GetBytes(MLLP.CreateMLLPMessage(hl7Message.Encode()));
+            return Encoding.ASCII.GetBytes(base64Message);
         }
 
-        public virtual ParserResult Parse(string message)
+        public virtual ParserResult Parse(byte[] messageBytes)
         {
+            string messageBase64 = Encoding.ASCII.GetString(messageBytes);
 
-            message = Encoding.ASCII.GetString(Convert.FromBase64String(message));
-            HL7Parser p = new HL7Parser();
+            byte[] raw = Convert.FromBase64String(messageBase64);
 
-            if(ValidMLLPMessage())
+            string messageToParse = Encoding.ASCII.GetString(raw);
 
-            return p.Parse(message);
-        } 
+            HL7api.Util.MLLP.StripMLLPContainer(ref messageToParse);
+
+            return m_HL7Parser.Parse(messageToParse);
+        }
         #endregion
     }
 }

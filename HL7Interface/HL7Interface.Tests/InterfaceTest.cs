@@ -412,7 +412,7 @@ namespace HL7Interface.Tests
             byte[] bytesToSend = Encoding.ASCII.GetBytes(MLLP.CreateMLLPMessage(request.Encode()));
             client.Send(bytesToSend);
 
-            Assert.That(ackReceived.WaitOne(500000));
+            Assert.That(ackReceived.WaitOne(50000));
 
             hl7Interface.Stop();
         }
