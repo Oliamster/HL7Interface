@@ -55,7 +55,6 @@ namespace HL7Interface
         }
         #endregion
 
-
         #region Public Properties
         public virtual string Name => this.GetType().Name;
 
