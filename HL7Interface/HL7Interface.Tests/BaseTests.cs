@@ -5,6 +5,7 @@ namespace HL7Interface.Tests
 {
     public class BaseTests
     {
+        protected const int timeout = 20000;
         protected void CreateClient()
         {
 

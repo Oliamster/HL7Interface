@@ -23,7 +23,7 @@ namespace HL7Interface.Tests
         System.Net.EndPoint serverEndpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 50060);
 
 
-        [Test]
+        [Test, Timeout(timeout)]
         public void EasyClientInitializationCallBack()
         {
             EasyClient easyClient = new EasyClient();
@@ -32,7 +32,8 @@ namespace HL7Interface.Tests
         /// <summary>
         /// Start the HL7Interface, initialize it and stop
         /// </summary>
-        [Test]
+
+        [Test, Timeout(timeout)]
         public void InterfaceInitializeStartStop()
         {
             HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
@@ -53,7 +54,8 @@ namespace HL7Interface.Tests
         /// <summary>
         /// Connect an active client to the interface, if a new session is connected  say "Welcome"
         /// </summary>
-        [Test]
+
+        [Test, Timeout(timeout)]
         public void ConnectClientToInterface()
         {
             HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
@@ -96,7 +98,8 @@ namespace HL7Interface.Tests
         /// <summary>
         /// Connect the Interface to the remote endpoint
         /// </summary>
-        [Test]
+
+        [Test, Timeout(timeout)]
         public void ConnectInterfaceToServer()
         {
             HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
@@ -123,7 +126,8 @@ namespace HL7Interface.Tests
         /// <summary>
         /// Connect the easy client to the interface and send a new equipment commmand request message
         /// </summary>
-        [Test]
+
+        [Test, Timeout(timeout)]
         public void SendMessageToHL7Interface()
         {
             HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
@@ -163,7 +167,8 @@ namespace HL7Interface.Tests
         /// blocking operations.
         /// </summary>
         /// <returns></returns>
-        [Test]
+
+        [Test, Timeout(timeout)]
         public async Task SendMessageAsyncTest()
         {
             HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
@@ -212,7 +217,8 @@ namespace HL7Interface.Tests
         /// is not required
         /// </summary>
         /// <returns></returns>
-        [Test]
+
+        [Test, Timeout(timeout)]
         public async Task SendMessageAsyncWaitAckTest()
         {
             HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
@@ -266,7 +272,8 @@ namespace HL7Interface.Tests
         /// the response / result  to the client who initiate the transaction.
         /// </summary>
         /// <returns></returns>
-        [Test]
+
+        [Test, Timeout(timeout)]
         public async Task SendMessageAsyncWaitAckAndResponseTest()
         {
             HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
@@ -327,7 +334,8 @@ namespace HL7Interface.Tests
         // Easy client sends message  to HL7Server and receves ack
         // </summary>
         // <returns></returns>
-        [Test]
+
+        [Test, Timeout(timeout)]
         public async Task ClientSendsCommandToHl7ServerAndWaitAck()
         {
             AutoResetEvent ackReceived = new AutoResetEvent(false);
@@ -368,7 +376,8 @@ namespace HL7Interface.Tests
         /// Easy client sends A command to HL7Interface who should acknowledge it
         /// </summary>
         /// <returns></returns>
-        [Test]
+
+        [Test, Timeout(timeout)]
         public async Task ClientSendCommandToHL7InterfaceAndWaitAck()
         {
             HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
@@ -432,8 +441,7 @@ namespace HL7Interface.Tests
         //       |                             |
         // </summary>
         // <returns></returns>
-        [Test]//, Repeat(2)]
-        //[Timeout(30000)]
+        [Test, Timeout(timeout)]
         public async Task Hl7InterfaceSendsCommandToAnotherHL7InterfaceWaitAckAndResponse()
         {
             HL7InterfaceBase hl7Interface = new HL7InterfaceBase();

@@ -1,5 +1,6 @@
 ﻿using HL7api.Model;
 using SuperSocket.SocketBase.Protocol;
+using System.Threading;
 
 namespace HL7Interface
 {
@@ -16,5 +17,7 @@ namespace HL7Interface
 
         public IHL7Message Acknowledgment { get; set; }
         public IHL7Message Response { get; set; }
+
+        protected AutoResetEvent ResponseReceivedEvent { get; set; }
     }
 }
