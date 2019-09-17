@@ -41,22 +41,22 @@ namespace Hl7Interface.ServerProtocol
 
             byte[] bytesMessge = Encoding.ASCII.GetBytes(mllpMessage);
 
-            string base64Message = Convert.ToBase64String(bytesMessge);
+            //string base64Message = Convert.ToBase64String(bytesMessge);
 
-            return Encoding.ASCII.GetBytes(base64Message);
+            return Encoding.ASCII.GetBytes(mllpMessage);
         }
 
         public virtual ParserResult Parse(byte[] messageBytes)
         {
             string messageBase64 = Encoding.ASCII.GetString(messageBytes);
 
-            byte[] raw = Convert.FromBase64String(messageBase64);
+            //byte[] raw = Convert.FromBase64String(messageBase64);
 
-            string messageToParse = Encoding.ASCII.GetString(raw);
+            //string messageToParse = Encoding.ASCII.GetString(raw);
 
-            HL7api.Util.MLLP.StripMLLPContainer(ref messageToParse);
+            HL7api.Util.MLLP.StripMLLPContainer(ref messageBase64);
 
-            return m_HL7Parser.Parse(messageToParse);
+            return m_HL7Parser.Parse(messageBase64);
         }
         #endregion
     }

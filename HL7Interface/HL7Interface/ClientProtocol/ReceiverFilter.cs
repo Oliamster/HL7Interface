@@ -47,6 +47,26 @@ namespace HL7Interface.ClientProtocol
         }
         public PackageInfo ResolvePackage(byte[] buffer)
         {
+            //PackageInfo package = new PackageInfo();
+
+            //ParserResult result = m_Protocol.Parse(buffer);
+
+            //if (result.MessageAccepted)
+            //{
+            //    package.Request = result.ParsedMessage;
+            //    package.Key = result.ParsedMessage.MessageID;
+            //    package.Acknowledgment = result.Acknowledge;
+            //}
+            //return package;
+
+
+
+
+            string message = Encoding.ASCII.GetString(buffer);
+
+            if (ValidateBeginEndFilteredMarkMessage(message))
+                StripBeginEndMarkContainer(ref message);
+
             PackageInfo package = new PackageInfo();
 
             ParserResult result = m_Protocol.Parse(buffer);
@@ -54,36 +74,18 @@ namespace HL7Interface.ClientProtocol
             {
                 package.Request = result.ParsedMessage;
                 package.Key = result.ParsedMessage.MessageID;
-                package.Acknowledgment = result.Acknowledge;
             }
+            else
+            {
+                package.OriginalRequest = message;
+            }
+
             return package;
         }
 
 
 
-        //string message = Encoding.ASCII.GetString(data);
-
-        //if (ValidateBeginEndFilteredMarkMessage(message))
-        //     StripBeginEndMarkContainer(ref message);
-
-        //PackageInfo package = new PackageInfo();
-
-        //ParserResult result = m_Protocol.Parse(message);
-        //if (result.MessageAccepted)
-        //{
-        //    package.Request = result.ParsedMessage;
-        //    package.Key = result.ParsedMessage.MessageID;
-        //}
-        //else
-        //{
-        //    package.OriginalRequest = message;
-        //}
-
-        //return package;
-    
-
-
-        static void StripBeginEndMarkContainer(ref string message)
+            static void StripBeginEndMarkContainer(ref string message)
         {
             StringBuilder sb = new StringBuilder(message);
             if (ValidateBeginEndFilteredMarkMessage(message) == true)
