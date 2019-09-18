@@ -4,3 +4,6 @@
 [submodule "SuperSocket.ProtoBase"]
 	path = SuperSocket.ProtoBase
 	url = https://github.com/kerryjiang/SuperSocket.ProtoBase.git
+[submodule "SuperSocket"]
+	path = SuperSocket
+	url = https://github.com/kerryjiang/SuperSocket.git

@@ -54,7 +54,8 @@ namespace HL7Interface.ServerProtocol
 
         public override void Send(string message)
         {
-            base.Send(message);
+            byte[] bytesToSend = Encoding.ASCII.GetBytes(message);
+            base.Send(bytesToSend, 0, bytesToSend.Length);
         }
 
         public override void Send(string message, params object[] paramValues)

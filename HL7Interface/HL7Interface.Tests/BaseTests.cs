@@ -1,4 +1,6 @@
-﻿using System;
+﻿using NUnit.Framework;
+using System;
+using System.Net;
 using System.Reflection;
 
 namespace HL7Interface.Tests
@@ -6,10 +8,29 @@ namespace HL7Interface.Tests
     public class BaseTests
     {
         protected const int timeout = 500000;
+        protected System.Net.EndPoint clientEndPoint;
+        protected System.Net.EndPoint serverEndpoint;
+
+        
+        [SetUp]
+        public void TestInitialize()
+        {
+            clientEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 50050);
+            serverEndpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 50060);
+
+        }
+
+        [TearDown]
+        public void TestTearDown()
+        {
+
+        }
+
         protected void CreateClient()
         {
 
         }
+
 
         public BaseTests()
         {
