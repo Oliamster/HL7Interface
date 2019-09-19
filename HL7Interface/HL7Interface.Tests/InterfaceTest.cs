@@ -16,6 +16,9 @@ using SuperSocket.ProtoBase;
 using SuperSocket.SocketBase.Protocol;
 using HL7Interface.Tests.Protocol;
 using HL7Interface.Tests.Protobase;
+using System;
+using System.Net.Sockets;
+using System.Collections.Generic;
 
 namespace HL7Interface.Tests
 {
@@ -27,7 +30,7 @@ namespace HL7Interface.Tests
         {
             EasyClient easyClient = new EasyClient();
           
-            easyClient.Initialize(new TestFakeTerminatorReceiveFilter(), (p) =>
+            easyClient.Initialize(new TestProtoBaseFakeTerminatorReceiverFilter(), (p) =>
             {
                 //do nothing
             });
@@ -55,26 +58,31 @@ namespace HL7Interface.Tests
 
             EasyClient easyClient = new EasyClient();
 
-            AutoResetEvent callbackEvent = new AutoResetEvent(false);
-
-            easyClient.Initialize(new TestProtoBaseBeginEndMarkReceiverFilter(), (p) =>
+            easyClient.Initialize(new TestProtoBaseFakeTerminatorReceiverFilter(), (p) =>
             {
                 //do nothing
             });
+
+            IList<ArraySegment<byte>> buff = null;
+
+
+
 
             bool connected = await easyClient.ConnectAsync(serverEndpoint);
 
             Assert.IsTrue(connected);
 
-            callbackEvent.WaitOne(timeout);
+            var result = easyClient.Socket.BeginReceive(buff, SocketFlags.None, new AsyncCallback((p) =>
+            {
+
+            }), null);
+
+            sessionConnectedEvent.WaitOne(timeout);
         }
 
 
-
-
-
         [Test, Timeout(timeout)]
-        public async Task TestEasyClientWelcomeNewSessionConnected()
+        public async Task TestAppServerendsWelcomeOnEasyClientNewSessionConnected()
         {
             AppServer appServer = new AppServer();
 
@@ -84,14 +92,15 @@ namespace HL7Interface.Tests
 
             appServer.NewSessionConnected += (s) =>
             {
-                s.Send("#Welcome!##");
+                ASCIIEncoding.ASCII.GetBytes("");
+                s.Send("Welcome!");
             };
 
             EasyClient easyClient = new EasyClient();
 
             AutoResetEvent callbackEvent = new AutoResetEvent(false);
 
-            easyClient.Initialize(new TestProtoBaseBeginEndMarkReceiverFilter(), (p) =>
+            easyClient.Initialize(new TestProtoBaseFakeTerminatorReceiverFilter(), (p) =>
             {
                 callbackEvent.Set();
             });
@@ -129,7 +138,7 @@ namespace HL7Interface.Tests
 
             AutoResetEvent callbackEvent = new AutoResetEvent(false);
 
-            easyClient.Initialize(new TestProtoBaseBeginEndMarkReceiverFilter(), (p) =>
+            easyClient.Initialize(new TestProtoBaseFakeTerminatorReceiverFilter(), (p) =>
             {
                 callbackEvent.Set();
             });

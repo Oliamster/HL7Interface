@@ -47,21 +47,6 @@ namespace HL7Interface.ClientProtocol
         }
         public PackageInfo ResolvePackage(byte[] buffer)
         {
-            //PackageInfo package = new PackageInfo();
-
-            //ParserResult result = m_Protocol.Parse(buffer);
-
-            //if (result.MessageAccepted)
-            //{
-            //    package.Request = result.ParsedMessage;
-            //    package.Key = result.ParsedMessage.MessageID;
-            //    package.Acknowledgment = result.Acknowledge;
-            //}
-            //return package;
-
-
-
-
             string message = Encoding.ASCII.GetString(buffer);
 
             if (ValidateBeginEndFilteredMarkMessage(message))

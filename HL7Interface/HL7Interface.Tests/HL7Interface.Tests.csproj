@@ -135,7 +135,7 @@
     <Compile Include="Protobase\TestProtoBaseBeginEndMarkReceiverFilter.cs" />
     <Compile Include="Protocol\TestBeginEndMarkReceiveFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Protobase\TestProtobaseFakeTerminatorReceiverFilter.cs" />
+    <Compile Include="Protobase\TestProtoBaseFakeTerminatorReceiveFilter.cs" />
     <Compile Include="Protobase\TestProtobaseTerminatorReceiverFilter.cs" />
   </ItemGroup>
   <ItemGroup>

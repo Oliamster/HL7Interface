@@ -17,6 +17,12 @@ namespace HL7Interface.Tests.Protocol
 
     public class TestProtobaseTerminatorReceiverFilter : SuperSocket.ProtoBase.TerminatorReceiveFilter<StringPackageInfo>
     {
+        public TestProtobaseTerminatorReceiverFilter()
+        : this(Encoding.ASCII.GetBytes("\r\n"))
+        {
+
+        }
+
         public TestProtobaseTerminatorReceiverFilter(byte[] terminatorMark)
             : base(terminatorMark)
         {
