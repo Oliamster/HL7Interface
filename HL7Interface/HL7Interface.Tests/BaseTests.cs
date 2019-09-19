@@ -7,7 +7,7 @@ namespace HL7Interface.Tests
 {
     public class BaseTests
     {
-        protected const int timeout = 500000;
+        protected const int timeout = 50000;
         protected System.Net.EndPoint clientEndPoint;
         protected System.Net.EndPoint serverEndpoint;
 

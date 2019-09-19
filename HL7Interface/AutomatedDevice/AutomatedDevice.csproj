@@ -35,15 +35,6 @@
     <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="SuperSocket.Common, Version=1.6.6.1, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
-      <HintPath>..\packages\SuperSocket.1.6.6.1\lib\net45\SuperSocket.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="SuperSocket.Facility, Version=1.6.6.1, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
-      <HintPath>..\packages\SuperSocket.1.6.6.1\lib\net45\SuperSocket.Facility.dll</HintPath>
-    </Reference>
-    <Reference Include="SuperSocket.SocketBase, Version=1.6.6.1, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
-      <HintPath>..\packages\SuperSocket.1.6.6.1\lib\net45\SuperSocket.SocketBase.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -66,6 +57,10 @@
     <ProjectReference Include="..\HL7Interface\HL7Interface.csproj">
       <Project>{db0f4680-50b7-4062-ac4a-8a57bc3d7b82}</Project>
       <Name>HL7Interface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SuperSocket\SocketBase\SuperSocket.SocketBase.Net45.csproj">
+      <Project>{40B77789-EA11-4C05-8F52-86711D7BCAAF}</Project>
+      <Name>SuperSocket.SocketBase.Net45</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

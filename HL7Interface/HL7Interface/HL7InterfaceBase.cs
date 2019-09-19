@@ -14,7 +14,7 @@ using HL7Interface.Configuration;
 using HL7Interface.ServerProtocol;
 using SuperSocket.SocketBase;
 using SuperSocket.SocketEngine;
-
+using SuperSocket.ClientEngine;
 
 namespace HL7Interface
 {
@@ -25,7 +25,7 @@ namespace HL7Interface
     {
         #region Private Properties
         private HL7Server m_HL7Server;
-        private SuperSocket.ClientEngine.EasyClient m_Client;
+        private EasyClient m_Client;
         private HL7ProtocolBase m_HL7Protocol;
         private ConcurrentQueue<IHL7Message> m_IncomingAcknowledgmentQueue;
         private ConcurrentStack<IHL7Message> m_IncomingMessageQueue;

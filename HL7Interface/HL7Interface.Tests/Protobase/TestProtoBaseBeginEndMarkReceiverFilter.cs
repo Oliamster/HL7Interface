@@ -1,30 +1,27 @@
 ﻿
 using HL7api.Parser;
-using HL7Interface.ServerProtocol;
 using SuperSocket.ProtoBase;
 using System;
 using System.Text;
 
-namespace HL7Interface.ClientProtocol
+namespace HL7Interface.Tests.Protobase
 {
     /// <summary>
     /// The Easy client Receiver filter
     /// </summary>
-    public class ReceiverFilter : BeginEndMarkReceiveFilterTest<PackageInfo>
+    public class TestProtoBaseBeginEndMarkReceiverFilter : BeginEndMarkReceiveFilterTest<StringPackageInfo>
     {
         private  static byte[] beginMark = new byte[] { 11 };
         private  static byte[] endMark = new byte[] { 28, 13 };
-        private IHL7Protocol m_Protocol;
-
-        public ReceiverFilter(IHL7Protocol protocol) 
-            : this(protocol, beginMark, endMark)
+     
+        public TestProtoBaseBeginEndMarkReceiverFilter() 
+            : this(beginMark, endMark)
         {
             
         }
 
-        public ReceiverFilter(IHL7Protocol protocol, byte[] begin, byte[] end) : base (begin,  end)
+        public TestProtoBaseBeginEndMarkReceiverFilter(byte[] begin, byte[] end) : base (begin,  end)
         {
-            this.m_Protocol = protocol;
             beginMark = begin;
             endMark = end;
         }
@@ -33,19 +30,19 @@ namespace HL7Interface.ClientProtocol
             return base.Equals(obj);
         }
 
-        public override PackageInfo Filter(BufferList data, out int rest)
+        public override StringPackageInfo Filter(BufferList data, out int rest)
         {
             return base.Filter(data, out rest);
         }
 
-        public override PackageInfo ResolvePackage(IBufferStream bufferStream)
+        public override StringPackageInfo ResolvePackage(IBufferStream bufferStream)
         {
             byte[] data = new byte[bufferStream.Length];
             bufferStream.Read(data, 0, Convert.ToInt32(bufferStream.Length));
             string message = Encoding.ASCII.GetString(data);
             return ResolvePackage(data);
         }
-        public PackageInfo ResolvePackage(byte[] buffer)
+        public StringPackageInfo ResolvePackage(byte[] buffer)
         {
             //PackageInfo package = new PackageInfo();
 
@@ -67,7 +64,7 @@ namespace HL7Interface.ClientProtocol
             if (ValidateBeginEndFilteredMarkMessage(message))
                 StripBeginEndMarkContainer(ref message);
 
-            PackageInfo package = new PackageInfo();
+            StringPackageInfo package = new StringPackageInfo();
 
             ParserResult result = m_Protocol.Parse(buffer);
             if (result.MessageAccepted)

@@ -111,21 +111,6 @@
     <Reference Include="NHapiTools.Model.V281, Version=1.0.0.0, Culture=neutral, PublicKeyToken=8cc2ca07deb72b3d, processorArchitecture=MSIL">
       <HintPath>..\packages\NHapiTools.1.10.0.0\lib\NHapiTools.Model.V281.dll</HintPath>
     </Reference>
-    <Reference Include="SuperSocket.Common, Version=1.6.6.1, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
-      <HintPath>..\packages\SuperSocket.1.6.6.1\lib\net45\SuperSocket.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="SuperSocket.Facility, Version=1.6.6.1, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
-      <HintPath>..\packages\SuperSocket.1.6.6.1\lib\net45\SuperSocket.Facility.dll</HintPath>
-    </Reference>
-    <Reference Include="SuperSocket.SocketBase, Version=1.6.6.1, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
-      <HintPath>..\packages\SuperSocket.1.6.6.1\lib\net45\SuperSocket.SocketBase.dll</HintPath>
-    </Reference>
-    <Reference Include="SuperSocket.SocketEngine, Version=1.6.6.1, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
-      <HintPath>..\packages\SuperSocket.Engine.1.6.6.1\lib\net45\SuperSocket.SocketEngine.dll</HintPath>
-    </Reference>
-    <Reference Include="SuperSocket.SocketService, Version=1.6.6.1, Culture=neutral, PublicKeyToken=6c80000676988ebb, processorArchitecture=MSIL">
-      <HintPath>..\packages\SuperSocket.Engine.1.6.6.1\lib\net45\SuperSocket.SocketService.exe</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -165,17 +150,33 @@
     <None Include="supersocket.sh" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\SuperSocket.ClientEngine\SuperSocket.ClientEngine.Net45.csproj">
-      <Project>{8bbfbe4a-b91a-4dcc-92d5-fb0436e2544f}</Project>
-      <Name>SuperSocket.ClientEngine.Net45</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\SuperSocket.ProtoBase\src\SuperSocket.ProtoBase.Net45.csproj">
-      <Project>{092DFE24-997A-41E3-9602-B5D52D3749DD}</Project>
-      <Name>SuperSocket.ProtoBase.Net45</Name>
-    </ProjectReference>
     <ProjectReference Include="..\HL7api\HL7api.csproj">
       <Project>{160740A5-90C5-4A59-B358-65A4185CC753}</Project>
       <Name>HL7api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SuperSocket.ClientEngine\SuperSocket.ClientEngine.Net45.csproj">
+      <Project>{8BBFBE4A-B91A-4DCC-92D5-FB0436E2544F}</Project>
+      <Name>SuperSocket.ClientEngine.Net45</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SuperSocket.ProtoBase\src\SuperSocket.ProtoBase.Net45.csproj">
+      <Project>{092dfe24-997a-41e3-9602-b5d52d3749dd}</Project>
+      <Name>SuperSocket.ProtoBase.Net45</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SuperSocket\Common\SuperSocket.Common.Net45.csproj">
+      <Project>{a24f4d38-ba9c-4fd6-95b7-4980de36131a}</Project>
+      <Name>SuperSocket.Common.Net45</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SuperSocket\Facility\SuperSocket.Facility.Net45.csproj">
+      <Project>{01987bac-c498-44dd-b274-62ea2506b51d}</Project>
+      <Name>SuperSocket.Facility.Net45</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SuperSocket\SocketBase\SuperSocket.SocketBase.Net45.csproj">
+      <Project>{40B77789-EA11-4C05-8F52-86711D7BCAAF}</Project>
+      <Name>SuperSocket.SocketBase.Net45</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SuperSocket\SocketEngine\SuperSocket.SocketEngine.Net45.csproj">
+      <Project>{153FEF72-191C-43D9-BE71-2B351C7AC760}</Project>
+      <Name>SuperSocket.SocketEngine.Net45</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

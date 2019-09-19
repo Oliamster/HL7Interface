@@ -12,6 +12,12 @@ using NHapiTools.Base.Util;
 using NUnit.Framework;
 using SuperSocket.ClientEngine;
 using SuperSocket.SocketBase;
+using SuperSocket.ProtoBase;
+using SuperSocket.SocketBase.Protocol;
+using HL7Interface.Tests.Protocol;
+
+
+
 
 
 namespace HL7Interface.Tests
@@ -20,16 +26,63 @@ namespace HL7Interface.Tests
     public class InterfaceTest : BaseTests
     {
         [Test, Timeout(timeout)]
-        public void EasyClientInitializationCallBack()
+        public async Task TestEasyClientConnection()
         {
             EasyClient easyClient = new EasyClient();
+          
+            easyClient.Initialize(new TestFakeTerminatorReceiveFilter(), (p) =>
+            {
+                //do nothing
+            });
+
+            var ret = await easyClient.ConnectAsync(new DnsEndPoint("github.com", 443));
+
+            Assert.True(ret);
         }
 
-        /// <summary>
-        /// Start the HL7Interface, initialize it and stop
-        /// </summary>
 
+    
         [Test, Timeout(timeout)]
+        public async Task TestEasyClientCallBack()
+        {
+            byte[] begin = Encoding.ASCII.GetBytes("#");
+            byte[] end = Encoding.ASCII.GetBytes("##");
+
+            var filter = new Protocol.TestBeginEndMarkReceiveFilter(begin, end);
+
+            var filterFactory = new DefaultReceiveFilterFactory<TestBeginEndMarkReceiveFilter, StringRequestInfo>();
+
+            AppServer appServer = new AppServer(filterFactory);
+
+            appServer.Setup(50060);
+
+            appServer.Start();
+
+            EasyClient easyClient = new EasyClient();
+            AutoResetEvent callbackEvent = new AutoResetEvent(false);
+
+            easyClient.Initialize(new TestBeginEndMarkReceiveFilter(), (p) =>
+            {
+                callbackEvent.Set();
+            });
+
+
+            bool connected = await easyClient.ConnectAsync(serverEndpoint);
+
+            Assert.IsTrue(connected);
+
+            easyClient.Send(Encoding.ASCII.GetBytes("#Welcome!##"));
+
+            callbackEvent.WaitOne(timeout);
+        }
+
+
+
+
+            /// <summary>
+            /// Start the HL7Interface, initialize it and stop
+            /// </summary>
+            [Test, Timeout(timeout)]
         public void InterfaceInitializeStartStop()
         {
             HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
@@ -326,6 +379,30 @@ namespace HL7Interface.Tests
         }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         // <summary>
         // Easy client sends message  to HL7Server and receves ack
         // </summary>
@@ -370,13 +447,60 @@ namespace HL7Interface.Tests
            await  client.Close();
         }
 
+
+
+        // <summary>
+        // Easy client sends message  to HL7Server and receves ack
+        // </summary>
+        // <returns></returns>
+
+        [Test, Timeout(timeout)]
+        public async Task ClientSendsCommandToHl7ServerAndWaitAckAndResponse()
+        {
+            AutoResetEvent ackReceived = new AutoResetEvent(false);
+
+            HL7Server hl7Server = new HL7Server();
+
+            hl7Server.Setup("127.0.0.1", 50060);
+            hl7Server.Start();
+
+            EquipmentCommandRequest request = new EquipmentCommandRequest();
+
+            EasyClient client = new EasyClient();
+
+            client.Initialize(new ReceiverFilter(new HL7ProtocolBase()), (packageInfo) =>
+            {
+                if (packageInfo.Request.IsAcknowledge)
+                {
+                    Assert.That(packageInfo.Request is GeneralAcknowledgment);
+                    Assert.That(HL7Parser.IsAckForRequest(request, packageInfo.Request));
+                    ackReceived.Set();
+                }
+                else
+                    Assert.Fail();
+            });
+
+            await client.ConnectAsync(serverEndpoint);
+
+            Assert.That(client.IsConnected);
+
+            byte[] bytesToSend = Encoding.ASCII.GetBytes(MLLP.CreateMLLPMessage(request.Encode()));
+            client.Send(bytesToSend);
+
+            Assert.That(ackReceived.WaitOne());
+
+            hl7Server.Stop();
+
+            await client.Close();
+        }
+
         /// <summary>
         /// Easy client sends A command to HL7Interface who should acknowledge it
         /// </summary>
         /// <returns></returns>
 
         [Test, Timeout(timeout)]
-        public async Task ClientSendCommandToHL7InterfaceAndWaitAck()
+        public async Task ClientSendsCommandToHL7InterfaceAndWaitAck()
         {
             HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
             AutoResetEvent ackReceived = new AutoResetEvent(false);
@@ -489,13 +613,13 @@ namespace HL7Interface.Tests
 
             Assert.That(ackReceived.WaitOne());
 
-            //Assert.That(commandResponseReceived.WaitOne());
+            Assert.That(commandResponseReceived.WaitOne());
 
-            //hl7Interface.Stop();
+            hl7Interface.Stop();
 
-            //await client.Close();
+            await client.Close();
 
-            //serverSide.Stop();
+            serverSide.Stop();
         }
     }
 }

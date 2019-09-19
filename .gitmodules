@@ -1,9 +1,10 @@
-[submodule "SuperSocket.ClientEngine"]
-	path = SuperSocket.ClientEngine
+
+[submodule "HL7Interface/SuperSocket.ClientEngine"]
+	path = HL7Interface/SuperSocket.ClientEngine
 	url = https://github.com/kerryjiang/SuperSocket.ClientEngine.git
-[submodule "SuperSocket.ProtoBase"]
-	path = SuperSocket.ProtoBase
+[submodule "HL7Interface/SuperSocket.ProtoBase"]
+	path = HL7Interface/SuperSocket.ProtoBase
 	url = https://github.com/kerryjiang/SuperSocket.ProtoBase.git
-[submodule "SuperSocket"]
-	path = SuperSocket
+[submodule "HL7Interface/SuperSocket"]
+	path = HL7Interface/SuperSocket
 	url = https://github.com/kerryjiang/SuperSocket.git
