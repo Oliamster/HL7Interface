@@ -14,8 +14,9 @@ namespace HL7Interface.Tests.Protocol
 {
     class TestBeginEndMarkReceiveFilter : BeginEndMarkReceiveFilter<StringRequestInfo>
     {
-        private readonly static byte[] BeginMark = new byte[] { 0x5b, 0x5b };
-        private readonly static byte[] EndMark = new byte[] { 0x5d, 0x5d };
+        private readonly static byte[] BeginMark = Encoding.ASCII.GetBytes("#");
+        private readonly static byte[] EndMark = Encoding.ASCII.GetBytes("##");
+    
 
         private BasicRequestInfoParser m_Parser = new BasicRequestInfoParser();
 
@@ -26,9 +27,8 @@ namespace HL7Interface.Tests.Protocol
         }
 
         public TestBeginEndMarkReceiveFilter(byte[] beginMark, byte[] endMark)
-        : base(beginMark, EndMark)
+        : base(beginMark, endMark)
         {
-
         }
 
 

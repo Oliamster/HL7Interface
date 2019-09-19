@@ -10,7 +10,7 @@ namespace HL7Interface.ClientProtocol
     /// <summary>
     /// The Easy client Receiver filter
     /// </summary>
-    public class ReceiverFilter : BeginEndMarkReceiveFilterTest<PackageInfo>
+    public class ReceiverFilter : BeginEndMarkReceiveFilter<PackageInfo>
     {
         private  static byte[] beginMark = new byte[] { 11 };
         private  static byte[] endMark = new byte[] { 28, 13 };

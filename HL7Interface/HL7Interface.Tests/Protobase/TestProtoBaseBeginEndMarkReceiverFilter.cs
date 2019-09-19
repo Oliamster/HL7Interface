@@ -9,40 +9,37 @@ namespace HL7Interface.Tests.Protobase
     /// <summary>
     /// The Easy client Receiver filter
     /// </summary>
-    public class TestProtoBaseBeginEndMarkReceiverFilter : BeginEndMarkReceiveFilterTest<StringPackageInfo>
+    public class TestProtoBaseBeginEndMarkReceiverFilter : BeginEndMarkReceiveFilter<TestProtobasePackageInfo>
     {
-        private  static byte[] beginMark = new byte[] { 11 };
-        private  static byte[] endMark = new byte[] { 28, 13 };
-     
-        public TestProtoBaseBeginEndMarkReceiverFilter() 
+        private readonly static byte[] beginMark = Encoding.ASCII.GetBytes("#");
+        private readonly static byte[] endMark = Encoding.ASCII.GetBytes("##");
+
+
+        public TestProtoBaseBeginEndMarkReceiverFilter()
             : this(beginMark, endMark)
         {
-            
+
         }
 
-        public TestProtoBaseBeginEndMarkReceiverFilter(byte[] begin, byte[] end) : base (begin,  end)
+        public TestProtoBaseBeginEndMarkReceiverFilter(byte[] beginMark, byte[] endMark)
+        : base(beginMark, endMark)
         {
-            beginMark = begin;
-            endMark = end;
-        }
-        public override bool Equals(object obj)
-        {
-            return base.Equals(obj);
         }
 
-        public override StringPackageInfo Filter(BufferList data, out int rest)
+
+        public override TestProtobasePackageInfo Filter(BufferList data, out int rest)
         {
             return base.Filter(data, out rest);
         }
 
-        public override StringPackageInfo ResolvePackage(IBufferStream bufferStream)
+        public override TestProtobasePackageInfo ResolvePackage(IBufferStream bufferStream)
         {
             byte[] data = new byte[bufferStream.Length];
             bufferStream.Read(data, 0, Convert.ToInt32(bufferStream.Length));
             string message = Encoding.ASCII.GetString(data);
             return ResolvePackage(data);
         }
-        public StringPackageInfo ResolvePackage(byte[] buffer)
+        public TestProtobasePackageInfo ResolvePackage(byte[] buffer)
         {
             //PackageInfo package = new PackageInfo();
 
@@ -64,18 +61,9 @@ namespace HL7Interface.Tests.Protobase
             if (ValidateBeginEndFilteredMarkMessage(message))
                 StripBeginEndMarkContainer(ref message);
 
-            StringPackageInfo package = new StringPackageInfo();
+            TestProtobasePackageInfo package = new TestProtobasePackageInfo();
 
-            ParserResult result = m_Protocol.Parse(buffer);
-            if (result.MessageAccepted)
-            {
-                package.Request = result.ParsedMessage;
-                package.Key = result.ParsedMessage.MessageID;
-            }
-            else
-            {
-                package.OriginalRequest = message;
-            }
+              package.OriginalRequest = message;
 
             return package;
         }

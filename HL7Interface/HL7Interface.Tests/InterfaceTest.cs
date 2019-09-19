@@ -15,10 +15,7 @@ using SuperSocket.SocketBase;
 using SuperSocket.ProtoBase;
 using SuperSocket.SocketBase.Protocol;
 using HL7Interface.Tests.Protocol;
-
-
-
-
+using HL7Interface.Tests.Protobase;
 
 namespace HL7Interface.Tests
 {
@@ -40,32 +37,102 @@ namespace HL7Interface.Tests
             Assert.True(ret);
         }
 
+        [Test, Timeout(timeout)]
+        public async Task TestAppServerEasyClientNewSessionConnected()
+        {
+            AppServer appServer = new AppServer();
 
-    
+            Assert.IsTrue(appServer.Setup("127.0.0.1", 50060));
+
+            Assert.IsTrue(appServer.Start());
+
+            AutoResetEvent sessionConnectedEvent = new AutoResetEvent(false);
+
+            appServer.NewSessionConnected += (s) =>
+            {
+                sessionConnectedEvent.Set();
+            };
+
+            EasyClient easyClient = new EasyClient();
+
+            AutoResetEvent callbackEvent = new AutoResetEvent(false);
+
+            easyClient.Initialize(new TestProtoBaseBeginEndMarkReceiverFilter(), (p) =>
+            {
+                //do nothing
+            });
+
+            bool connected = await easyClient.ConnectAsync(serverEndpoint);
+
+            Assert.IsTrue(connected);
+
+            callbackEvent.WaitOne(timeout);
+        }
+
+
+
+
+
+        [Test, Timeout(timeout)]
+        public async Task TestEasyClientWelcomeNewSessionConnected()
+        {
+            AppServer appServer = new AppServer();
+
+            Assert.IsTrue(appServer.Setup("127.0.0.1", 50060));
+
+            Assert.IsTrue(appServer.Start());
+
+            appServer.NewSessionConnected += (s) =>
+            {
+                s.Send("#Welcome!##");
+            };
+
+            EasyClient easyClient = new EasyClient();
+
+            AutoResetEvent callbackEvent = new AutoResetEvent(false);
+
+            easyClient.Initialize(new TestProtoBaseBeginEndMarkReceiverFilter(), (p) =>
+            {
+                callbackEvent.Set();
+            });
+
+            bool connected = await easyClient.ConnectAsync(serverEndpoint);
+
+            Assert.IsTrue(connected);
+
+            callbackEvent.WaitOne(timeout);
+        }
+
+
         [Test, Timeout(timeout)]
         public async Task TestEasyClientCallBack()
         {
-            byte[] begin = Encoding.ASCII.GetBytes("#");
-            byte[] end = Encoding.ASCII.GetBytes("##");
+            //byte[] begin = Encoding.ASCII.GetBytes("#");
+            //byte[] end = Encoding.ASCII.GetBytes("##");
 
-            var filter = new Protocol.TestBeginEndMarkReceiveFilter(begin, end);
+            //var filter = new Protocol.TestBeginEndMarkReceiveFilter(begin, end);
 
             var filterFactory = new DefaultReceiveFilterFactory<TestBeginEndMarkReceiveFilter, StringRequestInfo>();
 
             AppServer appServer = new AppServer(filterFactory);
 
-            appServer.Setup(50060);
+            Assert.IsTrue(appServer.Setup("127.0.0.1", 50060));
 
-            appServer.Start();
+            Assert.IsTrue(appServer.Start());
+
+            appServer.NewRequestReceived += (s, e) =>
+            {
+                s.Send("Thank You!");
+            };
 
             EasyClient easyClient = new EasyClient();
+
             AutoResetEvent callbackEvent = new AutoResetEvent(false);
 
-            easyClient.Initialize(new TestBeginEndMarkReceiveFilter(), (p) =>
+            easyClient.Initialize(new TestProtoBaseBeginEndMarkReceiverFilter(), (p) =>
             {
                 callbackEvent.Set();
             });
-
 
             bool connected = await easyClient.ConnectAsync(serverEndpoint);
 
@@ -79,10 +146,10 @@ namespace HL7Interface.Tests
 
 
 
-            /// <summary>
-            /// Start the HL7Interface, initialize it and stop
-            /// </summary>
-            [Test, Timeout(timeout)]
+        /// <summary>
+        /// Start the HL7Interface, initialize it and stop
+        /// </summary>
+        [Test, Timeout(timeout)]
         public void InterfaceInitializeStartStop()
         {
             HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
