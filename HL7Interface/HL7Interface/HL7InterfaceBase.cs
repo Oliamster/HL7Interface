@@ -142,8 +142,9 @@ namespace HL7Interface
 
             m_HL7Server = server;
 
-            m_Client.Initialize(new ReceiverFilter(m_HL7Protocol), (request) => {
-                if(request.Request.IsAcknowledge)
+            m_Client.Initialize(new ReceiverFilter(m_HL7Protocol), (request) =>
+            {
+                if (request.Request.IsAcknowledge)
                 {
                     lock (responseQueueLock)
                         m_IncomingAcknowledgmentQueue.Enqueue(request.Request);

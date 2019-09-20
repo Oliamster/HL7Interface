@@ -1,6 +1,7 @@
 ﻿
 using HL7api.Parser;
 using Hl7Interface.ServerProtocol;
+using HL7Interface.Tests.Protobase;
 using NHapiTools.Base.Util;
 using SuperSocket.Facility.Protocol;
 using SuperSocket.ProtoBase;
@@ -15,23 +16,42 @@ namespace HL7Interface.Tests.Protocol
 {
 
 
-    public class TestProtobaseTerminatorReceiverFilter : SuperSocket.ProtoBase.TerminatorReceiveFilter<StringPackageInfo>
+    public class TestProtoBaseTerminatorReceiverFilter : SuperSocket.ProtoBase.TerminatorReceiveFilter<TestProtobasePackageInfo>
     {
-        public TestProtobaseTerminatorReceiverFilter()
-        : this(Encoding.ASCII.GetBytes("\r\n"))
+        public TestProtoBaseTerminatorReceiverFilter()
+        : this(Encoding.ASCII.GetBytes("||"))
         {
 
         }
 
-        public TestProtobaseTerminatorReceiverFilter(byte[] terminatorMark)
+        public TestProtoBaseTerminatorReceiverFilter(byte[] terminatorMark)
             : base(terminatorMark)
         {
 
         }
 
-        public override StringPackageInfo ResolvePackage(IBufferStream bufferStream)
+
+        //public override TestProtobasePackageInfo ResolvePackage(IBufferStream bufferStream)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+
+
+        public override TestProtobasePackageInfo ResolvePackage(IBufferStream bufferStream)
         {
-            return null;
+            byte[] data = new byte[bufferStream.Length];
+            bufferStream.Read(data, 0, Convert.ToInt32(bufferStream.Length));
+
+            string message = Encoding.ASCII.GetString(data);
+
+
+            TestProtobasePackageInfo package = new TestProtobasePackageInfo();
+
+            package.OriginalRequest = message;
+
+            return package;
         }
+
     }
 }

@@ -1,4 +1,5 @@
 ﻿using SuperSocket.ProtoBase;
+using System;
 using System.Text;
 
 namespace HL7Interface.Tests.Protobase
@@ -6,7 +7,7 @@ namespace HL7Interface.Tests.Protobase
     public class TestProtoBaseFakeTerminatorReceiverFilter : SuperSocket.ProtoBase.TerminatorReceiveFilter<TestProtobasePackageInfo>
     {
         public TestProtoBaseFakeTerminatorReceiverFilter()
-            : base(Encoding.ASCII.GetBytes("\r\n"))
+            : base(Encoding.ASCII.GetBytes(Environment.NewLine))
         {
 
         }
