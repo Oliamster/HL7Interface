@@ -69,6 +69,10 @@ namespace HL7Interface.Tests
             asyncTcpSession.Send(data, 0, data.Length);
 
             callbackEvent.WaitOne(timeout);
+
+            asyncTcpSession.Close();
+
+            appServer.Stop();
         }
 
 
@@ -131,6 +135,20 @@ namespace HL7Interface.Tests
 
 
 
+        public class MyClient : EasyClient
+        {
+            public MyClient()
+            {
+                
+            }
+            protected override void HandlePackage(IPackageInfo package)
+            {
+                base.HandlePackage(package);
+            }
+        }
+
+
+
         [Test, Timeout(timeout)]
         public async Task EasyClientSendsWelcomeMesageToAppServerDefaultTerminator()
         {
@@ -142,11 +160,15 @@ namespace HL7Interface.Tests
 
             appServer.NewRequestReceived += (s, e) =>
             {
-                byte[] bytesToSend = Encoding.ASCII.GetBytes("Thank You!" + "||");
+                byte[] bytesToSend = Encoding.ASCII.GetBytes("Thank You!||");
                 s.Send(bytesToSend, 0, bytesToSend.Length);
             };
 
-            EasyClient easyClient = new EasyClient();
+            MyClient easyClient = new MyClient();
+
+            var session = easyClient.GetUnderlyingSession();
+
+            easyClient.ReceiveBufferSize = 30;
 
             AutoResetEvent callbackEvent = new AutoResetEvent(false);
 
@@ -162,10 +184,12 @@ namespace HL7Interface.Tests
             easyClient.Send(Encoding.ASCII.GetBytes("Welcome!" + Environment.NewLine));
 
             callbackEvent.WaitOne(timeout);
+
+            await easyClient.Close();
+
+            appServer.Stop();
+
         }
-
-
-
 
         [Test, Timeout(timeout)]
         public async Task TestAppServerendsWelcomeOnEasyClientNewSessionConnected()

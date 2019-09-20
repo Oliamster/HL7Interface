@@ -11,8 +11,8 @@ namespace HL7Interface.Tests.Protobase
     /// </summary>
     public class TestProtoBaseBeginEndMarkReceiverFilter : BeginEndMarkReceiveFilter<TestProtobasePackageInfo>
     {
-        private readonly static byte[] beginMark = Encoding.ASCII.GetBytes("#");
-        private readonly static byte[] endMark = Encoding.ASCII.GetBytes("##");
+        private readonly static byte[] beginMark = Encoding.ASCII.GetBytes("|");
+        private readonly static byte[] endMark = Encoding.ASCII.GetBytes("||");
 
 
         public TestProtoBaseBeginEndMarkReceiverFilter()
