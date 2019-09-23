@@ -12,14 +12,11 @@ namespace HL7Interface.Tests
         protected System.Net.EndPoint clientEndPoint;
         protected System.Net.EndPoint serverEndpoint;
        
-
-        
         [SetUp]
         public void TestInitialize()
         {
             clientEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 50050);
             serverEndpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 50060);
-
         }
 
         [TearDown]

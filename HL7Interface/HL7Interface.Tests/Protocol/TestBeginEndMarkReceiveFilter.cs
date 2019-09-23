@@ -31,18 +31,20 @@ namespace HL7Interface.Tests.Protocol
         {
         }
 
-
+        public override StringRequestInfo Filter(byte[] readBuffer, int offset, int length, bool toBeCopied, out int rest)
+        {
+            return base.Filter(readBuffer, offset, length, toBeCopied, out rest);
+        }
 
         protected override StringRequestInfo ProcessMatchedRequest(byte[] readBuffer, int offset, int length)
         {
-            if (length < 20)
-            {
-                Console.WriteLine("Ignore request");
-                return NullRequestInfo;
-            }
+            string message = Encoding.ASCII.GetString(readBuffer);
 
-            var line = Encoding.ASCII.GetString(readBuffer, offset, length);
-            return m_Parser.ParseRequestInfo(line.Substring(2, line.Length - 4));
+            message.TrimStart(Encoding.ASCII.GetChars(BeginMark));
+
+            message.TrimEnd(Encoding.ASCII.GetChars(EndMark));
+
+            return new StringRequestInfo(message, message, null);
         }
     }
 

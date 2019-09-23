@@ -2,23 +2,13 @@
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using HL7api.Parser;
-using HL7api.V251.Message;
-using Hl7Interface.ServerProtocol;
-using HL7Interface.ClientProtocol;
-using HL7Interface.Configuration;
-using HL7Interface.ServerProtocol;
-using NHapiTools.Base.Util;
 using NUnit.Framework;
 using SuperSocket.ClientEngine;
 using SuperSocket.SocketBase;
-using SuperSocket.ProtoBase;
 using SuperSocket.SocketBase.Protocol;
 using HL7Interface.Tests.Protocol;
 using HL7Interface.Tests.Protobase;
 using System;
-using System.Net.Sockets;
-using System.Collections.Generic;
 
 namespace HL7Interface.Tests.BasicTest
 {
@@ -250,45 +240,7 @@ namespace HL7Interface.Tests.BasicTest
 
 
         [Test, Timeout(timeout)]
-        public async Task G_AppServerReceivesNewRequestFromEasyClient()
-        {
-            AppServer appServer = new AppServer();
-
-            Assert.IsTrue(appServer.Setup("127.0.0.1", 50060));
-
-            Assert.IsTrue(appServer.Start());
-
-            AutoResetEvent newRequestReceivedEvent = new AutoResetEvent(false);
-
-            appServer.NewRequestReceived += (s, e) =>
-            {
-                Assert.AreEqual("Welcome!", s.CurrentCommand);
-                newRequestReceivedEvent.Set();
-            };
-
-            EasyClient easyClient = new EasyClient();
-
-            easyClient.Initialize(new TestProtoBaseDefaultTerminatorReceiverFilter(), (p) =>
-            {
-                //do nothing
-            });
-
-            bool connected = await easyClient.ConnectAsync(serverEndpoint);
-
-            Assert.IsTrue(connected);
-
-            easyClient.Send(Encoding.ASCII.GetBytes("Welcome!" + Environment.NewLine));
-
-            newRequestReceivedEvent.WaitOne(timeout);
-
-            await easyClient.Close();
-
-            appServer.Stop();
-        }
-
-
-        [Test, Timeout(timeout)]
-        public async Task H_AppServerSendsWelcomeOnEasyClientNewSessionConnected()
+        public async Task G_AppServerWelcomeOnEasyClientNewSessionConnected()
         {
             AppServer appServer = new AppServer();
 
@@ -298,7 +250,6 @@ namespace HL7Interface.Tests.BasicTest
 
             appServer.NewSessionConnected += (s) =>
             {
-                ASCIIEncoding.ASCII.GetBytes("");
                 s.Send("Welcome!");
             };
 
@@ -316,17 +267,16 @@ namespace HL7Interface.Tests.BasicTest
             Assert.IsTrue(connected);
 
             callbackEvent.WaitOne(timeout);
+
+            await easyClient.Close();
+
+            appServer.Stop();
         }
 
 
         [Test, Timeout(timeout)]
-        public async Task I_TestEasyClientCallBack()
+        public async Task H_AppServerReceivesNewRequestBeginEndMarkReceiver()
         {
-            //byte[] begin = Encoding.ASCII.GetBytes("#");
-            //byte[] end = Encoding.ASCII.GetBytes("##");
-
-            //var filter = new Protocol.TestBeginEndMarkReceiveFilter(begin, end);
-
             var filterFactory = new DefaultReceiveFilterFactory<TestBeginEndMarkReceiveFilter, StringRequestInfo>();
 
             AppServer appServer = new AppServer(filterFactory);
@@ -337,25 +287,31 @@ namespace HL7Interface.Tests.BasicTest
 
             appServer.NewRequestReceived += (s, e) =>
             {
-                s.Send("Thank You!");
+                byte[] data = Encoding.ASCII.GetBytes("|" + "Howdy!" + "||");
+                s.Send(data, 0, data.Length);
             };
 
             EasyClient easyClient = new EasyClient();
 
             AutoResetEvent callbackEvent = new AutoResetEvent(false);
 
-            easyClient.Initialize(new TestProtoBaseDefaultTerminatorReceiverFilter(), (p) =>
+            easyClient.Initialize(new TestProtoBaseBeginEndMarkReceiverFilter(), (p) =>
             {
+                Assert.AreEqual("Howdy!", p.OriginalRequest);
                 callbackEvent.Set();
             });
 
-            bool connected = await easyClient.ConnectAsync(serverEndpoint);
+            bool connected = easyClient.ConnectAsync(serverEndpoint).Result;
 
             Assert.IsTrue(connected);
 
-            easyClient.Send(Encoding.ASCII.GetBytes("#Welcome!##"));
+            easyClient.Send(Encoding.ASCII.GetBytes("#Hola!!##"));
 
             callbackEvent.WaitOne(timeout);
+
+            await easyClient.Close();
+
+            appServer.Stop();
         }
     }
 }

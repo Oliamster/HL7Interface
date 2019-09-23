@@ -20,7 +20,7 @@ using System;
 using System.Net.Sockets;
 using System.Collections.Generic;
 
-namespace HL7Interface.Tests.BasicTest
+namespace HL7Interface.Tests
 {
     [TestFixture]
     public class HL7InterfaceTests : HL7InterfaceTestsBase
@@ -29,7 +29,7 @@ namespace HL7Interface.Tests.BasicTest
         /// Start the HL7Interface, initialize it and stop
         /// </summary>
         [Test, Timeout(timeout)]
-        public void InterfaceInitializeStartStop()
+        public void A_InterfaceInitializeStartStop()
         {
             HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
 
@@ -51,42 +51,85 @@ namespace HL7Interface.Tests.BasicTest
         /// </summary>
 
         [Test, Timeout(timeout)]
-        public void ConnectClientToInterface()
+        public async Task B_ConnectEasyClientToHL7Interface()
         {
-            //HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
-            //AutoResetEvent newSessionConnectedSignal = new AutoResetEvent(false);
-            //AutoResetEvent welcomMessageReceived = new AutoResetEvent(false);
+            HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
+            AutoResetEvent newSessionConnectedSignal = new AutoResetEvent(false);
+            AutoResetEvent welcomMessageReceived = new AutoResetEvent(false);
 
-            //Assert.IsTrue(hl7Interface.Initialize());
+            Assert.IsTrue(hl7Interface.Initialize());
 
-            //Assert.IsTrue(hl7Interface.Start());
+            Assert.IsTrue(hl7Interface.Start());
 
-            //hl7Interface.HL7Server.NewSessionConnected += (hl7Session) =>
-            //{
-            //    Assert.That(hl7Session is HL7Session);
-            //    Assert.That(hl7Session.Connected);
-            //    hl7Session.Send("#Welcome##");
-            //    newSessionConnectedSignal.Set();
-            //};
-            //EasyClient client = new EasyClient();
+            hl7Interface.HL7Server.NewSessionConnected += (hl7Session) =>
+            {
+                Assert.That(hl7Session is HL7Session);
+                Assert.That(hl7Session.Connected);
+                newSessionConnectedSignal.Set();
+            };
 
-            //byte[] begin = Encoding.ASCII.GetBytes("#");
-            //byte[] end = Encoding.ASCII.GetBytes("##");
-            //client.Initialize(new ReceiverFilter(new HL7ProtocolBase(), begin, end), (packageInfo) =>
-            //{
-            //    Assert.That(packageInfo.OriginalRequest.Equals("Welcome"));
-            //    welcomMessageReceived.Set();
-            //});
+            EasyClient client = new EasyClient();
 
-            //client.ConnectAsync(serverEndpoint).Wait();
+            client.Initialize(new TestProtoBaseDefaultTerminatorReceiverFilter(),  (packageInfo) =>
+            {
+                //nothing
+            });
 
-            //Assert.That(client.IsConnected);
+            Assert.IsTrue(client.ConnectAsync(serverEndpoint).Result);
 
-            //Assert.That(newSessionConnectedSignal.WaitOne());
+            Assert.That(client.IsConnected);
 
-            //Assert.That(welcomMessageReceived.WaitOne());
+            Assert.That(newSessionConnectedSignal.WaitOne());
 
-            //hl7Interface.Stop();
+            await client.Close();
+
+            hl7Interface.Stop();
+        }
+
+
+
+
+        /// <summary>
+        /// Connect an active client to the interface, if a new session is connected  say "Welcome"
+        /// </summary>
+
+        [Test, Timeout(timeout)]
+        public void B_ConnectClientToInterface()
+        {
+            HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
+            AutoResetEvent newSessionConnectedSignal = new AutoResetEvent(false);
+            AutoResetEvent welcomMessageReceived = new AutoResetEvent(false);
+
+            Assert.IsTrue(hl7Interface.Initialize());
+
+            Assert.IsTrue(hl7Interface.Start());
+
+            hl7Interface.HL7Server.NewSessionConnected += (hl7Session) =>
+            {
+                Assert.That(hl7Session is HL7Session);
+                Assert.That(hl7Session.Connected);
+                hl7Session.Send("#Welcome##");
+                newSessionConnectedSignal.Set();
+            };
+            EasyClient client = new EasyClient();
+
+            byte[] begin = Encoding.ASCII.GetBytes("#");
+            byte[] end = Encoding.ASCII.GetBytes("##");
+            client.Initialize(new ReceiverFilter(new HL7ProtocolBase(), begin, end), (packageInfo) =>
+            {
+                Assert.That(packageInfo.OriginalRequest.Equals("Welcome"));
+                welcomMessageReceived.Set();
+            });
+
+            client.ConnectAsync(serverEndpoint).Wait();
+
+            Assert.That(client.IsConnected);
+
+            Assert.That(newSessionConnectedSignal.WaitOne());
+
+            Assert.That(welcomMessageReceived.WaitOne());
+
+            hl7Interface.Stop();
         }
 
 

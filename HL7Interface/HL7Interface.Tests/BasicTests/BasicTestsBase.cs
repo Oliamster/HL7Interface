@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using SuperSocket.ClientEngine;
 using SuperSocket.SocketBase;
 using System;
 using System.Net;
@@ -11,6 +12,8 @@ namespace HL7Interface.Tests.BasicTest
         protected const int timeout = 50000000;
         protected System.Net.EndPoint clientEndPoint;
         protected System.Net.EndPoint serverEndpoint;
+        protected EasyClient easyClient;
+        protected AppServer appServer;
        
 
         
@@ -19,20 +22,23 @@ namespace HL7Interface.Tests.BasicTest
         {
             clientEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 50050);
             serverEndpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 50060);
+            //easyClient = new EasyClient();
+            //appServer = new AppServer();
 
+            //Assert.IsTrue(appServer.Setup("127.0.0.1", 50060));
+
+            //Assert.IsTrue(appServer.Start());
         }
 
         [TearDown]
         public void TestTearDown()
         {
+            //easyClient.Close().Wait();
 
+            //appServer.Stop();
         }
 
-        protected void CreateClient()
-        {
-
-        }
-
+ 
 
         public BasicTestsBase()
         {
