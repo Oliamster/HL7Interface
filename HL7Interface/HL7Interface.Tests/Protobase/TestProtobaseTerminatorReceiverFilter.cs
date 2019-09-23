@@ -31,12 +31,6 @@ namespace HL7Interface.Tests.Protocol
         }
 
 
-        //public override TestProtobasePackageInfo ResolvePackage(IBufferStream bufferStream)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-
 
         public override TestProtobasePackageInfo ResolvePackage(IBufferStream bufferStream)
         {
@@ -44,7 +38,6 @@ namespace HL7Interface.Tests.Protocol
             bufferStream.Read(data, 0, Convert.ToInt32(bufferStream.Length));
 
             string message = Encoding.ASCII.GetString(data);
-
 
             TestProtobasePackageInfo package = new TestProtobasePackageInfo();
 

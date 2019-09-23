@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using SuperSocket.SocketBase;
 using System;
 using System.Net;
 using System.Reflection;
@@ -10,6 +11,7 @@ namespace HL7Interface.Tests
         protected const int timeout = 50000000;
         protected System.Net.EndPoint clientEndPoint;
         protected System.Net.EndPoint serverEndpoint;
+       
 
         
         [SetUp]

@@ -4,23 +4,30 @@ using System.Text;
 
 namespace HL7Interface.Tests.Protobase
 {
-    public class TestProtoBaseFakeTerminatorReceiverFilter : SuperSocket.ProtoBase.TerminatorReceiveFilter<TestProtobasePackageInfo>
+    public class TestProtoBaseDefaultTerminatorReceiverFilter : SuperSocket.ProtoBase.TerminatorReceiveFilter<StringPackageInfo>
     {
-        public TestProtoBaseFakeTerminatorReceiverFilter()
+        public TestProtoBaseDefaultTerminatorReceiverFilter()
             : base(Encoding.ASCII.GetBytes(Environment.NewLine))
         {
 
         }
 
-        public TestProtoBaseFakeTerminatorReceiverFilter(byte[] terminatorMark)
+        public TestProtoBaseDefaultTerminatorReceiverFilter(byte[] terminatorMark)
             : base(terminatorMark)
         {
 
         }
 
-        public override TestProtobasePackageInfo ResolvePackage(IBufferStream bufferStream)
+        public override StringPackageInfo ResolvePackage(IBufferStream bufferStream)
         {
-            return null;
+            byte[] data = new byte[bufferStream.Length];
+            bufferStream.Read(data, 0, Convert.ToInt32(bufferStream.Length));
+
+            string message = Encoding.ASCII.GetString(data);
+
+            StringPackageInfo package = new StringPackageInfo(message.TrimEnd('\r', '\n'), new BasicStringParser());
+
+            return package;
         }
     }
 }
