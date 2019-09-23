@@ -25,7 +25,9 @@ namespace HL7Interface.Tests.Protobase
 
             string message = Encoding.ASCII.GetString(data);
 
-            StringPackageInfo package = new StringPackageInfo(message.TrimEnd('\r', '\n'), new BasicStringParser());
+            BasicStringParser bsp = new BasicStringParser(Environment.NewLine, Environment.NewLine);
+
+            StringPackageInfo package = new StringPackageInfo(message, bsp);
 
             return package;
         }

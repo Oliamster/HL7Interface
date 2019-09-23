@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace HL7Interface.Tests
 {
-    public class BaseTests
+    public class HL7InterfaceTestsBase
     {
         protected const int timeout = 50000000;
         protected System.Net.EndPoint clientEndPoint;
@@ -34,7 +34,7 @@ namespace HL7Interface.Tests
         }
 
 
-        public BaseTests()
+        public HL7InterfaceTestsBase()
         {
             /* Preparing test start */
             Assembly assembly = Assembly.GetCallingAssembly();
