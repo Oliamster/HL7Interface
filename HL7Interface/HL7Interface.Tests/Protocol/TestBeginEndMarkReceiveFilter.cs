@@ -40,9 +40,7 @@ namespace HL7Interface.Tests.Protocol
         {
             string message = Encoding.ASCII.GetString(readBuffer);
 
-            message.TrimStart(Encoding.ASCII.GetChars(BeginMark));
-
-            message.TrimEnd(Encoding.ASCII.GetChars(EndMark));
+            message = message.TrimStart(Encoding.ASCII.GetChars(BeginMark)).TrimEnd(Encoding.ASCII.GetChars(EndMark));
 
             return new StringRequestInfo(message, message, null);
         }

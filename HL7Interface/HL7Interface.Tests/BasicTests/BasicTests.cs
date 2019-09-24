@@ -111,6 +111,7 @@ namespace HL7Interface.Tests.BasicTest
             easyClient.Initialize(new TestProtoBaseDefaultTerminatorReceiverFilter(), (p) =>
             {
                 //do nothing.
+                Async.AsyncRun()
             });       
 
             bool connected = await easyClient.ConnectAsync(serverEndpoint);
@@ -235,9 +236,7 @@ namespace HL7Interface.Tests.BasicTest
             await easyClient.Close();
 
             appServer.Stop();
-
         }
-
 
         [Test, Timeout(timeout)]
         public async Task G_AppServerWelcomeOnEasyClientNewSessionConnected()
@@ -287,6 +286,7 @@ namespace HL7Interface.Tests.BasicTest
 
             appServer.NewRequestReceived += (s, e) =>
             {
+                Assert.AreEqual("Hola!", e.Key);
                 byte[] data = Encoding.ASCII.GetBytes("|" + "Howdy!" + "||");
                 s.Send(data, 0, data.Length);
             };
@@ -305,7 +305,67 @@ namespace HL7Interface.Tests.BasicTest
 
             Assert.IsTrue(connected);
 
-            easyClient.Send(Encoding.ASCII.GetBytes("#Hola!!##"));
+            easyClient.Send(Encoding.ASCII.GetBytes("#Hola!##"));
+
+            callbackEvent.WaitOne(timeout);
+
+            await easyClient.Close();
+
+            appServer.Stop();
+        }
+
+
+        [Test, Timeout(timeout)]
+        public async Task I_AppServerAndEasyClientReceivesMultiblePackages()
+        {
+            var filterFactory = new DefaultReceiveFilterFactory<TestBeginEndMarkReceiveFilter, StringRequestInfo>();
+
+            AppServer appServer = new AppServer(filterFactory);
+
+            Assert.IsTrue(appServer.Setup("127.0.0.1", 50060));
+
+            Assert.IsTrue(appServer.Start());
+
+            int requestCount = 0;
+
+            StringBuilder sb = new StringBuilder();
+
+            appServer.NewRequestReceived += (s, e) =>
+            {
+                sb.Append(e.Key);
+
+                if(++requestCount == 4)
+                {
+                    Assert.AreEqual("Can you serve me?", sb.ToString());
+                    byte[] data = Encoding.ASCII.GetBytes("|Sure, ||" + "|how ||" + "|can ||" + "|I ||" + "|help?||");
+                    requestCount = 0;
+                    sb.Clear();
+
+                    s.Send(data, 0, data.Length);
+                }
+            };
+
+            EasyClient easyClient = new EasyClient();
+
+            AutoResetEvent callbackEvent = new AutoResetEvent(false);
+
+            StringBuilder sb1 = new StringBuilder(21);
+            easyClient.Initialize(new TestProtoBaseBeginEndMarkReceiverFilter(), (p) =>
+            {
+                 sb.Append(p.OriginalRequest);
+
+                if (++requestCount == 5)
+                {
+                    Assert.AreEqual("Sure, how can I help?", sb.ToString());
+                    callbackEvent.Set();
+                }
+            });
+
+            bool connected = easyClient.ConnectAsync(serverEndpoint).Result;
+
+            Assert.IsTrue(connected);
+
+            easyClient.Send(Encoding.ASCII.GetBytes("#Can ##" + "#you ##" + "#serve ##" + "#me?##"));
 
             callbackEvent.WaitOne(timeout);
 

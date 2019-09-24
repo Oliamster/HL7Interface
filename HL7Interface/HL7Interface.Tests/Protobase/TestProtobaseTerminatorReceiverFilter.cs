@@ -1,4 +1,8 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using HL7api.Parser;
 using Hl7Interface.ServerProtocol;
 using HL7Interface.Tests.Protobase;
@@ -6,11 +10,6 @@ using NHapiTools.Base.Util;
 using SuperSocket.Facility.Protocol;
 using SuperSocket.ProtoBase;
 using SuperSocket.SocketBase.Protocol;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HL7Interface.Tests.Protocol
 {
@@ -29,8 +28,6 @@ namespace HL7Interface.Tests.Protocol
         {
 
         }
-
-
 
         public override TestProtobasePackageInfo ResolvePackage(IBufferStream bufferStream)
         {
