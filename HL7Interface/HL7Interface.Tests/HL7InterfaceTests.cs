@@ -19,6 +19,7 @@ using HL7Interface.Tests.Protobase;
 using System;
 using System.Net.Sockets;
 using System.Collections.Generic;
+using HL7api.Model;
 
 namespace HL7Interface.Tests
 {
@@ -131,7 +132,7 @@ namespace HL7Interface.Tests
 
 
         [Test, Timeout(timeout)]
-        public void D_EasyClientSendsRequestToHL7InterfaceDefaultTerminator()
+        public async Task D_EasyClientSendsHL7MessageToHL7InterfaceAndReceivedAck()
         {
             HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
 
@@ -141,32 +142,39 @@ namespace HL7Interface.Tests
 
             Assert.IsTrue(hl7Interface.Start());
 
+            EquipmentCommandRequest equipmentCommandRequest = new EquipmentCommandRequest();
+
             hl7Interface.HL7Server.NewRequestReceived += (hl7Session, hl7Request) =>
             {
                 Assert.That(hl7Request is HL7Request);
 
+                Assert.IsTrue(hl7Request.Request is EquipmentCommandRequest);
+
                 Assert.That(hl7Session.Connected);
-
-                //Assert.That()
-
-                byte[] data = Encoding.ASCII.GetBytes("|Welcome!||");
-
-                hl7Session.Send(data, 0, data.Length);
             };
 
             EasyClient client = new EasyClient();
 
-            client.Initialize(new TestProtoBaseBeginEndMarkReceiverFilter(), (packageInfo) =>
+            var tcs = new TaskCompletionSource<IHL7Message>();
+
+            client.Initialize(new ReceiverFilter(new HL7ProtocolBase()), (packageInfo) =>
             {
-                Assert.That(packageInfo.OriginalRequest.Equals("Welcome!"));
-                //welcomMessageReceived.Set();
+                tcs.SetResult(packageInfo.Request);
             });
 
-            Assert.IsTrue(client.ConnectAsync(serverEndpoint).Result);
+            Assert.That( await client.ConnectAsync(serverEndpoint));
 
-            Assert.That(client.IsConnected);
+            byte[] data = Encoding.ASCII.GetBytes(MLLP.CreateMLLPMessage(equipmentCommandRequest.Encode()));
 
-            //Assert.That(welcomMessageReceived.WaitOne());
+            client.Send(data);
+
+            var result = await tcs.Task;
+
+            Assert.IsTrue(result.IsAcknowledge);
+
+            Assert.IsTrue(HL7Parser.IsAckForRequest(equipmentCommandRequest, result));
+
+            await client.Close();
 
             hl7Interface.Stop();
         }
