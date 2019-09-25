@@ -110,8 +110,7 @@ namespace HL7Interface.Tests.BasicTest
 
             easyClient.Initialize(new TestProtoBaseDefaultTerminatorReceiverFilter(), (p) =>
             {
-                //do nothing.
-                Async.AsyncRun()
+                //do nothing
             });       
 
             bool connected = await easyClient.ConnectAsync(serverEndpoint);
