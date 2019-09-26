@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HL7api.Model
 {
-    interface IAcknowledge : IHL7Message
+    interface IHL7Acknowledge
     {
         //properties specific for acknowledgments, query response 
     }
