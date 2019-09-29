@@ -11,11 +11,9 @@ namespace HL7api.Model
 {
     public abstract class AbstractHL7Message : IHL7Message
     {
-
-        protected IMessage m_Message;
+        protected IMessage m_Message; 
         private HL7Parser hl7Parser;
         protected Terser terser;
-
 
         public AbstractHL7Message(IMessage message)
         {
@@ -23,7 +21,7 @@ namespace HL7api.Model
             this.hl7Parser = new HL7Parser();
             this.terser = new Terser(m_Message);
         }
-        public string MessageID => this.GetType().Name; //Change to RequestKey
+        public string MessageID => this.GetType().Name;
 
         public abstract DateTime MessageDateTime { get; }
 
@@ -66,5 +64,13 @@ namespace HL7api.Model
             terser.Set(path, newValue);
         }
         public abstract bool IsResponseForRequest(IHL7Message request);
+
+        public virtual bool IsAckForRequest(IHL7Message request)
+        {
+            if (!this.IsAcknowledge)
+                return false;
+
+            return HL7Parser.IsAckForRequest(request, this);
+        }
     }
 }

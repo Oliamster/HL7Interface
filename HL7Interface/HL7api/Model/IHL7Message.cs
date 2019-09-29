@@ -58,6 +58,13 @@ namespace HL7api.Model
         bool IsResponseForRequest(IHL7Message request);
 
         /// <summary>
+        /// Whether this is an ack for the supplyed request
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        bool IsAckForRequest(IHL7Message request);
+
+        /// <summary>
         /// Whether this message is an acknowledgment
         /// </summary>
         bool IsAcknowledge { get; }

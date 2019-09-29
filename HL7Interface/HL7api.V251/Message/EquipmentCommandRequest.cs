@@ -34,6 +34,7 @@ namespace HL7api.V251.Message
             this.eAC_U07.MSH.GetMessageProfileIdentifier(0).EntityIdentifier.Value = GetType().Name;
 
             string msh10 = this.eAC_U07.MSH.MessageControlID.Value;
+
             if(string.IsNullOrEmpty(msh10))
                  this.eAC_U07.MSH.MessageControlID.Value = Guid.NewGuid().ToString();
 

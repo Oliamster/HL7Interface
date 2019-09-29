@@ -1,13 +1,8 @@
-﻿
+﻿using System;
+using System.Diagnostics;
 using NHapi.Model.V251.Message;
 using HL7api.V251.Message;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 
 namespace HL7api.Tests
@@ -49,8 +44,6 @@ namespace HL7api.Tests
 
             Debug.Print(msg);
         }
-
-
     }
 }
 

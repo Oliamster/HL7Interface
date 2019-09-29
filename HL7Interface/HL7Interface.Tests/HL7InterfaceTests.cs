@@ -12,13 +12,7 @@ using NHapiTools.Base.Util;
 using NUnit.Framework;
 using SuperSocket.ClientEngine;
 using SuperSocket.SocketBase;
-using SuperSocket.ProtoBase;
-using SuperSocket.SocketBase.Protocol;
-using HL7Interface.Tests.Protocol;
 using HL7Interface.Tests.Protobase;
-using System;
-using System.Net.Sockets;
-using System.Collections.Generic;
 using HL7api.Model;
 
 namespace HL7Interface.Tests
@@ -99,8 +93,8 @@ namespace HL7Interface.Tests
 
             EasyClient client = new EasyClient();
 
-            client.Initialize(new TestProtoBaseDefaultTerminatorReceiverFilter(),  (packageInfo) =>
-            {
+            client.Initialize(new TestProtoBaseDefaultTerminatorReceiverFilter(), (packageInfo) =>
+           {
                 //nothing
             });
 
@@ -123,7 +117,7 @@ namespace HL7Interface.Tests
         public void D_HL7InterfaceSendsWelcomeOnEasyClientNewSessionConnected()
         {
             HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
-       
+
             AutoResetEvent welcomMessageReceived = new AutoResetEvent(false);
 
             Assert.IsTrue(hl7Interface.Initialize());
@@ -190,7 +184,7 @@ namespace HL7Interface.Tests
                 tcs.SetResult(packageInfo.Request);
             });
 
-            Assert.That( await client.ConnectAsync(serverEndpoint));
+            Assert.That(await client.ConnectAsync(serverEndpoint));
 
             byte[] data = Encoding.ASCII.GetBytes(MLLP.CreateMLLPMessage(equipmentCommandRequest.Encode()));
 
@@ -444,7 +438,7 @@ namespace HL7Interface.Tests
                     Assert.That(HL7Parser.IsAckForRequest(request, packageInfo.Request));
                     ackReceived.Set();
                 } else
-                Assert.Fail();
+                    Assert.Fail();
             });
 
             Assert.That(client.ConnectAsync(serverEndpoint).Result);
@@ -492,7 +486,7 @@ namespace HL7Interface.Tests
                     Assert.Fail();
             });
 
-            await client.ConnectAsync(serverEndpoint);
+            Assert.That(client.ConnectAsync(serverEndpoint).Result);
 
             Assert.That(client.IsConnected);
 
@@ -501,9 +495,10 @@ namespace HL7Interface.Tests
 
             Assert.That(ackReceived.WaitOne());
 
+            await client.Close();
+
             hl7Server.Stop();
 
-            await client.Close();
         }
 
         /// <summary>
@@ -522,7 +517,7 @@ namespace HL7Interface.Tests
             {
                 IsAckRequired = true,
                 IsResponseRequired = true
-            }) ;
+            });
 
             HL7Server serverSide = new HL7Server();
             Assert.IsTrue(serverSide.Setup("127.0.0.1", 50060));
@@ -560,40 +555,41 @@ namespace HL7Interface.Tests
         }
 
 
-        // <summary>
-        // Send the message to the remote system, both acknowledgment and the response  
-        // are blocking operation.
-        //
-        // Laboratory Device    Automation Manager(HL7INTERFACE)
-        //       |                             |
-        //       |------------EAC^U07--------->|
-        //       |<-----------ACK^U07----------|
-        //       |                             |
-        //       |<-----------EAR^U07----------|
-        //       |------------ACK^U08--------->|
-        //       |                             |
+
+
+        // Automation Manager         Laboratory Device          
+        // (HL7INTERFACE)              (HL7INTERFACE)     
+        //       |----------EAC^U07--------->|
+        //       |<---------ACK^U07----------|
+        //       |                           |
+        //       |<---------EAR^U07----------|
+        //       |----------ACK^U08--------->|
+        //       |                           |
         // </summary>
         // <returns></returns>
         [Test, Timeout(timeout)]
-        public async Task M_HL7InterfaceSendsCommandToAnotherHL7InterfaceWaitAckAndResponse()
+        public async Task M_EasyCLientSendsCommandToHL7InterfaceWaitAckAndResponse()
         {
             HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
             AutoResetEvent ackReceived = new AutoResetEvent(false);
             AutoResetEvent commandResponseReceived = new AutoResetEvent(false);
 
-            HL7ProtocolBase protocol = new HL7ProtocolBase(new HL7ProtocolConfig()
-            {
-                IsAckRequired = true,
-                IsResponseRequired = true
-            });
-
             HL7Server serverSide = new HL7Server();
 
             Assert.IsTrue(serverSide.Setup("127.0.0.1", 50060));
 
-            Assert.IsTrue(hl7Interface.Initialize(serverSide, protocol));
+            Assert.IsTrue(hl7Interface.Initialize(serverSide, new HL7ProtocolBase( new HL7ProtocolConfig()) ));
 
             Assert.That(hl7Interface.Start());
+
+            hl7Interface.NewRequestReceived += (s, e) =>
+            {
+                string response = MLLP.CreateMLLPMessage((new EquipmentCommandResponse()).Encode());
+
+                byte[] dataToSend = Encoding.ASCII.GetBytes(response);
+
+                s.Send(dataToSend, 0, dataToSend.Length);
+            };
 
             EquipmentCommandRequest request = new EquipmentCommandRequest();
 
@@ -608,7 +604,10 @@ namespace HL7Interface.Tests
                     ackReceived.Set();
                 }
                 else
+                {
+                    Assert.IsTrue(packageInfo.Request is EquipmentCommandResponse);
                     commandResponseReceived.Set();
+                }
             });
 
             Assert.That(client.ConnectAsync(serverEndpoint).Result);
@@ -621,14 +620,116 @@ namespace HL7Interface.Tests
 
             Assert.That(commandResponseReceived.WaitOne());
 
-            hl7Interface.Stop();
-
             await client.Close();
 
             serverSide.Stop();
+
+            hl7Interface.Stop();
+        }
+
+
+        // Automation Manager         Laboratory Device          
+        // (HL7INTERFACE)              (HL7INTERFACE)     
+        //       |----------EAC^U07--------->|
+        //       |<---------ACK^U07----------|
+        //       |                           |
+        //       |<---------EAR^U07----------|
+        //       |----------ACK^U08--------->|
+        //       |                           |
+        // </summary>
+        // <returns></returns>
+        [Test, Timeout(timeout)]
+        public async Task N_HL7InterfaceSendsCommandToHL7InterfaceWaitAckAndResponse()
+        {
+            HL7InterfaceBase hl7InterfaceA = new HL7InterfaceBase();
+            HL7InterfaceBase hl7InterfaceB = new HL7InterfaceBase();
+
+            AutoResetEvent ackReceived = new AutoResetEvent(false);
+            AutoResetEvent commandResponseReceived = new AutoResetEvent(false);
+
+            HL7ProtocolBase protocolA = new HL7ProtocolBase(new HL7ProtocolConfig()
+            {
+                IsAckRequired = true,
+                IsResponseRequired = false
+            });
+
+            HL7ProtocolBase protocolB = new HL7ProtocolBase(new HL7ProtocolConfig()
+            {
+                IsAckRequired = true,
+                IsResponseRequired = true
+            });
+
+            HL7Server serverA = new HL7Server();
+
+            Assert.IsTrue(serverA.Setup("127.0.0.1", 50060));
+
+            Assert.IsTrue(hl7InterfaceA.Initialize(serverA, protocolA));
+
+            Assert.That(hl7InterfaceA.Start());
+
+            hl7InterfaceA.NewRequestReceived += async (s, e) =>
+            {
+                EquipmentCommandResponse rsp = new EquipmentCommandResponse();
+
+                Assert.That(await hl7InterfaceA.ConnectAsync(clientEndPoint));
+
+                await hl7InterfaceA.SendHL7MessageAsync(rsp);
+            };
+
+            HL7Server serverB = new HL7Server();
+
+            Assert.IsTrue(serverB.Setup("127.0.0.1", 50050));
+
+            Assert.IsTrue(hl7InterfaceB.Initialize(serverB, protocolB));
+
+            Assert.That(hl7InterfaceB.Start());
+
+            EquipmentCommandRequest request = new EquipmentCommandRequest();
+
+            Assert.That(await hl7InterfaceB.ConnectAsync(serverEndpoint));
+
+            var result = await hl7InterfaceB.SendHL7MessageAsync(request);
+
+            Assert.IsTrue(result.Acknowledgment != null);
+
+            Assert.IsTrue(HL7Parser.IsAckForRequest(request, result.Acknowledgment));
+
+            Assert.IsTrue(result.Request.IsResponseForRequest(request));
+
+            hl7InterfaceA.Stop(); hl7InterfaceB.Stop();
+        }
+
+        [Test]
+        public async Task O_HL7InterfaceSelfConnectShouldFail()
+        {
+            HL7InterfaceBase hl7InterfaceA = new HL7InterfaceBase();
+
+            HL7ProtocolBase protocolA = new HL7ProtocolBase(new HL7ProtocolConfig()
+            {
+                IsAckRequired = true,
+                IsResponseRequired = false
+            });
+
+            HL7Server serverA = new HL7Server();
+
+            Assert.IsTrue(serverA.Setup("127.0.0.1", 50060));
+
+            Assert.IsTrue(hl7InterfaceA.Initialize(serverA, protocolA));
+
+            Assert.That(hl7InterfaceA.Start());
+
+            hl7InterfaceA.NewSessionConnected += (e) =>
+            {
+
+            };
+
+            Assert.IsFalse(await hl7InterfaceA.ConnectAsync(serverEndpoint));
+
+            hl7InterfaceA.Stop();
         }
     }
 }
+    
 
 
 

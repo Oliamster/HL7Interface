@@ -53,6 +53,12 @@ namespace HL7Interface
             add { m_HL7Server.NewRequestReceived += value; }
             remove { m_HL7Server.NewRequestReceived -= value; }
         }
+
+        public event SessionHandler<HL7Session> NewSessionConnected
+        {
+            add { m_HL7Server.NewSessionConnected += value; }
+            remove { m_HL7Server.NewSessionConnected -= value; }
+        }
         #endregion
 
         #region Public Properties
@@ -167,7 +173,9 @@ namespace HL7Interface
 
         private void OnNewRequestReceived(HL7Session session, HL7Request requestInfo)
         {
-            
+            lock (responseQueueLock)
+                m_IncomingMessageQueue.Push(requestInfo.Request);
+            responseReceivedSignal.Set();
         }
 
         public Task<HL7Request> SendHL7MessageAsync(IHL7Message message)
@@ -253,7 +261,7 @@ namespace HL7Interface
                 {
                     if (m_IncomingAcknowledgmentQueue.TryPeek(out ack))
                     {
-                        if (HL7Parser.IsAckForRequest(request, ack))
+                        if(ack.IsAckForRequest(request))
                         {
                             if (m_IncomingAcknowledgmentQueue.TryDequeue(out ack))
                             {

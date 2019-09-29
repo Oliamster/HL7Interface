@@ -268,6 +268,9 @@ namespace HL7api.Parser
             }
             //ackTerser.Set("/MSH-12", NHapi.Model.V251.Constants.VERSION);
             hl7Ack.SetValue("/MSA-1", Enum.GetName(typeof(AckTypes), ackType));
+
+            string code = Terser.Get(inboundHeader, 10, 0, 1, 1);
+
             hl7Ack.SetValue("/MSA-2", Terser.Get(inboundHeader, 10, 0, 1, 1));
         }
 
@@ -384,7 +387,7 @@ namespace HL7api.Parser
         private void FillMSHSegment(ISegment mshIn, ISegment mshOut)
         {
             if (mshOut == null)
-                throw new System.Exception();
+                throw new System.Exception("mshout");
 
             Guid g = Guid.NewGuid();
             Terser.Set(mshIn, 7, 0, 1, 1, DateTime.Now.ToString("yyyyMMddHHmmss"));

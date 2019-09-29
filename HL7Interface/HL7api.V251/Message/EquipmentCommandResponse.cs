@@ -76,7 +76,11 @@ namespace HL7api.V251.Message
             Debug.Print((new PipeParser()).Encode(eAR_U08));
             this.eAR_U08.MSH.DateTimeOfMessage.Time.SetLongDateWithSecond(DateTime.Now);
             this.eAR_U08.MSH.GetMessageProfileIdentifier(0).EntityIdentifier.Value = GetType().Name;
-            this.eAR_U08.MSH.MessageControlID.Value = Guid.NewGuid().ToString();
+
+            string msh10 = this.eAR_U08.MSH.MessageControlID.Value;
+            if (string.IsNullOrEmpty(msh10))
+                this.eAR_U08.MSH.MessageControlID.Value = Guid.NewGuid().ToString();
+
             this.eAR_U08.MSH.MessageType.MessageCode.Value = "EAR";
             this.eAR_U08.MSH.MessageType.TriggerEvent.Value = "U08";
 

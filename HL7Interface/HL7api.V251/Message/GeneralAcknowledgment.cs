@@ -1,14 +1,10 @@
-﻿using NHapi.Model.V251.Message;
+﻿using System;
 using HL7api.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using NHapi.Model.V251.Message;
 
 namespace HL7api.V251.Message
 {
-    public class GeneralAcknowledgment : AbstractHL7Message
+    public class GeneralAcknowledgment : AbstractHL7Message, IHL7Acknowledge
     {
         protected ACK ack;
 

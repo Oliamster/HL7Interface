@@ -100,7 +100,7 @@ namespace HL7api.Parser
 
             if (String.Compare(msa2, msh10) != 0)
                 return false;
-
+            
             //if the trigger event is provided then check aigain
             if (!string.IsNullOrEmpty(ack.Trigger))
             {
@@ -336,6 +336,7 @@ namespace HL7api.Parser
         {
             if (HL7Encoding.XML == encoding)
                 return xmlParser.Encode(hl7Message.Message);
+
             return pipeParser.Encode(hl7Message.Message);
         }
 
