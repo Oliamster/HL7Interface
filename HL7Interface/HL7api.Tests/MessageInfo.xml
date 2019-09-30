@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<messages>
+  <message id ="EquipementCommandRequest">
+    <MessageType>EAC_U07</MessageType>
+    <AckID>ACK_U07</AckID>
+    <AckType>ACK_U07</AckType>
+    <ResponseID>EquipementCommandResponse</ResponseID>
+    <ResponseType>EAR_U08</ResponseType>
+  </message>
+</messages>

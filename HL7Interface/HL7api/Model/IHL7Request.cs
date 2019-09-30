@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace HL7api.Model
 {
-    public interface IHL7Request : IHL7Message
+    public interface IHL7Request
     {
-        //properties specific for requests
     }
 }

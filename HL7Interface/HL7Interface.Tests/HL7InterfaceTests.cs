@@ -669,7 +669,10 @@ namespace HL7Interface.Tests
 
             hl7InterfaceA.NewRequestReceived += async (s, e) =>
             {
-                EquipmentCommandResponse rsp = new EquipmentCommandResponse();
+                EquipmentCommandResponse rsp = new EquipmentCommandResponse()
+                {
+                    RequestID = e.Request.MessageID
+                };
 
                 Assert.That(await hl7InterfaceA.ConnectAsync(clientEndPoint));
 
@@ -694,7 +697,7 @@ namespace HL7Interface.Tests
 
             Assert.IsTrue(HL7Parser.IsAckForRequest(request, result.Acknowledgment));
 
-            Assert.IsTrue(result.Request.IsResponseForRequest(request));
+            Assert.IsTrue(result.Response.IsResponseForRequest(request));
 
             hl7InterfaceA.Stop(); hl7InterfaceB.Stop();
         }

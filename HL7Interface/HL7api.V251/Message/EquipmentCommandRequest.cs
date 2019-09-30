@@ -10,16 +10,11 @@ namespace HL7api.V251.Message
 {
     public class EquipmentCommandRequest : AbstractHL7Message
     {
-        protected EAC_U07 eAC_U07;
+        #region Fields
+        protected EAC_U07 eAC_U07; 
+        #endregion
 
-        public EAC_U07 EAC_U07
-        {
-            get
-            {
-                return this.eAC_U07;
-            }
-        }
-
+        #region Constructors
         public EquipmentCommandRequest() : this(new EAC_U07())
         {
 
@@ -35,14 +30,24 @@ namespace HL7api.V251.Message
 
             string msh10 = this.eAC_U07.MSH.MessageControlID.Value;
 
-            if(string.IsNullOrEmpty(msh10))
-                 this.eAC_U07.MSH.MessageControlID.Value = Guid.NewGuid().ToString();
+            if (string.IsNullOrEmpty(msh10))
+                this.eAC_U07.MSH.MessageControlID.Value = Guid.NewGuid().ToString();
 
             this.eAC_U07.MSH.MessageType.MessageCode.Value = "EAC";
             this.eAC_U07.MSH.MessageType.TriggerEvent.Value = "U07";
-
         }
-        public TS DateTimeOfMEssage
+        #endregion
+
+        #region Properties
+        public EAC_U07 EAC_U07
+        {
+            get
+            {
+                return this.eAC_U07;
+            }
+        }
+      
+        public TS DateTimeOfMessage
         {
             get
             {
@@ -66,7 +71,7 @@ namespace HL7api.V251.Message
                 DateTime ret;
                 try
                 {
-                    ret = DateTime.ParseExact(DateTimeOfMEssage.Time.Value, "yyyyMMddHHmmss", null);
+                    ret = DateTime.ParseExact(DateTimeOfMessage.Time.Value, "yyyyMMddHHmmss", null);
                 }
                 catch (Exception)
                 { throw; }
@@ -99,5 +104,6 @@ namespace HL7api.V251.Message
         {
             return false;
         }
+        #endregion
     }
 }

@@ -14,7 +14,7 @@ using System.Diagnostics;
 
 namespace HL7api.V251.Message
 {
-    public class EquipmentCommandResponse : AbstractHL7Message
+    public class EquipmentCommandResponse : AbstractHL7Message, IHL7Response
     {
         protected EAR_U08 eAR_U08;
 
@@ -138,5 +138,7 @@ namespace HL7api.V251.Message
         public override string ExpectedResponseType => String.Empty;
 
         public override string ExpectedAckType => "ACK_U08";
+
+        public string RequestID { get; set; }
     }
 }
