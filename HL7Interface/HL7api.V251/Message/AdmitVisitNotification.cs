@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace HL7api.V251.Message
 {
-    public class AdmitVisitNotification : AbstractHL7Message
+    public class AdmitVisitNotification : HL7Message
     {
         protected ADT_A01 aDT_A01;
 

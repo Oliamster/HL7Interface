@@ -4,7 +4,7 @@ using NHapi.Model.V251.Message;
 
 namespace HL7api.V251.Message
 {
-    public class GeneralAcknowledgment : AbstractHL7Message, IHL7Acknowledge
+    public class GeneralAcknowledgment : HL7Message, IHL7Acknowledge
     {
         protected ACK ack;
 

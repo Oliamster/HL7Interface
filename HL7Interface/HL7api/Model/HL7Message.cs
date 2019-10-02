@@ -9,19 +9,25 @@ using NHapi.Base.Util;
 
 namespace HL7api.Model
 {
-    public abstract class AbstractHL7Message : IHL7Message
+    /// <summary>
+    /// The abstact HL7 MEssage
+    /// </summary>
+    public abstract class HL7Message : IHL7Message 
     {
         protected IMessage m_Message; 
         private HL7Parser hl7Parser;
         protected Terser terser;
 
-        public AbstractHL7Message(IMessage message)
+        public HL7Message(IMessage message)
         {
             this.m_Message = message;
             this.hl7Parser = new HL7Parser();
             this.terser = new Terser(m_Message);
         }
-        public string MessageID => this.GetType().Name;
+        public string MessageID
+        {
+            get { return GetType().Name; }
+        }
 
         public abstract DateTime MessageDateTime { get; }
 

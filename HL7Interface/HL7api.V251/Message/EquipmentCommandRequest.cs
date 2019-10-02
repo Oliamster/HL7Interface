@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace HL7api.V251.Message
 {
-    public class EquipmentCommandRequest : AbstractHL7Message
+    public class EquipmentCommandRequest : HL7Message
     {
         #region Fields
         protected EAC_U07 eAC_U07; 

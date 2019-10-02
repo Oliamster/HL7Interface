@@ -119,7 +119,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions.cs" />
-    <Compile Include="Model\AbstractHL7Message.cs" />
+    <Compile Include="Model\HL7Message.cs" />
     <Compile Include="Model\IHL7Acknowledge.cs" />
     <Compile Include="Model\IHL7Message.cs" />
     <Compile Include="HL7apiException.cs" />
