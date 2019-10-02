@@ -38,7 +38,7 @@ namespace HL7api.Model
         /// <summary>
         /// The HL7 version
         /// </summary>
-        string MessageVersion { get;  }
+        string HL7Version { get;  }
 
         /// <summary>
         /// The name of the expected response to this message

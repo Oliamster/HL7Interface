@@ -43,7 +43,7 @@ namespace HL7api.Parser
         public IHL7Message GetAckForMessage(IHL7Message hl7Message)
         {
             string ackName = hl7Message.ExpectedAckID;
-            string version = hl7Message.MessageVersion;
+            string version = hl7Message.HL7Version;
             return InstantiateMessage(ackName, version);
         }
 

@@ -1,11 +1,7 @@
-﻿using NHapi.Base.Model;
+﻿using System;
 using HL7api.Parser;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NHapi.Base.Util;
+using NHapi.Base.Model;
 
 namespace HL7api.Model
 {
@@ -15,15 +11,22 @@ namespace HL7api.Model
     public abstract class HL7Message : IHL7Message 
     {
         protected IMessage m_Message; 
-        private HL7Parser hl7Parser;
-        protected Terser terser;
+        private HL7Parser m_HL7Parser;
+        protected Terser m_Terser;
+        private ISegment m_MSH;
 
+        /// <summary>
+        /// Create a new instance of HL7Message
+        /// </summary>
+        /// <param name="message"></param>
         public HL7Message(IMessage message)
         {
             this.m_Message = message;
-            this.hl7Parser = new HL7Parser();
-            this.terser = new Terser(m_Message);
+            this.m_HL7Parser = new HL7Parser();
+            this.m_Terser = new Terser(m_Message);
+            this.m_MSH = m_Terser.getSegment("MSH");
         }
+
         public string MessageID
         {
             get { return GetType().Name; }
@@ -31,29 +34,32 @@ namespace HL7api.Model
 
         public abstract DateTime MessageDateTime { get; }
 
-        public virtual string ControlID => throw new NotImplementedException();
+        public virtual string ControlID => Terser.Get(m_MSH, 10,  0, 1, 1);
 
-        public string MessageVersion => this.m_Message.Version;
+        public string HL7Version => this.m_Message.Version;
 
         public virtual string ExpectedResponseID => throw new NotImplementedException();
 
-        public TransactionType TypeOfTransaction { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public TransactionType TypeOfTransaction { get; set; }
 
-        public virtual string Trigger => throw new NotImplementedException();
+        public virtual string Trigger => Terser.Get(m_MSH, 9, 0, 2, 1);
 
-        public virtual string Code => throw new NotImplementedException();
+        public virtual string Code => Terser.Get(m_MSH, 9, 0, 1, 1);
 
+        /// <summary>
+        /// The IMessage Interface
+        /// </summary>
         public IMessage Message => this.m_Message;
 
         public abstract string ExpectedAckID { get; }
 
         public string Encode()
         {
-            return hl7Parser.Encode(this);
+            return m_HL7Parser.Encode(this);
         }
         public string Encode(HL7Encoding hL7Encoding)
         {
-            return hl7Parser.Encode(this, hL7Encoding, true);
+            return m_HL7Parser.Encode(this, hL7Encoding, true);
         }
 
         public abstract bool IsAcknowledge { get; }
@@ -62,12 +68,12 @@ namespace HL7api.Model
 
         public string GetValue(string path)
         {
-            return terser.Get(path);
+            return m_Terser.Get(path);
         }
 
         public void SetValue(string path, string newValue)
         {
-            terser.Set(path, newValue);
+            m_Terser.Set(path, newValue);
         }
         public abstract bool IsResponseForRequest(IHL7Message request);
 

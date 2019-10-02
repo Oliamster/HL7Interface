@@ -61,7 +61,7 @@ namespace HL7Interface.ServerProtocol
                 request.Request = result.ParsedMessage;
                 request.Acknowledgment = result.Acknowledge;
 
-                request.Key = "V" + result.ParsedMessage.MessageVersion.Replace(".", "");
+                request.Key = "V" + result.ParsedMessage.HL7Version.Replace(".", "");
                 request.Key += result.ParsedMessage.MessageID;
             }
             return request;
