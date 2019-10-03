@@ -108,6 +108,9 @@
     <Reference Include="NHapiTools.Model.V281, Version=1.0.0.0, Culture=neutral, PublicKeyToken=8cc2ca07deb72b3d, processorArchitecture=MSIL">
       <HintPath>\\Mac\Home\HL7Interface\HL7Interface\packages\NHapiTools.1.10.0.0\lib\NHapiTools.Model.V281.dll</HintPath>
     </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\SuperSocket\Reference\nunit.framework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -122,6 +125,7 @@
     <Compile Include="Message\EquipmentCommandRequest.cs" />
     <Compile Include="Message\AdmitVisitNotification.cs" />
     <Compile Include="Message\GeneralAcknowledgment.cs" />
+    <Compile Include="Message\PrepareForSpecimenRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

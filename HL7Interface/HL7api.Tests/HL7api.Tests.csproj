@@ -128,6 +128,8 @@
     <Compile Include="HL7ParserTests.cs" />
     <Compile Include="EquipmentCommandRequestMessage.cs" />
     <Compile Include="AdmitVisitNotificationMessage.cs" />
+    <Compile Include="Messages\PrepareForSpecimentRequestTest.cs" />
+    <Compile Include="PrepareForSpecimentRequestTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
