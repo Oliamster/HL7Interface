@@ -126,6 +126,7 @@
     <Compile Include="Message\AdmitVisitNotification.cs" />
     <Compile Include="Message\GeneralAcknowledgment.cs" />
     <Compile Include="Message\PrepareForSpecimenRequest.cs" />
+    <Compile Include="Message\PrepareForSpecimenResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -50,27 +50,34 @@ namespace HL7api.Parser
 
         internal IHL7Message InstantiateMessage(string messageID, string version, IMessage message)
         {
-            string assemblyName = $"HL7api.V{version.Replace(".", "")}";//.HL7api.V251
+            string assemblyName = $"HL7api.V{version.Replace(".", "")}"; //.HL7api.V251
+
             string className = $"{assemblyName}.Message.{messageID}";
 
             IHL7Message hl7Message = null;
+
             Type messageType = null;
             String classToTry = $"{className},{assemblyName}";
            
             messageType = Type.GetType(classToTry); //GetType from the specified assembly
+
             if (messageType == null)
                 messageType = Type.GetType(className); //try in the current assembly
+
             if (messageType == null)
             {
-                throw new Exception();
+                throw new HL7apiException();
             }
             try
             {
-                hl7Message = (IHL7Message)Activator.CreateInstance(messageType, message);
+                hl7Message = (IHL7Message)Activator.CreateInstance(messageType, 
+                    BindingFlags.NonPublic
+                    |BindingFlags.Public
+                    |BindingFlags.Instance, message);
             }
             catch (Exception e)
             {
-                throw new HL7apiException("Unable to instantiate the class" + messageID);
+                throw new HL7apiException("Unable to instantiate the class " + messageID);
             }
             return hl7Message;
         }

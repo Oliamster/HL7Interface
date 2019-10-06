@@ -16,33 +16,33 @@ namespace HL7api.V251.Message.Tests
         [Test]
         public void A_CreateAndParsePrepareForSpecimenAcquisition()
         {
-            //ARANGE & ACK
-            PrepareForSpecimenRequest prepare = new PrepareForSpecimenRequest("123");
+            //ARANGE & ACT
+            PrepareForSpecimenRequest prepare = new PrepareForSpecimenRequest();
 
             //ASSERTS
             //Assert.IsTrue(prepare.SampleID == "123");
 
-            Assert.IsTrue(prepare.MessageID == "PrepareForSpecimenRequest");
+            Assert.AreEqual(nameof(PrepareForSpecimenRequest), prepare.MessageID);
 
-            Assert.IsTrue(prepare.HL7Version == "2.5.1");
+            Assert.AreEqual("2.5.1", prepare.HL7Version);
 
-            Assert.IsTrue(prepare.ExpectedAckID == "GeneralAcknowledgment");
+            Assert.AreEqual(nameof(GeneralAcknowledgment), prepare.ExpectedAckID);
 
-            Assert.IsTrue(prepare.ExpectedResponseID == "PrepareForSpecimenResponse");
+            Assert.AreEqual(nameof(PrepareForSpecimenResponse), prepare.ExpectedResponseID);
 
-            Assert.IsTrue(prepare.Trigger == "U07");
+            Assert.AreEqual("U07", prepare.Trigger);
 
-            Assert.IsTrue(prepare.Code == "EAC");
+            Assert.AreEqual("EAC", prepare.Code);
 
-            Assert.IsTrue(prepare.ExpectedResponseType == "EAR_U08");
+            Assert.AreEqual("EAR_U08", prepare.ExpectedResponseType);
 
-            Assert.IsTrue(prepare.ExpectedAckType == "ACK_U07");
+            Assert.AreEqual("ACK_U07", prepare.ExpectedAckType);
 
             Assert.IsFalse(prepare.IsAcknowledge);
 
             Assert.IsTrue(Regex.Match(prepare.ControlID, pattern, RegexOptions.IgnoreCase).Success);
 
-            string prepareRcv = @"MSH|^~\&|||||20190322123829||EAC^U07^EAC_U07|728d2456-339c-4d34-b7ad-c41b1e4cff34||2.5.1|||||||||PrepareForSpecimenRequest
+            string prepareRcv = @"MSH|^~\&|||||20190322123829||EAC^U07^EAC_U07|728d2456-339c-4d34-b7ad-c41b1e4cff34||2.5.1|||||||||PrepareForSpecimenRequest|
             EQU||20190322123829
             ECD||LO^Prepare^ASTM|Y
             SAC|||123";
@@ -114,6 +114,17 @@ namespace HL7api.V251.Message.Tests
             //StringAssert.Matches(ack.MessageID, regex1, "The MSH-10 shoul be a guid");
 
             Assert.IsTrue(ack.IsAckForRequest(prepareForSpecimen));
+
+        }
+
+        [Test]
+        public void ParseHouldNotFail()
+        {
+            string prepareRcv = @"MSH|^~\&|||||20190322123829||EAC^U07^EAC_U07|728d2456-339c-4d34-b7ad-c41b1e4cff34||2.5.1|||||||||PrepareForSpecimenRequest
+            EQU||20190322123829
+            ECD||LO^Prepare^ASTM|Y
+            SAC|||123";
+
         }
     }
 }

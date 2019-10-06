@@ -1,4 +1,6 @@
-﻿using System;
+﻿using NHapi.Base.Model;
+using NHapi.Model.V251.Message;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,13 +9,17 @@ using System.Threading.Tasks;
 namespace HL7api.V251.Message
 {
     /// <summary>
-    /// PRepare for specimen acquisition
+    /// Prepare for specimen acquisition
     /// </summary>
     public class PrepareForSpecimenRequest : EquipmentCommandRequest
     {
+        public PrepareForSpecimenRequest()
+        {
+        }
+
         public PrepareForSpecimenRequest(string sid) : this(new string[] { sid })
         {
-           
+
         }
 
         public PrepareForSpecimenRequest(params string[] sids)
@@ -34,5 +40,12 @@ namespace HL7api.V251.Message
                 throw new HL7apiException($"Unable to initialise a new instance of {GetType().Name} message");
             }
         }
+
+        internal PrepareForSpecimenRequest(IMessage message) : base(message)
+        {
+
+        }
+
+        public override string ExpectedResponseID => nameof(PrepareForSpecimenResponse);
     }
-}
+ } 

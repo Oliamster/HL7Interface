@@ -5,6 +5,7 @@ using NHapi.Model.V251.Datatype;
 using NHapi.Base;
 using NHapi.Base.Parser;
 using System.Diagnostics;
+using NHapi.Base.Model;
 
 namespace HL7api.V251.Message
 {
@@ -20,7 +21,7 @@ namespace HL7api.V251.Message
 
         }
 
-        public EquipmentCommandRequest(EAC_U07 eAC_U07)
+        public EquipmentCommandRequest(IMessage eAC_U07)
             : base(eAC_U07)
         {
             this.eAC_U07 = this.m_Message as EAC_U07;
@@ -63,6 +64,7 @@ namespace HL7api.V251.Message
         }
 
         public override string ExpectedResponseID => typeof(EquipmentCommandResponse).Name;
+
 
         public override DateTime MessageDateTime
         {
