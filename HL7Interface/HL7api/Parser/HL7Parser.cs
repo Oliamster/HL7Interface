@@ -70,13 +70,20 @@ namespace HL7api.Parser
             }
             try
             {
-                hl7Message = (IHL7Message)Activator.CreateInstance(messageType, 
-                    BindingFlags.NonPublic
-                    |BindingFlags.Public
-                    |BindingFlags.Instance, message);
+
+                ConstructorInfo[] cis = messageType.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance);
+
+                 hl7Message = (IHL7Message)Activator.CreateInstance(
+                     messageType, BindingFlags.NonPublic | BindingFlags.Instance, 
+                     null,
+                     new object[] { message }, 
+                     null);
             }
             catch (Exception e)
             {
+                
+
+
                 throw new HL7apiException("Unable to instantiate the class " + messageID);
             }
             return hl7Message;
