@@ -1,6 +1,8 @@
 ﻿using System;
 using HL7api.Model;
+using NHapi.Base.Model;
 using NHapi.Model.V251.Message;
+using NHapiTools.Base.Util;
 
 namespace HL7api.V251.Message
 {
@@ -27,6 +29,13 @@ namespace HL7api.V251.Message
             }
         }
 
+        internal GeneralAcknowledgment(IMessage message) : base(message) 
+        {
+            ack = message as ACK;
+        }
+
+
+    
 
         public override string Trigger => ack.MSH.MessageType.TriggerEvent.Value;
 
@@ -44,17 +53,14 @@ namespace HL7api.V251.Message
 
         public override string ExpectedAckType => String.Empty;
 
+        public AckTypes AckType { get; internal set; }
+
         public GeneralAcknowledgment() : this(new ACK())
         {
 
         }
 
-        public GeneralAcknowledgment(ACK ack)
-            : base(ack)
-        {
-            this.ack = this.m_Message as ACK;
-        }
-
+  
         public override bool IsResponseForRequest(IHL7Message request)
         {
             throw new NotImplementedException();

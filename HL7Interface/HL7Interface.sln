@@ -9,11 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HL7Interface.Tests", "HL7In
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HL7api.Tests", "HL7api.Tests\HL7api.Tests.csproj", "{82D763FE-0364-43D0-B30D-C327B38787F5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutomationManager", "AutomationManager\AutomationManager.csproj", "{82BF1D40-5D0E-4B05-A9D9-94010BF13617}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HL7AutomationManager", "AutomationManager\HL7AutomationManager.csproj", "{82BF1D40-5D0E-4B05-A9D9-94010BF13617}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutomatedDevice", "AutomatedDevice\AutomatedDevice.csproj", "{5B65072A-5C5D-4728-AAE2-A8A2BC9967A1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HL7AutomatedDevice", "AutomatedDevice\HL7AutomatedDevice.csproj", "{5B65072A-5C5D-4728-AAE2-A8A2BC9967A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutomatedDevice.Tests", "AutomatedDevice.Tests\AutomatedDevice.Tests.csproj", "{9473EC9B-3C05-4C1A-BA63-48E192B58FBD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HL7AutomatedDevice.Tests", "AutomatedDevice.Tests\HL7AutomatedDevice.Tests.csproj", "{9473EC9B-3C05-4C1A-BA63-48E192B58FBD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SuperSocket", "SuperSocket", "{0A274E05-906C-48B8-A032-AA09A5A4C925}"
 EndProject

@@ -36,7 +36,7 @@ namespace HL7api.Tests
 
 
         [Test]
-        public void TesrPositiveAckConstruction()
+        public void TestPositiveAckConstruction()
         {
             EquipmentCommandRequest rqst = new EquipmentCommandRequest();
 

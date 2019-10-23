@@ -2,6 +2,7 @@
 using HL7api.Parser;
 using NHapi.Base.Util;
 using NHapi.Base.Model;
+using NHapi.Base;
 
 namespace HL7api.Model
 {
@@ -68,12 +69,26 @@ namespace HL7api.Model
 
         public string GetValue(string path)
         {
-            return m_Terser.Get(path);
+            try
+            {
+                return m_Terser.Get(path);
+            }
+            catch (HL7Exception he)
+            {
+                throw new HL7apiException($"Unable to get value form path: {path}", he);
+            }
         }
 
         public void SetValue(string path, string newValue)
         {
-            m_Terser.Set(path, newValue);
+            try
+            {
+                m_Terser.Set(path, newValue);
+            }
+            catch (HL7Exception he)
+            {
+                throw new HL7apiException($"Unable to set the value to loction: {path}", he);
+            }
         }
         public abstract bool IsResponseForRequest(IHL7Message request);
 

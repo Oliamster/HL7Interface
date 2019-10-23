@@ -1,4 +1,5 @@
 ﻿using HL7api.Parser;
+using NHapiTools.Base.Util;
 using NUnit.Framework;
 using System;
 using System.Text.RegularExpressions;
@@ -12,7 +13,7 @@ namespace HL7api.V251.Message.Tests
         Guid g;
         string pattern = @"(?im)^[{(]?[0-9A-F]{8}[-]?(?:[0-9A-F]{4}[-]?){3}[0-9A-F]{12}[)}]?$";
 
-
+   
         [Test]
         public void A_CreateAndParsePrepareForSpecimenAcquisition()
         {
@@ -61,10 +62,9 @@ namespace HL7api.V251.Message.Tests
 
             PrepareForSpecimenRequest prepareForSpecimen = (PrepareForSpecimenRequest)result.ParsedMessage;
 
-            //Assert.IsTrue(prepareForSpecimen.SampleID == "123");
+            Assert.IsTrue(prepareForSpecimen.GetValue("/COMMAND(0)/SPECIMEN_CONTAINER/SAC-3") == "123");
 
             Assert.IsTrue(prepareForSpecimen.MessageID == "PrepareForSpecimenRequest");
-
 
             Assert.IsTrue(prepareForSpecimen.MessageID == typeof(PrepareForSpecimenRequest).Name);
 
@@ -72,9 +72,9 @@ namespace HL7api.V251.Message.Tests
 
             //Assert.IsTrue(prepare.ProcessingID == "P");
 
-            Assert.IsTrue(prepareForSpecimen.ExpectedAckID == "GeneralAcknowledgment");
+            Assert.AreEqual(typeof(GeneralAcknowledgment), prepareForSpecimen.ExpectedAckID);
 
-            Assert.IsTrue(prepareForSpecimen.ExpectedResponseID == "PrepareForSpecimenResponse");
+            Assert.AreEqual(typeof(PrepareForSpecimenResponse), prepareForSpecimen.ExpectedResponseID);
 
             Assert.IsFalse(prepareForSpecimen.IsAcknowledge);
 
@@ -82,14 +82,13 @@ namespace HL7api.V251.Message.Tests
 
             Assert.AreEqual(prepareForSpecimen.MessageDateTime.ToString("yyyyMMddHHmmss"), "20190322123829");
 
-
             //ARANGE & ACT
             GeneralAcknowledgment ack = result.Acknowledge as GeneralAcknowledgment;
 
             //ASSERTS
             Assert.IsNotNull(ack);
 
-            //Assert.IsTrue(ack.AckType == Constants.AckTypes.AA);
+            //Assert.IsTrue(ack.AckType == AckTypes.AA);
 
             Assert.IsTrue(ack.MessageID == "GeneralAcknowledgment");
 

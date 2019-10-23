@@ -153,7 +153,7 @@ namespace HL7Interface.Tests
         }
 
 
-        [Test, Timeout(timeout)]
+        [Test, Timeout(timeout + 1000000)]
         public async Task E_EasyClientSendsHL7MessageToHL7InterfaceAndReceivesAck()
         {
             HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
@@ -164,13 +164,13 @@ namespace HL7Interface.Tests
 
             Assert.IsTrue(hl7Interface.Start());
 
-            EquipmentCommandRequest equipmentCommandRequest = new EquipmentCommandRequest();
+            PrepareForSpecimenRequest equipmentCommandRequest = new PrepareForSpecimenRequest();
 
             hl7Interface.HL7Server.NewRequestReceived += (hl7Session, hl7Request) =>
             {
                 Assert.That(hl7Request is HL7Request);
 
-                Assert.IsTrue(hl7Request.Request is EquipmentCommandRequest);
+                Assert.IsTrue(hl7Request.Request is PrepareForSpecimenRequest);
 
                 Assert.That(hl7Session.Connected);
             };
@@ -212,13 +212,13 @@ namespace HL7Interface.Tests
 
             Assert.IsTrue(hl7Interface.Start());
 
-            EquipmentCommandRequest equipmentCommandRequest = new EquipmentCommandRequest();
+            PrepareForSpecimenRequest equipmentCommandRequest = new PrepareForSpecimenRequest();
 
             hl7Interface.HL7Server.NewSessionConnected += (hl7Session) =>
             {
                 Assert.That(hl7Session.Connected);
 
-                string response = MLLP.CreateMLLPMessage((new EquipmentCommandResponse()).Encode());
+                string response = MLLP.CreateMLLPMessage((new PrepareForSpecimenResponse()).Encode());
 
                 byte[] dataToSend = Encoding.ASCII.GetBytes(response);
 
@@ -238,7 +238,7 @@ namespace HL7Interface.Tests
 
             var result = await tcs.Task;
 
-            Assert.IsTrue(result is EquipmentCommandResponse);
+            Assert.IsTrue(result is PrepareForSpecimenResponse);
 
             await client.Close();
 
@@ -278,7 +278,7 @@ namespace HL7Interface.Tests
 
             server.NewRequestReceived += (e, s) =>
             {
-                Assert.That(s.Request is EquipmentCommandRequest);
+                Assert.That(s.Request is PrepareForSpecimenRequest);
                 requestReceived.Set();
             };
 
@@ -286,7 +286,7 @@ namespace HL7Interface.Tests
 
             Assert.That(connected);
 
-            await hl7Interface.SendHL7MessageAsync(new EquipmentCommandRequest());
+            await hl7Interface.SendHL7MessageAsync(new PrepareForSpecimenRequest());
 
             requestReceived.WaitOne();
 
@@ -325,7 +325,7 @@ namespace HL7Interface.Tests
 
             server.NewRequestReceived += (e, s) =>
             {
-                Assert.That(s.Request is EquipmentCommandRequest);
+                Assert.That(s.Request is PrepareForSpecimenRequest);
                 requestReceived.Set();
             };
 
@@ -333,7 +333,7 @@ namespace HL7Interface.Tests
 
             Assert.That(connected);
 
-            HL7Request req = await hl7Interface.SendHL7MessageAsync(new EquipmentCommandRequest());
+            HL7Request req = await hl7Interface.SendHL7MessageAsync(new PrepareForSpecimenRequest());
 
             Assert.IsNotNull(req);
 
@@ -378,10 +378,10 @@ namespace HL7Interface.Tests
 
             server.NewRequestReceived += (e, s) =>
             {
-                Assert.That(s.Request is EquipmentCommandRequest);
+                Assert.That(s.Request is PrepareForSpecimenRequest);
                 requestReceived.Set();
                 Thread.Sleep(500);
-                byte[] bytesToSend = Encoding.ASCII.GetBytes(MLLP.CreateMLLPMessage((new EquipmentCommandResponse()).Encode()));
+                byte[] bytesToSend = Encoding.ASCII.GetBytes(MLLP.CreateMLLPMessage((new PrepareForSpecimenResponse()).Encode()));
                 e.Send(bytesToSend, 0, bytesToSend.Length);
             };
 
@@ -389,7 +389,7 @@ namespace HL7Interface.Tests
 
             Assert.That(connected);
 
-            HL7Request req = await hl7Interface.SendHL7MessageAsync(new EquipmentCommandRequest());
+            HL7Request req = await hl7Interface.SendHL7MessageAsync(new PrepareForSpecimenRequest());
 
             Assert.IsNotNull(req);
 
@@ -426,7 +426,7 @@ namespace HL7Interface.Tests
             hl7Server.Setup("127.0.0.1", 50060);
             hl7Server.Start();
 
-            EquipmentCommandRequest request = new EquipmentCommandRequest();
+            PrepareForSpecimenRequest request = new PrepareForSpecimenRequest();
 
             EasyClient client = new EasyClient();
 
@@ -470,7 +470,7 @@ namespace HL7Interface.Tests
             hl7Server.Setup("127.0.0.1", 50060);
             hl7Server.Start();
 
-            EquipmentCommandRequest request = new EquipmentCommandRequest();
+            PrepareForSpecimenRequest request = new PrepareForSpecimenRequest();
 
             EasyClient client = new EasyClient();
 
@@ -526,7 +526,7 @@ namespace HL7Interface.Tests
 
             Assert.That(hl7Interface.Start());
 
-            EquipmentCommandRequest request = new EquipmentCommandRequest();
+            PrepareForSpecimenRequest request = new PrepareForSpecimenRequest();
 
             EasyClient client = new EasyClient();
 
@@ -584,14 +584,14 @@ namespace HL7Interface.Tests
 
             hl7Interface.NewRequestReceived += (s, e) =>
             {
-                string response = MLLP.CreateMLLPMessage((new EquipmentCommandResponse()).Encode());
+                string response = MLLP.CreateMLLPMessage((new PrepareForSpecimenResponse()).Encode());
 
                 byte[] dataToSend = Encoding.ASCII.GetBytes(response);
 
                 s.Send(dataToSend, 0, dataToSend.Length);
             };
 
-            EquipmentCommandRequest request = new EquipmentCommandRequest();
+            PrepareForSpecimenRequest request = new PrepareForSpecimenRequest();
 
             EasyClient client = new EasyClient();
 
@@ -605,7 +605,7 @@ namespace HL7Interface.Tests
                 }
                 else
                 {
-                    Assert.IsTrue(packageInfo.Request is EquipmentCommandResponse);
+                    Assert.IsTrue(packageInfo.Request is PrepareForSpecimenResponse);
                     commandResponseReceived.Set();
                 }
             });
@@ -669,7 +669,7 @@ namespace HL7Interface.Tests
 
             hl7InterfaceA.NewRequestReceived += async (s, e) =>
             {
-                EquipmentCommandResponse rsp = new EquipmentCommandResponse()
+                PrepareForSpecimenResponse rsp = new PrepareForSpecimenResponse()
                 {
                     RequestID = e.Request.MessageID
                 };
@@ -687,7 +687,7 @@ namespace HL7Interface.Tests
 
             Assert.That(hl7InterfaceB.Start());
 
-            EquipmentCommandRequest request = new EquipmentCommandRequest();
+            PrepareForSpecimenRequest request = new PrepareForSpecimenRequest();
 
             Assert.That(await hl7InterfaceB.ConnectAsync(serverEndpoint));
 

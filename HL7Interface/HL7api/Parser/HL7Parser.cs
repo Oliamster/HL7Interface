@@ -79,12 +79,9 @@ namespace HL7api.Parser
                      new object[] { message }, 
                      null);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                
-
-
-                throw new HL7apiException("Unable to instantiate the class " + messageID);
+                throw new HL7apiException("Unable to instantiate the class " + messageID, ex);
             }
             return hl7Message;
         }
@@ -354,8 +351,6 @@ namespace HL7api.Parser
             return pipeParser.Encode(hl7Message.Message);
         }
 
-
-
         public PipeParser PipeParser => this.pipeParser;
 
         public string Encode(IHL7Message message)
@@ -364,7 +359,7 @@ namespace HL7api.Parser
         }
     }
 
-    public class MapClass
+    public class MessageInfo
     {
         string MessageType;
 
