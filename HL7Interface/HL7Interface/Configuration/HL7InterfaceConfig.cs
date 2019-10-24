@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace HL7Interface.Configuration
 {
-    public class HL7ProtocolConfig : IProtocolConfig
+    public class HL7InterfaceConfig
     {
         /// <summary>
         /// Gets the name of the protocol you want to use

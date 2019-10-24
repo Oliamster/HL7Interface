@@ -26,7 +26,12 @@ namespace HL7Interface
             get; set;
         }
 
-        protected AutoResetEvent ResponseReceivedEvent
+        internal AutoResetEvent ResponseReceivedEvent
+        {
+            get; set;
+        }
+
+        internal AutoResetEvent AckReceivedEvent
         {
             get; set;
         }

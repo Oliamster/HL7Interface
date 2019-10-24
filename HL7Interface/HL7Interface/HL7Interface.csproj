@@ -122,6 +122,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\HL7InterfaceConfig.cs" />
     <Compile Include="HL7InterfaceBase.cs" />
     <Compile Include="ClientProtocol\PackageInfo.cs" />
     <Compile Include="ClientProtocol\ReceiverFilter.cs" />
@@ -130,6 +131,7 @@
     <Compile Include="Configuration\IProtocolConfig.cs" />
     <Compile Include="Configuration\ProtocolConfig.cs" />
     <Compile Include="HL7Commands.cs" />
+    <Compile Include="HL7InterfaceException.cs" />
     <Compile Include="ICommunication.cs" />
     <Compile Include="IHL7Interface.cs" />
     <Compile Include="HL7Request.cs" />

@@ -15,6 +15,7 @@ using HL7Interface.ServerProtocol;
 using SuperSocket.SocketBase;
 using SuperSocket.SocketEngine;
 using SuperSocket.ClientEngine;
+using SuperSocket.SocketBase.Config;
 
 namespace HL7Interface
 {
@@ -25,26 +26,25 @@ namespace HL7Interface
     {
         #region Private Properties
         private HL7Server m_HL7Server;
-        private EasyClient m_Client;
+        private EasyClient m_EasyClient;
         private HL7ProtocolBase m_HL7Protocol;
-        private ConcurrentQueue<IHL7Message> m_IncomingAcknowledgmentQueue;
-        private ConcurrentStack<IHL7Message> m_IncomingMessageQueue;
+        private BlockingCollection<HL7Request> m_OutgoingRequests;
         private object AckQueueLock = new object();
         private object responseQueueLock = new object();
-        private AutoResetEvent ackReceivedSignal = new AutoResetEvent(false);
-        private AutoResetEvent responseReceivedSignal = new AutoResetEvent(false);
         private EndPoint m_LocalEndpoint;
         #endregion
 
         #region Constructor
+
+        /// <summary>
+        /// Create a new Instance of HL7Interface
+        /// </summary>
         public HL7InterfaceBase()
         {
-            m_IncomingAcknowledgmentQueue = new ConcurrentQueue<IHL7Message>();
-            m_IncomingMessageQueue = new ConcurrentStack<IHL7Message>(); 
-            m_Client = new SuperSocket.ClientEngine.EasyClient();
+            m_OutgoingRequests = new BlockingCollection<HL7Request>();
+            m_EasyClient = new SuperSocket.ClientEngine.EasyClient();
             m_HL7Protocol = new HL7ProtocolBase();
             m_HL7Server = new HL7Server();
-            //m_HL7Server.LogFactory.GetLog(m_HL7Server.Name);
         }
         #endregion
 
@@ -70,14 +70,14 @@ namespace HL7Interface
 
         public void Stop()
         {
-            if (m_Client.IsConnected)
-                m_Client.Close().Wait();
+            if (m_EasyClient.IsConnected)
+                m_EasyClient.Close().Wait();
 
             m_HL7Server.Stop();
         }
         
 
-        public IHL7Protocol Protocol
+        public virtual IHL7Protocol Protocol
         {
             get
             {
@@ -104,7 +104,7 @@ namespace HL7Interface
             {
                 while (!ret && !cts.Token.IsCancellationRequested)
                 {
-                    ret = await m_Client.ConnectAsync(remoteEndPoint);
+                    ret = await m_EasyClient.ConnectAsync(remoteEndPoint);
                 }
             }, cts.Token);
             t.Wait(5000);
@@ -129,7 +129,7 @@ namespace HL7Interface
             if (m_HL7Server == null)
                 return false;
 
-            //m_HL7Server.Logger.Debug("the Server side is initializing");
+            m_HL7Server.Logger.Debug("the Server side is initializing");
 
             HL7SocketServiceConfig config = bootstrap.Config as HL7SocketServiceConfig;
 
@@ -144,7 +144,7 @@ namespace HL7Interface
 
         public virtual bool Initialize(HL7Server server, IHL7Protocol protocol)
         {
-            //m_HL7Server.Logger.Debug("the Client side is initializing");
+            m_HL7Server.Logger.Debug("the Client side is initializing");
 
             if (protocol.Config == null)
                 throw new ArgumentNullException("The configuration proprty is missing for this protocol");
@@ -159,19 +159,48 @@ namespace HL7Interface
 
             m_LocalEndpoint = new IPEndPoint(IPAddress.Parse(m_HL7Server.Config.Ip), m_HL7Server.Config.Port);
 
-            m_Client.Initialize(new ReceiverFilter(m_HL7Protocol), (request) =>
+            m_EasyClient.Initialize(new ReceiverFilter(m_HL7Protocol), (request) =>
             {
                 if (request.Request.IsAcknowledge)
                 {
-                    lock (responseQueueLock)
-                        m_IncomingAcknowledgmentQueue.Enqueue(request.Request);
-                    ackReceivedSignal.Set();
+                    ProcessIncomingAck(request.Request);
                 }
                 else
                 {
-                    lock (responseQueueLock)
-                        m_IncomingMessageQueue.Push(request.Request);
-                    responseReceivedSignal.Set();
+                    ProcessIncomingRequest(request);
+                }
+            });
+
+            NewRequestReceived += OnNewRequestReceived;
+
+            return true;
+        }
+
+
+
+        public virtual bool Initialize(IProtocolConfig protocolConfig, IServerConfig serverConfig, HL7ProtocolBase hL7Protocol = null)
+        {
+            if (!m_HL7Server.Setup(serverConfig))
+                return false;
+
+            if (hL7Protocol != null) m_HL7Protocol = hL7Protocol;
+
+
+            if(m_HL7Server.Setup(serverConfig)) return false;
+
+
+            m_LocalEndpoint = new IPEndPoint(IPAddress.Parse(m_HL7Server.Config.Ip), m_HL7Server.Config.Port);
+
+            m_EasyClient.Initialize(new ReceiverFilter(m_HL7Protocol), (request) =>
+            {
+
+                if (request.Request.IsAcknowledge)
+                {
+                    ProcessIncomingAck(request.Request);
+                }
+                else
+                {
+                    ProcessIncomingRequest(request);
                 }
             });
 
@@ -179,78 +208,95 @@ namespace HL7Interface
 
             return true;
 
-            
         }
+
 
         private void OnNewRequestReceived(HL7Session session, HL7Request requestInfo)
         {
-            lock (responseQueueLock)
-                m_IncomingMessageQueue.Push(requestInfo.Request);
-            responseReceivedSignal.Set();
+            ProcessIncomingRequest(requestInfo);
         }
 
         public Task<HL7Request> SendHL7MessageAsync(IHL7Message message)
         {
             return Task.Run( async () =>
             {
-                m_Client.Send(Encoding.ASCII.GetBytes(MLLP.CreateMLLPMessage(message.Encode())));
+                m_EasyClient.Send(Encoding.ASCII.GetBytes(MLLP.CreateMLLPMessage(message.Encode())));
 
                 HL7Request hl7Request = new HL7Request()
                 {
                     Request = message,
+                    ResponseReceivedEvent = new AutoResetEvent(false),
+                    AckReceivedEvent = new AutoResetEvent(false)
                 };
 
-                if (Protocol.Config.IsAckRequired)
+                if (!Protocol.Config.IsAckRequired)
+                    return await Task.FromResult(hl7Request);
+               
+                if (!hl7Request.AckReceivedEvent.WaitOne(Protocol.Config.AckTimeout))
                 {
-                    hl7Request.Acknowledgment = await WaitForAcknowlwdgment(message, new CancellationToken());
-                }
 
-                if (Protocol.Config.IsResponseRequired)
-                {
-                    hl7Request.Response = await WaitForResponse(message, new CancellationToken());
                 }
+                else
+                {
+                    
+                }
+                
+
+                if (!Protocol.Config.IsResponseRequired)
+                    return await Task.FromResult(hl7Request);
+
+                
+                if (!hl7Request.ResponseReceivedEvent.WaitOne(Protocol.Config.ResponseTimeout))
+                {
+
+                }
+                else
+                {
+                   
+                }
+                
                 return hl7Request;
             });
         }
 
         /// <summary>
-        /// Poll the queue until the response arrived or timeout
+        /// 
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="ack"></param>
         /// <returns></returns>
-        private Task<IHL7Message> WaitForResponse(IHL7Message request, CancellationToken token)
+        private void ProcessIncomingAck(IHL7Message ack)
         {
-            IHL7Message response = null;
-            return Task.Run(() =>
+            HL7Request req = null;
+
+            var v = m_OutgoingRequests.Where((request, b) =>
             {
-                try
+                if (ack.IsAckForRequest(request.Request) && request.Acknowledgment == null)
                 {
-                    do
-                    {
-                        responseReceivedSignal.WaitOne();
-                        lock (responseQueueLock)
-                        {
-                            if (m_IncomingMessageQueue.TryPeek(out response))
-                            {
-                                if (response.IsResponseForRequest(request))
-                                {
-                                    if (m_IncomingMessageQueue.TryPop(out response))
-                                    {
-                                        return response;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    while (true);
+                    request.Acknowledgment = ack as IHL7Message;
+                    
+                    return true;
                 }
-                catch (OperationCanceledException)
-                {
-                    response = null;
-                    return response;
-                }
-            }, token);
+                else return false;
+
+            }).ToList();
+
+            if (v.Count() == 0)
+            {
+                string log = "Unexpected ack received or ack received to late";
+                m_HL7Server.Logger.Error(log);
+            }
+            else if (v.Count() > 1)
+            {
+                throw new HL7InterfaceException("each ack should be bount to a single request");
+            }
+            else
+            {
+                req = v.FirstOrDefault();
+
+                req.AckReceivedEvent.Set();
+            }
         }
+    
 
         public HL7Server HL7Server
         {
@@ -262,27 +308,34 @@ namespace HL7Interface
             return m_HL7Server.Start();
         }
 
-        private Task<IHL7Message> WaitForAcknowlwdgment(IHL7Message request, CancellationToken token)
+        private void ProcessIncomingRequest(HL7Request response)
         {
-            IHL7Message ack = null;
-            return Task.Run(() =>
+            HL7Request req = null;
+
+           
+            var v = m_OutgoingRequests.Where((request, b) =>
             {
-                ackReceivedSignal.WaitOne();
-                lock (AckQueueLock)
+                if (response.Request.IsResponseForRequest(request.Request))
                 {
-                    if (m_IncomingAcknowledgmentQueue.TryPeek(out ack))
-                    {
-                        if(ack.IsAckForRequest(request))
-                        {
-                            if (m_IncomingAcknowledgmentQueue.TryDequeue(out ack))
-                            {
-                                return ack;
-                            }
-                        }
-                    }
+                    request.Request = response.Request;
+                    return true;
                 }
-                return null;
-            });
+                else return false;
+            }
+            ).ToList();
+
+           
+            if (v.Count() == 0)
+            {
+                m_HL7Server.Logger.Error("Unexpected response received");
+            }
+            else
+            {
+                req = v.FirstOrDefault();
+
+                req.ResponseReceivedEvent.Set();
+            }
         }
+
     }
 }

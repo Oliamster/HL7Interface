@@ -14,7 +14,7 @@ namespace HL7api.V251.Message
         {
         }
 
-        public PrepareForSpecimenResponse(EquipmentCommandRequest request) : base(request as EquipmentCommandResponse)
+        public PrepareForSpecimenResponse(EquipmentCommandRequest request) : base(request)
         {
 
         }

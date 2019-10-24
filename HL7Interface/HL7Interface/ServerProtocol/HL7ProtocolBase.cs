@@ -23,7 +23,7 @@ namespace Hl7Interface.ServerProtocol
 
         }
 
-        public HL7ProtocolBase(HL7ProtocolConfig p)
+        public HL7ProtocolBase(IProtocolConfig p)
         {
             Config = p;
         }
