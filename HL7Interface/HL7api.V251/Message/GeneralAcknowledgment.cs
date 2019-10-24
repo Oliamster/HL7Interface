@@ -37,17 +37,17 @@ namespace HL7api.V251.Message
 
     
 
-        public override string Trigger => ack.MSH.MessageType.TriggerEvent.Value;
+        public override string TriggerEvent => ack.MSH.MessageType.TriggerEvent.Value;
 
-        public override string Code => ack.MSH.MessageType.MessageCode.Value;
+        public override string MessageCode => ack.MSH.MessageType.MessageCode.Value;
 
 
         public override bool IsAcknowledge => true;
         public override DateTime MessageDateTime => throw new NotImplementedException();
 
-        public override string ExpectedAckID => null;
+        public override string ExpectedAckID => string.Empty;
 
-        public override string ExpectedResponseID => default(string);
+        public override string ExpectedResponseID => string.Empty;
 
         public override string ExpectedResponseType => String.Empty;
 

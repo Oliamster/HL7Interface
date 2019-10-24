@@ -9,20 +9,20 @@ using HL7api.Parser;
 namespace HL7api.Tests
 {
     [TestFixture]
-    public class EquipmentCommandRequestMessage
+    public class PrepareForSpecimenResponseMessageTest
     {
         [Test]
-        public void CreateNewEquipmentCommandRequest()
+        public void CreatePrepareForSpecimenResponse()
         {
-            EquipmentCommandRequest request = new EquipmentCommandRequest();
+            PrepareForSpecimenResponse request = new PrepareForSpecimenResponse();
 
-            Assert.IsAssignableFrom(typeof(EAC_U07), request.EAC_U07);
+            //Assert.IsAssignableFrom(typeof(EAC_U07), request.EAC_U07);
 
             Assert.That(request.MessageDateTime.ToString("yyyyMMddHHmmss"), Does.Match(""));
 
-            Assert.AreEqual("EAC", request.Code);
+            Assert.AreEqual("EAR", request.MessageCode);
 
-            Assert.AreEqual("U07", request.Trigger);
+            Assert.AreEqual("U08", request.TriggerEvent);
 
             Guid g = new Guid();
             Assert.IsTrue(Guid.TryParse(request.ControlID, out g));
@@ -36,38 +36,41 @@ namespace HL7api.Tests
         }
 
         [Test]
-        public void ParseEquipmentCommandRequest()
+        public void ParsePrepareForSpecimenResponse()
         {
             HL7Parser p = new HL7Parser();
 
             ParserResult pResult = null;
 
-            string m = @"MSH|^~\&|||||20181004003016||EAC^U07|d241a178-b714-49ce-9177-52a572e2f419||2.5.1|||||||||EquipmentCommandRequest
-                        ECD||CL^Prepare for specimen acquisition^ASTM|Y";
+            string m = @"MSH|^~\&|||||20190322144038||EAR^U08^EAR_U08|89900867-5efc-4393-8dc2-c11baa88683f||2.5.1|||||||||PrepareForSpecimenResponse
+            EQU||20190322144144
+            ECD||LO^Prepare^ASTM|Y
+            SAC|||123
+            ECR|OK^Command completed successfully^HL70387";
 
             Assert.DoesNotThrow(() => { pResult = p.Parse(m); });
 
             Assert.That(pResult.MessageAccepted);
 
-            EquipmentCommandRequest request = pResult.ParsedMessage as EquipmentCommandRequest;
+            EquipmentCommandResponse request = pResult.ParsedMessage as EquipmentCommandResponse;
 
             Assert.IsFalse(request.IsAcknowledge);
 
             Assert.IsNotNull(request);
 
-            Assert.That(request.ExpectedAckID.Equals("GeneralAcknowledgment"));
+            Assert.AreEqual(nameof(GeneralAcknowledgment), request.ExpectedAckID);
 
-            Assert.That(request.ExpectedResponseID.Equals(typeof(EquipmentCommandResponse).Name));
+            Assert.AreEqual(string.Empty, request.ExpectedResponseID);
 
-            Assert.AreEqual(request.GetValue("MSH-9-1"), "EAC");
+            Assert.AreEqual(request.GetValue("MSH-9-1"), "EAR");
 
-            Assert.AreEqual(request.GetValue("MSH-9-2"), "U07");
+            Assert.AreEqual(request.GetValue("MSH-9-2"), "U08");
 
-            Assert.AreEqual(request.GetValue("MSH-21-1"), "EquipmentCommandRequest");
+            Assert.AreEqual(nameof(PrepareForSpecimenResponse), request.GetValue("MSH-21-1"));
 
-            Assert.AreEqual(request.GetValue("MSH-10"), "d241a178-b714-49ce-9177-52a572e2f419");
+            Assert.AreEqual("89900867-5efc-4393-8dc2-c11baa88683f", request.GetValue("MSH-10"));
 
-            Assert.AreEqual(request.GetValue("COMMAND/ECD-2-1"), "CL");
+            Assert.AreEqual(request.GetValue("COMMAND/ECD-2-1"), "LO");
 
             Assert.That(pResult.IsAcknowledge.HasValue && !pResult.IsAcknowledge.Value);
 
@@ -81,13 +84,13 @@ namespace HL7api.Tests
 
             Assert.AreEqual(ack.GetValue("MSA-1"), "AA");
 
-            Assert.AreEqual(ack.GetValue("MSA-2"), "d241a178-b714-49ce-9177-52a572e2f419");
+            Assert.AreEqual(ack.GetValue("MSA-2"), "89900867-5efc-4393-8dc2-c11baa88683f");
 
             Assert.AreEqual(ack.GetValue("MSH-9-1"), "ACK");
 
-            Assert.AreEqual(ack.GetValue("MSH-9-2"), "U07");
+            Assert.AreEqual(ack.GetValue("MSH-9-2"), "U08");
 
-            Assert.AreEqual(ack.GetValue("MSH-21-1"), "GeneralAcknowledgment");
+            Assert.AreEqual(nameof(GeneralAcknowledgment), ack.GetValue("MSH-21-1"));
         }
     }
 }

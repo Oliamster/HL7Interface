@@ -19,9 +19,9 @@ namespace HL7api.Tests
 
             Assert.That(avn.MessageDateTime.ToString("yyyyMMddHHmmss"), Does.Match(""));
 
-            Assert.AreEqual("ADT", avn.Code);
+            Assert.AreEqual("ADT", avn.MessageCode);
 
-            Assert.AreEqual("A01", avn.Trigger);
+            Assert.AreEqual("A01", avn.TriggerEvent);
 
             Guid g = new Guid();
             Assert.IsTrue(Guid.TryParse(avn.ControlID, out g));
@@ -38,15 +38,15 @@ namespace HL7api.Tests
         [Test]
         public void TestPositiveAckConstruction()
         {
-            EquipmentCommandRequest rqst = new EquipmentCommandRequest();
+            PrepareForSpecimenRequest prepare = new PrepareForSpecimenRequest();
 
             HL7Parser p = new HL7Parser();
 
-            ParserResult result = p.Parse(rqst.Encode());
+            ParserResult result = p.Parse(prepare.Encode());
 
             Assert.IsTrue(result.MessageAccepted);
 
-            Assert.IsTrue(result.Acknowledge.IsAckForRequest(rqst));           
+            Assert.IsTrue(result.Acknowledge.IsAckForRequest(prepare));           
         }
     }
 }

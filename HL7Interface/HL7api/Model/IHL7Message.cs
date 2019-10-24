@@ -14,12 +14,12 @@ namespace HL7api.Model
         /// <summary>
         /// The trigger event
         /// </summary>
-        string Trigger { get; }
+        string TriggerEvent { get; }
 
         /// <summary>
         /// the message code
         /// </summary>
-        string Code { get; }
+        string MessageCode { get; }
 
         /// <summary>
         /// The original message

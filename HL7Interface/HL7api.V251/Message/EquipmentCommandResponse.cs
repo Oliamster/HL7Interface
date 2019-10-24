@@ -1,16 +1,10 @@
-﻿using NHapi.Model.V251.Message;
-using HL7api.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NHapi.Model.V251.Datatype;
-using NHapi.Base.Model.Primitive;
+﻿using System;
 using NHapi.Base;
-using System.Globalization;
+using HL7api.Model;
 using NHapi.Base.Parser;
 using System.Diagnostics;
+using NHapi.Model.V251.Message;
+using NHapi.Model.V251.Datatype;
 
 namespace HL7api.V251.Message
 {
@@ -34,7 +28,7 @@ namespace HL7api.V251.Message
             if (string.IsNullOrEmpty(request.ExpectedResponseType))
                 throw new ArgumentException("the request cannot be a type of response message or acknowledgment");
 
-            if (string.IsNullOrEmpty(this.Trigger) || string.IsNullOrEmpty(this.Code))
+            if (string.IsNullOrEmpty(this.TriggerEvent) || string.IsNullOrEmpty(this.MessageCode))
                 throw new HL7apiException($"The message code and trigger event of the message: " +
                     $" {this.MessageID} are mandatory fields");
 
@@ -42,7 +36,7 @@ namespace HL7api.V251.Message
             if (!string.IsNullOrEmpty(this.ExpectedResponseType))
                 return false;
 
-            if (request.ExpectedResponseType != $"{this.Code}_{this.Trigger}")
+            if (request.ExpectedResponseType != $"{this.MessageCode}_{this.TriggerEvent}")
                 return false;
 
             if ((request.ExpectedResponseID != this.MessageID))
@@ -68,6 +62,12 @@ namespace HL7api.V251.Message
         {
 
         }
+
+        public EquipmentCommandResponse(EquipmentCommandRequest request) :this()
+        {
+
+        }
+
 
         public EquipmentCommandResponse(EAR_U08 eAR_U08)
             : base(eAR_U08)
@@ -101,7 +101,7 @@ namespace HL7api.V251.Message
         }
 
 
-        //public override string ExpectedResponseName =>  default(string);
+        public override string ExpectedResponseID =>  string.Empty;
 
         public override DateTime MessageDateTime
         {
@@ -128,8 +128,8 @@ namespace HL7api.V251.Message
             }
         }
 
-        public override string Code => eAR_U08.MSH.MessageType.MessageCode.Value;
-        public override string Trigger => eAR_U08.MSH.MessageType.TriggerEvent.Value;
+        public override string MessageCode => eAR_U08.MSH.MessageType.MessageCode.Value;
+        public override string TriggerEvent => eAR_U08.MSH.MessageType.TriggerEvent.Value;
 
         public override string ExpectedAckID => typeof(GeneralAcknowledgment).Name;
 

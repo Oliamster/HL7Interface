@@ -113,14 +113,14 @@ namespace HL7api.Parser
                 return false;
             
             //if the trigger event is provided then check aigain
-            if (!string.IsNullOrEmpty(ack.Trigger))
+            if (!string.IsNullOrEmpty(ack.TriggerEvent))
             {
-                if (!request.ExpectedAckType.Equals($"{ack.Code}_{ack.Trigger}"))
+                if (!request.ExpectedAckType.Equals($"{ack.MessageCode}_{ack.TriggerEvent}"))
                     return false;
             }
             else
             {
-                if (!ack.Code.Equals("ACK"))
+                if (!ack.MessageCode.Equals("ACK"))
                     return false;
             }
             return true;

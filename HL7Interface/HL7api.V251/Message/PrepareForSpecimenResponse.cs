@@ -14,10 +14,10 @@ namespace HL7api.V251.Message
         {
         }
 
-        //public PrepareForSpecimenResponse(string sid) : this(new string[] { sid })
-        //{
+        public PrepareForSpecimenResponse(EquipmentCommandRequest request) : base(request as EquipmentCommandResponse)
+        {
 
-        //}
+        }
 
         //public PrepareForSpecimenResponse(params string[] sids)
         //{
@@ -43,7 +43,9 @@ namespace HL7api.V251.Message
 
         }
 
-        public override string ExpectedResponseID => nameof(PrepareForSpecimenResponse);
+
+
+        public override string ExpectedResponseID => string.Empty;
     }
 }
 

@@ -91,8 +91,8 @@ namespace HL7api.V251.Message
             }
         }
 
-        public override string Code => eAC_U07.MSH.MessageType.MessageCode.Value;
-        public override string Trigger => eAC_U07.MSH.MessageType.TriggerEvent.Value;
+        public override string MessageCode => eAC_U07.MSH.MessageType.MessageCode.Value;
+        public override string TriggerEvent => eAC_U07.MSH.MessageType.TriggerEvent.Value;
 
         public override string ExpectedAckID => typeof(GeneralAcknowledgment).Name;
 

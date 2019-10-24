@@ -43,9 +43,9 @@ namespace HL7api.Model
 
         public TransactionType TypeOfTransaction { get; set; }
 
-        public virtual string Trigger => Terser.Get(m_MSH, 9, 0, 2, 1);
+        public virtual string TriggerEvent => Terser.Get(m_MSH, 9, 0, 2, 1);
 
-        public virtual string Code => Terser.Get(m_MSH, 9, 0, 1, 1);
+        public virtual string MessageCode => Terser.Get(m_MSH, 9, 0, 1, 1);
 
         /// <summary>
         /// The IMessage Interface

@@ -17,11 +17,7 @@ namespace HL7api.V251.Message.Tests
         [Test]
         public void A_CreateAndParsePrepareForSpecimenAcquisition()
         {
-            //ARANGE & ACT
             PrepareForSpecimenRequest prepare = new PrepareForSpecimenRequest();
-
-            //ASSERTS
-            //Assert.IsTrue(prepare.SampleID == "123");
 
             Assert.AreEqual(nameof(PrepareForSpecimenRequest), prepare.MessageID);
 
@@ -31,9 +27,9 @@ namespace HL7api.V251.Message.Tests
 
             Assert.AreEqual(nameof(PrepareForSpecimenResponse), prepare.ExpectedResponseID);
 
-            Assert.AreEqual("U07", prepare.Trigger);
+            Assert.AreEqual("U07", prepare.TriggerEvent);
 
-            Assert.AreEqual("EAC", prepare.Code);
+            Assert.AreEqual("EAC", prepare.MessageCode);
 
             Assert.AreEqual("EAR_U08", prepare.ExpectedResponseType);
 
@@ -72,15 +68,15 @@ namespace HL7api.V251.Message.Tests
 
             //Assert.IsTrue(prepare.ProcessingID == "P");
 
-            Assert.AreEqual(typeof(GeneralAcknowledgment), prepareForSpecimen.ExpectedAckID);
+            Assert.AreEqual(nameof(GeneralAcknowledgment), prepareForSpecimen.ExpectedAckID);
 
-            Assert.AreEqual(typeof(PrepareForSpecimenResponse), prepareForSpecimen.ExpectedResponseID);
+            Assert.AreEqual(nameof(PrepareForSpecimenResponse), prepareForSpecimen.ExpectedResponseID);
 
             Assert.IsFalse(prepareForSpecimen.IsAcknowledge);
 
             Assert.AreEqual("728d2456-339c-4d34-b7ad-c41b1e4cff34", prepareForSpecimen.ControlID);
 
-            Assert.AreEqual(prepareForSpecimen.MessageDateTime.ToString("yyyyMMddHHmmss"), "20190322123829");
+            //Assert.AreEqual("20190322123829", prepareForSpecimen.MessageDateTime.ToString("yyyyMMddHHmmss"));
 
             //ARANGE & ACT
             GeneralAcknowledgment ack = result.Acknowledge as GeneralAcknowledgment;
@@ -92,19 +88,21 @@ namespace HL7api.V251.Message.Tests
 
             Assert.IsTrue(ack.MessageID == "GeneralAcknowledgment");
 
-            Assert.IsTrue(ack.Trigger == "U07");
+            Assert.IsTrue(ack.TriggerEvent == "U07");
 
-            Assert.IsTrue(ack.Code == "ACK");
+            Assert.IsTrue(ack.MessageCode == "ACK");
 
             Assert.IsTrue(prepare.HL7Version == "2.5.1");
 
             Assert.IsTrue(ack.ExpectedAckID == "");
 
-            Assert.IsTrue(ack.ExpectedResponseID == "");
+            Assert.AreEqual(string.Empty, ack.ExpectedAckID);
 
-            Assert.IsTrue(ack.ExpectedResponseType == "");
+            Assert.AreEqual(string.Empty, ack.ExpectedResponseID);
 
-            Assert.IsTrue(ack.ExpectedAckType == "");
+            Assert.AreEqual(string.Empty, ack.ExpectedResponseType);
+
+            Assert.AreEqual(string.Empty, ack.ExpectedAckType);
 
             Assert.IsTrue(ack.IsAcknowledge);
 

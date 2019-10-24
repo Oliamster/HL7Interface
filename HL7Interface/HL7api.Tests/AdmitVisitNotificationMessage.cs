@@ -19,9 +19,9 @@ namespace HL7api.Tests
 
             Assert.That(avn.MessageDateTime.ToString("yyyyMMddHHmmss"), Does.Match(""));
 
-            Assert.AreEqual("ADT", avn.Code);
+            Assert.AreEqual("ADT", avn.MessageCode);
 
-            Assert.AreEqual("A01", avn.Trigger);
+            Assert.AreEqual("A01", avn.TriggerEvent);
 
             Guid g = new Guid();
             Assert.IsTrue(Guid.TryParse(avn.ControlID, out g));

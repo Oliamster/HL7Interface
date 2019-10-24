@@ -33,6 +33,7 @@ namespace HL7Interface
         private object responseQueueLock = new object();
         private AutoResetEvent ackReceivedSignal = new AutoResetEvent(false);
         private AutoResetEvent responseReceivedSignal = new AutoResetEvent(false);
+        private EndPoint m_LocalEndpoint;
         #endregion
 
         #region Constructor
@@ -90,8 +91,15 @@ namespace HL7Interface
 
         public async Task<bool> ConnectAsync(EndPoint remoteEndPoint)
         {
+            if (remoteEndPoint.Equals(m_LocalEndpoint))
+            {
+                return false;       
+            }
+               
             CancellationTokenSource cts = new CancellationTokenSource();
+
             bool ret = false;
+
             var t = await Task.Factory.StartNew(async () =>
             {
                 while (!ret && !cts.Token.IsCancellationRequested)
@@ -147,6 +155,9 @@ namespace HL7Interface
                 return false;
 
             m_HL7Server = server;
+
+
+            m_LocalEndpoint = new IPEndPoint(IPAddress.Parse(m_HL7Server.Config.Ip), m_HL7Server.Config.Port);
 
             m_Client.Initialize(new ReceiverFilter(m_HL7Protocol), (request) =>
             {

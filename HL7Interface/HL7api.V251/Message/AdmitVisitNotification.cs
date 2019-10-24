@@ -80,8 +80,8 @@ namespace HL7api.V251.Message
             }
         }
 
-        public override string Code => aDT_A01.MSH.MessageType.MessageCode.Value;
-        public override string Trigger => aDT_A01.MSH.MessageType.TriggerEvent.Value;
+        public override string MessageCode => aDT_A01.MSH.MessageType.MessageCode.Value;
+        public override string TriggerEvent => aDT_A01.MSH.MessageType.TriggerEvent.Value;
 
         public override string ExpectedAckID => typeof(GeneralAcknowledgment).Name;
 
