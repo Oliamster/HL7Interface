@@ -1,6 +1,7 @@
 ﻿using HL7api.Model;
 using SuperSocket.SocketBase.Protocol;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace HL7Interface
 {
@@ -25,13 +26,29 @@ namespace HL7Interface
         {
             get; set;
         }
-
-        internal AutoResetEvent ResponseReceivedEvent
+        
+        internal ManualResetEventSlim ResponseReceivedEvent
         {
             get; set;
         }
 
-        internal AutoResetEvent AckReceivedEvent
+        internal ManualResetEventSlim AckReceivedEvent
+        {
+            get; set;
+        }
+
+        internal Task<HL7Request> SenderTask
+        {
+            get;
+            set;
+        }
+
+        internal AutoResetEvent RequestCompletedEvent
+        {
+            get; set;
+        }
+
+        internal CancellationTokenSource RequestCancellationToken
         {
             get; set;
         }

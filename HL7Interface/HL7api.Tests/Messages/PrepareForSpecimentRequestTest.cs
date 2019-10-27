@@ -115,7 +115,7 @@ namespace HL7api.V251.Message.Tests
         }
 
         [Test]
-        public void ParseHouldNotFail()
+        public void ParseShouldNotFail()
         {
             string prepareRcv = @"MSH|^~\&|||||20190322123829||EAC^U07^EAC_U07|728d2456-339c-4d34-b7ad-c41b1e4cff34||2.5.1|||||||||PrepareForSpecimenRequest
             EQU||20190322123829

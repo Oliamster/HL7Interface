@@ -47,7 +47,6 @@ namespace HL7api.Parser
             return InstantiateMessage(ackName, version);
         }
 
-
         internal IHL7Message InstantiateMessage(string messageID, string version, IMessage message)
         {
             string assemblyName = $"HL7api.V{version.Replace(".", "")}"; //.HL7api.V251
@@ -70,7 +69,6 @@ namespace HL7api.Parser
             }
             try
             {
-
                 ConstructorInfo[] cis = messageType.GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance);
 
                  hl7Message = (IHL7Message)Activator.CreateInstance(

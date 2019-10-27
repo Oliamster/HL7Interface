@@ -56,7 +56,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AutomatedDevice\HL7AutomatedDevice.csproj">
+    <ProjectReference Include="..\HL7AutomatedDevice\HL7AutomatedDevice.csproj">
       <Project>{5b65072a-5c5d-4728-aae2-a8a2bc9967a1}</Project>
       <Name>HL7AutomatedDevice</Name>
     </ProjectReference>

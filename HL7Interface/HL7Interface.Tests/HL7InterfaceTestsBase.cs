@@ -29,8 +29,6 @@ namespace HL7Interface.Tests
         {
 
         }
-
-
         public HL7InterfaceTestsBase()
         {
             /* Preparing test start */

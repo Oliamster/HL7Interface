@@ -68,7 +68,6 @@ namespace HL7api.V251.Message
 
         }
 
-
         public EquipmentCommandResponse(EAR_U08 eAR_U08)
             : base(eAR_U08)
         {

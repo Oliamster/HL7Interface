@@ -48,6 +48,20 @@ namespace HL7api.Tests
 
             Assert.IsTrue(result.Acknowledge.IsAckForRequest(prepare));           
         }
+
+        [Test]
+        public void TestPositiveAckPrepareForSpecimenResponse()
+        {
+            PrepareForSpecimenResponse prepare = new PrepareForSpecimenResponse();
+
+            HL7Parser p = new HL7Parser();
+
+            ParserResult result = p.Parse(prepare.Encode());
+
+            Assert.IsTrue(result.MessageAccepted);
+
+            Assert.IsTrue(result.Acknowledge.IsAckForRequest(prepare));
+        }
     }
 }
 

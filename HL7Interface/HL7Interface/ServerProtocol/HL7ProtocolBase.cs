@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Configuration;
-using NHapiTools.Base.Util;
+﻿using System.Text;
 using HL7Interface.Configuration;
 using HL7Interface.ServerProtocol;
 using HL7api.Parser;

@@ -9,10 +9,6 @@ namespace HL7api.V251.Message
 {
     public class PrepareForSpecimentRequestTest
     {
-        [Test]
-        public void MyTestMethod()
-        {
-
-        }
+      
     }
 }

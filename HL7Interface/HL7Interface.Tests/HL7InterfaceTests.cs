@@ -14,6 +14,7 @@ using SuperSocket.ClientEngine;
 using SuperSocket.SocketBase;
 using HL7Interface.Tests.Protobase;
 using HL7api.Model;
+using SuperSocket.SocketBase.Config;
 
 namespace HL7Interface.Tests
 {
@@ -45,7 +46,6 @@ namespace HL7Interface.Tests
         /// <summary>
         /// Connect the HL7Interface to the AppServer
         /// </summary>
-
         [Test, Timeout(timeout)]
         public async Task B_ConnectHL7InterfaceToAppServer()
         {
@@ -94,7 +94,7 @@ namespace HL7Interface.Tests
             EasyClient client = new EasyClient();
 
             client.Initialize(new TestProtoBaseDefaultTerminatorReceiverFilter(), (packageInfo) =>
-           {
+            {
                 //nothing
             });
 
@@ -153,7 +153,7 @@ namespace HL7Interface.Tests
         }
 
 
-        [Test, Timeout(timeout + 1000000)]
+        [Test, Timeout(timeout)]
         public async Task E_EasyClientSendsHL7MessageToHL7InterfaceAndReceivesAck()
         {
             HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
@@ -252,6 +252,7 @@ namespace HL7Interface.Tests
         /// <returns></returns>
 
         [Test, Timeout(timeout)]
+
         public async Task G_HL7InterfaceSendsMessageToHL7ServerNoAckNoResponse()
         {
             HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
@@ -360,10 +361,13 @@ namespace HL7Interface.Tests
             HL7InterfaceBase hl7Interface = new HL7InterfaceBase();
             HL7Server server = new HL7Server();
             AutoResetEvent requestReceived = new AutoResetEvent(false);
+
             HL7ProtocolBase protocol = new HL7ProtocolBase(new HL7ProtocolConfig()
             {
                 IsAckRequired = true,
-                IsResponseRequired = true
+                IsResponseRequired = true,
+                AckTimeout = 10000,
+                ResponseTimeout = 50000
             });
 
             HL7Server serverSide = new HL7Server();
@@ -395,7 +399,7 @@ namespace HL7Interface.Tests
 
             Assert.That(req.Acknowledgment is GeneralAcknowledgment);
 
-            Assert.That(HL7Parser.IsAckForRequest(req.Request, req.Acknowledgment));
+            Assert.That(req.Acknowledgment.IsAckForRequest(req.Request));
 
             Assert.That(req.Acknowledgment.GetValue("MSA-1") == "AA");
 
@@ -424,6 +428,7 @@ namespace HL7Interface.Tests
             HL7Server hl7Server = new HL7Server();
 
             hl7Server.Setup("127.0.0.1", 50060);
+
             hl7Server.Start();
 
             PrepareForSpecimenRequest request = new PrepareForSpecimenRequest();
@@ -638,13 +643,15 @@ namespace HL7Interface.Tests
         //       |                           |
         // </summary>
         // <returns></returns>
-        [Test, Timeout(timeout)]
+        [Test, Timeout(timeout), Repeat(3)]
         public async Task N_HL7InterfaceSendsCommandToHL7InterfaceWaitAckAndResponse()
         {
             HL7InterfaceBase hl7InterfaceA = new HL7InterfaceBase();
+
             HL7InterfaceBase hl7InterfaceB = new HL7InterfaceBase();
 
             AutoResetEvent ackReceived = new AutoResetEvent(false);
+
             AutoResetEvent commandResponseReceived = new AutoResetEvent(false);
 
             HL7ProtocolBase protocolA = new HL7ProtocolBase(new HL7ProtocolConfig()
@@ -730,9 +737,64 @@ namespace HL7Interface.Tests
 
             hl7InterfaceA.Stop();
         }
+
+        [Test, Timeout(timeout)]
+        public async Task P_Stopping_Interface_Should_Cancel_Incompleted_SenderTask()
+        {
+            HL7InterfaceBase hl7InterfaceA = new HL7InterfaceBase();
+
+            HL7InterfaceBase hl7InterfaceB = new HL7InterfaceBase();
+
+            AutoResetEvent ackReceived = new AutoResetEvent(false);
+
+            AutoResetEvent commandResponseReceived = new AutoResetEvent(false);
+
+            HL7ProtocolConfig hL7ProtocolConfigA = new HL7ProtocolConfig()
+            {
+                IsAckRequired = true,
+                IsResponseRequired = true,
+                ResponseTimeout = 500000
+            };
+
+            IServerConfig serverConfigA = new ServerConfig()
+            {
+                Ip = "127.0.0.1",
+                Port = 50060
+            };
+
+            HL7ProtocolConfig hL7ProtocolConfigB = new HL7ProtocolConfig()
+            {
+                IsAckRequired = true,
+                IsResponseRequired = false
+            };
+
+            IServerConfig serverConfigB = new ServerConfig()
+            {
+                Ip = "127.0.0.1",
+                Port = 50050
+            };
+
+            Assert.IsTrue(hl7InterfaceA.Initialize(hL7ProtocolConfigA, serverConfigA));
+
+            Assert.That(hl7InterfaceA.Start());
+
+            Assert.IsTrue(hl7InterfaceB.Initialize(hL7ProtocolConfigB, serverConfigB));
+
+            Assert.That(hl7InterfaceB.Start());
+
+            PrepareForSpecimenRequest request = new PrepareForSpecimenRequest();
+
+            Assert.That(await hl7InterfaceA.ConnectAsync(clientEndPoint));
+
+            var senderTask =  hl7InterfaceA.SendHL7MessageAsync(request);
+
+            await Task.Delay(10);
+
+            hl7InterfaceA.Stop();
+
+            Assert.IsTrue(senderTask.IsCompleted);
+
+            hl7InterfaceB.Stop();
+        }
     }
 }
-    
-
-
-
