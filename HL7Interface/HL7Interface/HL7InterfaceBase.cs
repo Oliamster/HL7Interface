@@ -197,8 +197,8 @@ namespace HL7Interface
             HL7Request hl7Request = new HL7Request()
             {
                 Request = message,
-                ResponseReceivedEvent = new ManualResetEventSlim(false),
-                AckReceivedEvent = new ManualResetEventSlim(false),
+                ResponseReceivedEvent = new AutoResetEvent(false),
+                AckReceivedEvent = new AutoResetEvent(false),
                 RequestCompletedEvent = new AutoResetEvent(false),
                 RequestCancellationToken = new CancellationTokenSource()
             };
@@ -240,7 +240,6 @@ namespace HL7Interface
                     {
 
                     }
-
                     return hl7Request;
                 }
                 catch (Exception) 
@@ -249,8 +248,6 @@ namespace HL7Interface
                     return hl7Request;
                 }
             }, hl7Request.RequestCancellationToken.Token);
-
-
 
             return hl7Request.SenderTask;
         }

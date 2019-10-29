@@ -32,7 +32,6 @@ namespace HL7api.Tests
             string msg = request.Encode();
 
             Debug.Print(msg);
-
         }
 
         [Test]
