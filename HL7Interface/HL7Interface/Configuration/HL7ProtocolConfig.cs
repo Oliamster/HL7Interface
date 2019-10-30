@@ -7,22 +7,61 @@ using System.Threading.Tasks;
 
 namespace HL7Interface.Configuration
 {
-    public class HL7ProtocolConfig : IProtocolConfig
+    public partial class HL7ProtocolConfig : IProtocolConfig
     {
         /// <summary>
-        /// Gets the name of the protocol you want to use
+        /// Default ReceiveBufferSize
+        /// </summary>
+        public const int DefaultMaxAckRetriesNumber = 1;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public const int DefaultMaxResponseRetriesNumber = 1;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public const int DefaultConnectionTimeout = 5000;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public const int DefaultAcktimeout = 1000;
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public const int DefaultResponseTimeout = 5000;
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public const bool DefaultIsAckRequired = true;
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public const bool DefaultIsAckBlocking = false;
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public const bool DefaultIsResponsRequired = false;
+
+        /// <summary>
+        /// 
         /// </summary>
         /// <value>
         /// The name of the server type.
         /// </value>
         public string ProtocolName { get; set; }
 
-        /// <summary>
-        /// Gets the type of the protocol
-        /// </summary>
-        /// <value>
-        /// The type of the server.
-        /// </value>
+
         public string ProtocolType { get; set; }
 
 
@@ -37,7 +76,12 @@ namespace HL7Interface.Configuration
         public int MaxResponseRetriesNumber { get; set; }
 
         /// <summary>
-        /// Ack time out
+        /// connection time out
+        /// </summary>
+        public int ConnectionTimeout { get; set; }
+
+        /// <summary>
+        /// Ack timeout
         /// </summary>
         public int AckTimeout { get; set; }
 
@@ -112,11 +156,22 @@ namespace HL7Interface.Configuration
         /// </value>
         public string TextEncoding { get; set; }
 
-
         /// <summary>
         /// Responds on the same session
         /// </summary>
         public bool RespondOnCurrentSession { get; set; }
+
+
+        public HL7ProtocolConfig()
+        {
+            MaxAckRetriesNumber = DefaultMaxAckRetriesNumber;
+            MaxAckRetriesNumber = DefaultMaxResponseRetriesNumber;
+            ConnectionTimeout = DefaultConnectionTimeout;
+            AckTimeout = DefaultAcktimeout;
+            IsAckRequired = DefaultIsAckRequired;
+            IsAckBlocking = DefaultIsAckBlocking;
+            IsResponseRequired = DefaultIsResponsRequired;
+        }
     }
 }
 

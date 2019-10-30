@@ -61,6 +61,16 @@ namespace HL7Interface.Configuration
             get { return (int)this["AckTimeout"]; }
         }
 
+
+            /// <summary>
+        /// Gets the port.
+        /// </summary>
+        [ConfigurationProperty("ConnectionTimeout", IsRequired = false, DefaultValue = ServerConfig.DefaultMaxConnectionNumber)]
+        public int ConnectionTimeout
+        {
+            get { return (int)this["ConnectionTimeout"]; }
+        }
+
         /// <summary>
         /// Gets the mode.
         /// </summary>

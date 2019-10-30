@@ -60,9 +60,15 @@ namespace HL7Interface
         #endregion
 
         #region Public Properties
+        /// <summary>
+        /// The interface name
+        /// </summary>
         public virtual string Name => this.GetType().Name;
         #endregion
 
+        /// <summary>
+        /// The protocol for use in this interface
+        /// </summary>
         public virtual IHL7Protocol Protocol
         {
             get
@@ -71,8 +77,16 @@ namespace HL7Interface
             }
         }
 
+        /// <summary>
+        /// The interface state
+        /// </summary>
         public ServerState State => (ServerState)m_HL7Server.State;
 
+        /// <summary>
+        /// Connect to the remote end point
+        /// </summary>
+        /// <param name="remoteEndPoint"></param>
+        /// <returns></returns>
         public async Task<bool> ConnectAsync(EndPoint remoteEndPoint)
         {
             if (remoteEndPoint.Equals(m_LocalEndpoint))
@@ -84,19 +98,25 @@ namespace HL7Interface
 
             bool ret = false;
 
-            var t = await Task.Factory.StartNew(async () =>
+            try
             {
-                while (!ret && !cts.Token.IsCancellationRequested)
+                var t = await Task.Factory.StartNew(async () =>
                 {
-                    ret = await m_EasyClient.ConnectAsync(remoteEndPoint);
-                }
-            }, cts.Token);
-            t.Wait(5000);
-            if (ret)
-                return ret;
-            else cts.Cancel();
-            Task.WaitAll(new Task[] { t });
-               throw new OperationCanceledException("Unable to connect to the remote endpoint:!");
+                    while (!ret)
+                    {
+                        cts.Token.ThrowIfCancellationRequested();
+
+                        ret = await m_EasyClient.ConnectAsync(remoteEndPoint);
+                    }
+                }, cts.Token);
+
+                if (!t.Wait(Protocol.Config.ConnectionTimeout)) cts.Cancel();
+            }
+            catch (OperationCanceledException)
+            {
+                throw new OperationCanceledException("Unable to connect to the remote endpoint:!");
+            }
+            return ret;
         }
 
        public virtual bool Initialize()
@@ -218,6 +238,18 @@ namespace HL7Interface
 
                     if (!Protocol.Config.IsAckRequired)
                         return hl7Request;
+
+                    if (!m_OutgoingRequests.Contains(hl7Request))
+                    {
+                        throw new OperationCanceledException("");
+                    }
+
+                    if (hl7Request.RequestCancellationToken.Token.IsCancellationRequested)
+                        throw new OperationCanceledException(hl7Request.RequestCancellationToken.Token);
+
+                
+
+                    hl7Request.RequestCancellationToken.Token.ThrowIfCancellationRequested();
 
                     if (!hl7Request.AckReceivedEvent.Wait(Protocol.Config.AckTimeout + 10000, hl7Request.RequestCancellationToken.Token))
                     {

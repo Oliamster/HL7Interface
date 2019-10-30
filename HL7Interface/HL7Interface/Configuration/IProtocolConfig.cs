@@ -33,6 +33,12 @@ namespace HL7Interface.Configuration
         /// <summary>
         /// Ack time out
         /// </summary>
+         int ConnectionTimeout { get; }
+
+
+        /// <summary>
+        /// Ack time out
+        /// </summary>
         int AckTimeout { get; }
 
         /// <summary>
