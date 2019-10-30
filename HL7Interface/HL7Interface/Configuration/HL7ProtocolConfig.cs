@@ -168,6 +168,7 @@ namespace HL7Interface.Configuration
             MaxAckRetriesNumber = DefaultMaxResponseRetriesNumber;
             ConnectionTimeout = DefaultConnectionTimeout;
             AckTimeout = DefaultAcktimeout;
+            ResponseTimeout = DefaultResponseTimeout;
             IsAckRequired = DefaultIsAckRequired;
             IsAckBlocking = DefaultIsAckBlocking;
             IsResponseRequired = DefaultIsResponsRequired;

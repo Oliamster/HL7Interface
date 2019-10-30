@@ -104,7 +104,9 @@ namespace HL7Interface
                 {
                     while (!ret)
                     {
+
                         cts.Token.ThrowIfCancellationRequested();
+
 
                         ret = await m_EasyClient.ConnectAsync(remoteEndPoint);
                     }
@@ -251,7 +253,7 @@ namespace HL7Interface
 
                     hl7Request.RequestCancellationToken.Token.ThrowIfCancellationRequested();
 
-                    if (!hl7Request.AckReceivedEvent.Wait(Protocol.Config.AckTimeout + 10000, hl7Request.RequestCancellationToken.Token))
+                    if (!hl7Request.AckReceivedEvent.Wait(Protocol.Config.AckTimeout , hl7Request.RequestCancellationToken.Token))
                     {
                         
                     }
@@ -264,7 +266,7 @@ namespace HL7Interface
                         return hl7Request;
 
 
-                    if (!hl7Request.ResponseReceivedEvent.Wait(Protocol.Config.ResponseTimeout + 20000, hl7Request.RequestCancellationToken.Token))
+                    if (!hl7Request.ResponseReceivedEvent.Wait(Protocol.Config.ResponseTimeout, hl7Request.RequestCancellationToken.Token))
                     {
 
                     }
