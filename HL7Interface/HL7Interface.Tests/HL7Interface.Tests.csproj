@@ -133,6 +133,7 @@
     <Compile Include="BasicTests\BasicTestsBase.cs" />
     <Compile Include="HL7InterfaceTests.cs" />
     <Compile Include="BasicTests\BasicTests.cs" />
+    <Compile Include="FakeHL7Server.cs" />
     <Compile Include="Protobase\TestProtobasePackageInfo.cs" />
     <Compile Include="Protobase\TestProtoBaseBeginEndMarkReceiverFilter.cs" />
     <Compile Include="Protocol\TestBeginEndMarkReceiveFilter.cs" />

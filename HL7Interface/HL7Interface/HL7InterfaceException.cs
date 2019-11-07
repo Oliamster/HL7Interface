@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace HL7Interface
 {
     [Serializable]
-    internal class HL7InterfaceException : Exception
+    public class HL7InterfaceException : Exception
     {
         public HL7InterfaceException()
         {

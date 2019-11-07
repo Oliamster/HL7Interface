@@ -71,7 +71,7 @@ namespace HL7Interface.Tests.BasicTest
         }
 
 
-        [Test, Timeout(timeout)]
+        [Test, Timeout(timeout+ 1000000000)]
         public async Task B_EasyClientConnection()
         {
             EasyClient easyClient = new EasyClient();
@@ -237,7 +237,7 @@ namespace HL7Interface.Tests.BasicTest
             appServer.Stop();
         }
 
-        [Test, Timeout(timeout)]
+        [Test, Timeout(timeout + 5000)]
         public async Task G_AppServerWelcomeOnEasyClientNewSessionConnected()
         {
             AppServer appServer = new AppServer();
