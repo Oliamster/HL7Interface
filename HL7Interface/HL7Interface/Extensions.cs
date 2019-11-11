@@ -27,5 +27,33 @@ namespace HL7Interface
 
             return false;
         }
+
+        public static async Task<bool> WaitAsync(this Task task, int timeout, CancellationToken token)
+        {
+            token.ThrowIfCancellationRequested();
+
+            try
+            {
+               
+                var result = task.Wait(timeout, token);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
+            //if (await Task.WhenAny(task, Task.Delay(timeout, token)) == task)
+            //{
+            //    token.ThrowIfCancellationRequested();
+
+            //    return true;
+            //}
+            //else
+            //{
+            //    return false;
+            //}
+            return  await new TaskCompletionSource<bool>().Task;
+        }
     }
 }

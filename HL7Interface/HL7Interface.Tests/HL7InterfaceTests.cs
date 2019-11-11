@@ -801,7 +801,7 @@ namespace HL7Interface.Tests
 
         
         [Test, Timeout(timeout + 1000000000)]
-        public async Task R_Ack_Not_Received_Scenario()
+        public void  R_Ack_Not_Received_Scenario()
         {
             HL7InterfaceBase hl7InterfaceA = new HL7InterfaceBase();
 
@@ -836,32 +836,83 @@ namespace HL7Interface.Tests
 
             var connectionTask = hl7InterfaceA.ConnectAsync(clientEndPoint);
 
-            //await Task.Delay(10);
-
             PrepareForSpecimenRequest request = new PrepareForSpecimenRequest();
 
+            Assert.ThrowsAsync(Is.TypeOf<HL7InterfaceException>()
 
-            Assert.Throws(Is.TypeOf<HL7InterfaceException>(), new TestDelegate(  () =>
-                
-                
-                
+                .And.Message.EqualTo("The message was not acknowledged after a total number of -1 retries"),  
 
-                Task.Run(async ()=> await hl7InterfaceA.SendHL7MessageAsync(request))));
-
-
-
-
-
-
-            await Task.Delay(1000000).ConfigureAwait(false);
+                async () =>  await  hl7InterfaceA.SendHL7MessageAsync(request));
 
             fakeHL7Server.Stop(); hl7InterfaceA.Stop();
         }
 
-        [Test, Timeout(timeout)]
+        [Test, Timeout(timeout + 5000), Repeat(2)]
         public async Task Q_Stopping_Interface_Should_Cancel_Connection_Routine()
-    {
+        {
+            HL7InterfaceBase hl7InterfaceA = new HL7InterfaceBase();
 
+            HL7InterfaceBase hl7InterfaceB = new HL7InterfaceBase();
+
+            HL7ProtocolConfig hL7ProtocolConfigA = new HL7ProtocolConfig()
+            {
+                IsAckRequired = true,
+                IsResponseRequired = false,
+                ConnectionTimeout = -1,
+            };
+
+            IServerConfig serverConfigA = new ServerConfig()
+            {
+                Ip = "127.0.0.1",
+                Port = 50060
+            };
+
+            HL7ProtocolConfig hL7ProtocolConfigB = new HL7ProtocolConfig()
+            {
+                IsAckRequired = true,
+                IsResponseRequired = false
+            };
+
+            IServerConfig serverConfigB = new ServerConfig()
+            {
+                Ip = "127.0.0.1",
+                Port = 50050
+            };
+
+            Assert.IsTrue(hl7InterfaceA.Initialize(hL7ProtocolConfigA, serverConfigA));
+
+            Assert.That(hl7InterfaceA.Start());
+
+            Assert.IsTrue(hl7InterfaceB.Initialize(hL7ProtocolConfigB, serverConfigB));
+
+            //Assert.That(hl7InterfaceB.Start());
+
+            var connectionTask = hl7InterfaceA.ConnectAsync(clientEndPoint);
+
+            await Task.Delay(10);
+
+            Assert.IsFalse(hl7InterfaceA.IsConnected);
+
+            hl7InterfaceA.Stop();
+
+            Assert.ThrowsAsync(Is.TypeOf<OperationCanceledException>()
+
+                 .And.Message.EqualTo("The connection task was cancelled."),
+
+                 async () => await connectionTask);
+
+            Assert.IsTrue(connectionTask.IsCompleted);
+
+
+            Assert.IsFalse(hl7InterfaceA.IsConnected);
+
+            hl7InterfaceB.Stop();
+        }
+
+
+        [Test, Timeout(timeout + 10000000)]
+        public async Task S_Throw_If_Connection_timed_out()
+        {
             HL7InterfaceBase hl7InterfaceA = new HL7InterfaceBase();
 
             HL7InterfaceBase hl7InterfaceB = new HL7InterfaceBase();
@@ -897,17 +948,24 @@ namespace HL7Interface.Tests
 
             Assert.IsTrue(hl7InterfaceB.Initialize(hL7ProtocolConfigB, serverConfigB));
 
-            Assert.That(hl7InterfaceA.Start());
+            //Assert.That(hl7InterfaceB.Start());
 
             var connectionTask = hl7InterfaceA.ConnectAsync(clientEndPoint);
 
             await Task.Delay(10);
 
-            hl7InterfaceA.Stop();
+            Assert.IsFalse(hl7InterfaceA.IsConnected);
 
-            Assert.IsTrue(connectionTask.Wait(1000000000));
 
-            hl7InterfaceB.Stop();
+            Assert.ThrowsAsync(Is.TypeOf<HL7InterfaceException>()
+
+               .And.Message.EqualTo("Connection timed out: 5000."),
+
+               async () => await connectionTask);
+
+            Assert.IsFalse(hl7InterfaceA.IsConnected);
+
+            hl7InterfaceB.Stop(); hl7InterfaceA.Stop();
         }
     }
 }

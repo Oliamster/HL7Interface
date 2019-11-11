@@ -82,6 +82,11 @@ namespace HL7Interface
         /// The interface state
         /// </summary>
         public ServerState State => (ServerState)m_HL7Server.State;
+
+        /// <summary>
+        /// Whether the interface is connected
+        /// </summary>
+        public bool IsConnected { get { return m_EasyClient.IsConnected; } }
         #endregion
 
         /// <summary>
@@ -97,8 +102,10 @@ namespace HL7Interface
             }
 
             m_ConnectionCancellationToken = new CancellationTokenSource();
+           
 
             bool ret = false;
+            int timeout = Protocol.Config.ConnectionTimeout;
 
             try
             {
@@ -106,22 +113,25 @@ namespace HL7Interface
                 {
                     while (!ret)
                     {
-                        m_ConnectionCancellationToken.Token.ThrowIfCancellationRequested();
+                        //m_ConnectionCancellationToken.Token.ThrowIfCancellationRequested();
 
                         ret = await m_EasyClient.ConnectAsync(remoteEndPoint);
                     }
-
                 }, m_ConnectionCancellationToken.Token);
 
-
-                if (!m_ConnectionTask.Wait(Protocol.Config.ConnectionTimeout)) m_ConnectionCancellationToken.Cancel();
+                if (!m_ConnectionTask.Wait(timeout, m_ConnectionCancellationToken.Token))
+                {
+                    throw new HL7InterfaceException($"Connection timed out: {timeout}.");
+                }
             }
             catch (OperationCanceledException)
             {
-                throw new OperationCanceledException("Unable to connect to the remote endpoint:!");
+                throw new OperationCanceledException("The connection task was cancelled.");
             }
             catch (Exception ex)
             {
+                if (ex is HL7InterfaceException) throw ex;
+
                 m_HL7Server.Logger.Error(ex);
             }
             return ret;
