@@ -113,7 +113,7 @@ namespace HL7Interface
                 {
                     while (!ret)
                     {
-                        //m_ConnectionCancellationToken.Token.ThrowIfCancellationRequested();
+                        m_ConnectionCancellationToken.Token.ThrowIfCancellationRequested();
 
                         ret = await m_EasyClient.ConnectAsync(remoteEndPoint);
                     }

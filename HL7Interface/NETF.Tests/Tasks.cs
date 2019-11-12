@@ -1,0 +1,92 @@
+﻿using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace NETF.Tests
+{
+    [TestFixture]
+    public class Tasks
+    {
+        [Test]
+        public async Task TestCancellation()
+        {
+            var m_ConnectionCancellationToken = new CancellationTokenSource();
+
+
+            bool ret = false;
+            int timeout = 100000;
+
+            m_ConnectionCancellationToken.Cancel();
+
+            try
+            {
+                var m_ConnectionTask = await Task.Factory.StartNew(async () =>
+                {
+                    while (!ret)
+                    {
+                        m_ConnectionCancellationToken.Token.ThrowIfCancellationRequested();
+
+                        Thread.Sleep(100);
+                    }
+                }, m_ConnectionCancellationToken.Token);
+
+                if (!m_ConnectionTask.Wait(timeout, m_ConnectionCancellationToken.Token))
+                {
+                    throw new Exception($"Connection timed out: {timeout}.");
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                throw new OperationCanceledException("The connection task was cancelled.");
+            }
+            catch (Exception ex)
+            {
+            }
+          
+        }
+
+
+
+        [Test]
+        public async Task TestCancellation1()
+        {
+            var m_ConnectionCancellationToken = new CancellationTokenSource();
+
+
+            bool ret = false;
+            int timeout = 100000;
+
+            m_ConnectionCancellationToken.Cancel();
+
+            try
+            {
+                var m_ConnectionTask = await Task.Factory.StartNew(async () =>
+                {
+                    while (!ret)
+                    {
+                        //m_ConnectionCancellationToken.Token.ThrowIfCancellationRequested();
+
+                        Thread.Sleep(100);
+                    }
+                }, m_ConnectionCancellationToken.Token);
+
+                if (!m_ConnectionTask.Wait(timeout, m_ConnectionCancellationToken.Token))
+                {
+                    throw new Exception($"Connection timed out: {timeout}.");
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                throw new OperationCanceledException("The connection task was cancelled.");
+            }
+            catch (Exception ex)
+            {
+            }
+
+        }
+    }
+}
