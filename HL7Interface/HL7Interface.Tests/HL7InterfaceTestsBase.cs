@@ -1,10 +1,10 @@
-﻿using HL7Interface.Configuration;
+﻿using System;
+using System.Net;
+using System.Reflection;
+using HL7Interface.Configuration;
 using NUnit.Framework;
 using SuperSocket.SocketBase;
 using SuperSocket.SocketBase.Config;
-using System;
-using System.Net;
-using System.Reflection;
 
 namespace HL7Interface.Tests
 {
@@ -78,7 +78,6 @@ namespace HL7Interface.Tests
         }
         public HL7InterfaceTestsBase()
         {
-            /* Preparing test start */
             Assembly assembly = Assembly.GetCallingAssembly();
             AppDomainManager manager = new AppDomainManager();
             FieldInfo entryAssemblyfield = manager.GetType().GetField("m_entryAssembly", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -87,7 +86,7 @@ namespace HL7Interface.Tests
             AppDomain domain = AppDomain.CurrentDomain;
             FieldInfo domainManagerField = domain.GetType().GetField("_domainManager", BindingFlags.Instance | BindingFlags.NonPublic);
             domainManagerField.SetValue(domain, manager);
-            /* Preparing test end */
+     
         }
     }
 }

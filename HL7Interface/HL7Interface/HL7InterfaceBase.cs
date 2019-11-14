@@ -28,6 +28,7 @@ namespace HL7Interface
         private EasyClient m_EasyClient;
         private HL7ProtocolBase m_HL7Protocol;
         private BlockingCollection<HL7Request> m_OutgoingRequests;
+        private ConcurrentDictionary<string, HL7Request> m_OutgoingRequests1;
         private EndPoint m_LocalEndpoint;
         private Task m_ConnectionTask;
         private CancellationTokenSource m_ConnectionCancellationToken;
@@ -44,6 +45,7 @@ namespace HL7Interface
             m_EasyClient = new SuperSocket.ClientEngine.EasyClient();
             m_HL7Protocol = new HL7ProtocolBase();
             m_HL7Server = new HL7Server();
+            m_OutgoingRequests1 = new ConcurrentDictionary<string, HL7Request>();
         }
         #endregion
 
@@ -102,8 +104,7 @@ namespace HL7Interface
             }
 
             m_ConnectionCancellationToken = new CancellationTokenSource();
-           
-
+         
             bool ret = false;
             int timeout = Protocol.Config.ConnectionTimeout;
 
@@ -111,17 +112,17 @@ namespace HL7Interface
             {
                 m_ConnectionTask = await Task.Factory.StartNew(async () =>
                 {
-                    while (!ret)
+                    while (!ret && !m_ConnectionCancellationToken.IsCancellationRequested)
                     {
-                        m_ConnectionCancellationToken.Token.ThrowIfCancellationRequested();
-
                         ret = await m_EasyClient.ConnectAsync(remoteEndPoint);
                     }
-                }, m_ConnectionCancellationToken.Token);
+                });
 
                 if (!m_ConnectionTask.Wait(timeout, m_ConnectionCancellationToken.Token))
                 {
-                    throw new HL7InterfaceException($"Connection timed out: {timeout}.");
+                    m_ConnectionCancellationToken.Cancel();
+
+                    throw new HL7InterfaceException($"Connection timed out: {timeout}ms.");
                 }
             }
             catch (OperationCanceledException)
@@ -232,14 +233,10 @@ namespace HL7Interface
 
         public Task<HL7Request> SendHL7MessageAsync(IHL7Message message)
         {
-            HL7Request hl7Request = new HL7Request()
-            {
-                Request = message,
-                ResponseReceivedEvent = new AutoResetEvent(false),
-                AckReceivedEvent = new AutoResetEvent(false),
-                RequestCompletedEvent = new AutoResetEvent(false),
-                RequestCancellationToken = new CancellationTokenSource()
-            };
+            HL7Request hl7Request = new HL7Request(message);
+
+            if (!m_OutgoingRequests1.TryAdd(message.ControlID, hl7Request))
+                throw new HL7InterfaceException("m_OutgoingRequests");
 
             m_OutgoingRequests.Add(hl7Request);
 
@@ -277,6 +274,27 @@ namespace HL7Interface
         {
             hl7Request.RequestCancellationToken.Token.ThrowIfCancellationRequested();
 
+            if (!SendAndWaitForAck(hl7Request, ackRetries))
+                return;
+
+            if (!Protocol.Config.IsResponseRequired)
+            {
+                success = true; return;
+            }
+
+            if (!hl7Request.ResponseReceivedEvent.Wait(Protocol.Config.ResponseTimeout, hl7Request.RequestCancellationToken.Token))
+            {
+                if (responseRetries-- > 0)
+                {
+                    success = false; return;
+                }
+                else throw new HL7InterfaceException($"The message was not acknowledged after a total number of {ackRetries} retries");
+            }
+            success = true;
+        }
+
+        private bool SendAndWaitForAck(HL7Request hl7Request, int ackRetries)
+        {
             m_EasyClient.Send(Encoding.ASCII.GetBytes(MLLP.CreateMLLPMessage(hl7Request.Request.Encode())));
 
             string logMessage = string.Empty;
@@ -286,7 +304,7 @@ namespace HL7Interface
 
             if (!Protocol.Config.IsAckRequired)
             {
-                success = true; return;
+                return  true;
             }
 
             if (!m_OutgoingRequests.Contains(hl7Request))
@@ -303,26 +321,11 @@ namespace HL7Interface
             {
                 if (ackRetries-- > 0)
                 {
-                    success = false;
-                    return;
+                    return false;
                 }
                 else throw new HL7InterfaceException($"The message was not acknowledged after a total number of {ackRetries} retries");
             }
-
-            if (!Protocol.Config.IsResponseRequired)
-            {
-                success = true; return;
-            }
-
-            if (!hl7Request.ResponseReceivedEvent.Wait(Protocol.Config.ResponseTimeout, hl7Request.RequestCancellationToken.Token))
-            {
-                if (responseRetries-- > 0)
-                {
-                    success = false; return;
-                }
-                else throw new HL7InterfaceException($"The message was not acknowledged after a total number of {ackRetries} retries");
-            }
-            success = true;
+            return true;
         }
 
         /// <summary>

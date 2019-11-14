@@ -7,6 +7,17 @@ namespace HL7Interface
 {
     public class HL7Request : IRequestInfo
     {
+        public HL7Request() { }
+
+        public HL7Request(IHL7Message message)
+        {
+            Request = message;
+            ResponseReceivedEvent = new AutoResetEvent(false);
+            AckReceivedEvent = new AutoResetEvent(false);
+            RequestCompletedEvent = new AutoResetEvent(false);
+            RequestCancellationToken = new CancellationTokenSource();
+        }
+
         public string Key
         {
             get; set;

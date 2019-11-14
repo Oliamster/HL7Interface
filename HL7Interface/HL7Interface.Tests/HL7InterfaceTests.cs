@@ -717,7 +717,7 @@ namespace HL7Interface.Tests
         [Test, Timeout(timeout)]
         public async Task P_Stopping_Interface_Should_Cancel_Incompleted_SenderTask()
         {
-            CreateAndConfigureA(true, true, 500000);
+            CreateAndConfigureA(true, true, 5000);
             CreateAndConfigureB(true, false);
 
             AutoResetEvent ackReceived = new AutoResetEvent(false);
@@ -810,10 +810,10 @@ namespace HL7Interface.Tests
         }
 
 
-        [Test, Timeout(timeout + 10000000)]
+        [Test, Timeout(timeout)]
         public async Task S_Throw_If_Connection_timed_out()
         {
-            CreateAndConfigureA(true, false, 5000);
+            CreateAndConfigureA(true, false, 100);
 
             CreateAndConfigureB(true, false);
 
@@ -829,7 +829,7 @@ namespace HL7Interface.Tests
 
             Assert.ThrowsAsync(Is.TypeOf<HL7InterfaceException>()
 
-               .And.Message.EqualTo("Connection timed out: 5000."),
+               .And.Message.EqualTo("Connection timed out: 100ms."),
 
                async () => await connectionTask);
 
