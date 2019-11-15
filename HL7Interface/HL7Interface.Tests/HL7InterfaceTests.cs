@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Threading;
@@ -834,6 +835,35 @@ namespace HL7Interface.Tests
                async () => await connectionTask);
 
             Assert.IsFalse(hl7InterfaceA.IsConnected);
+
+            hl7InterfaceB.Stop(); hl7InterfaceA.Stop();
+        }
+
+
+        [Test, Timeout(-1)]
+        public void Interfaces_Should_Handle_100_messages_Concurrently()
+        {
+            CreateAndConfigureA(true, false, 5000);
+
+            CreateAndConfigureB(true, false);
+
+            Assert.That(hl7InterfaceA.Start());
+
+            Assert.That(hl7InterfaceB.Start());
+
+            var connectionTask = hl7InterfaceA.ConnectAsync(endPointB);
+
+            Assert.IsTrue(connectionTask.Result);
+
+            Assert.IsTrue(hl7InterfaceA.IsConnected);
+
+            List<Task> tasks = new List<Task>(100);
+
+            for (int i = 0; i < 10; i++)
+            {
+                tasks.Add(hl7InterfaceA.SendHL7MessageAsync(new PrepareForSpecimenRequest($"{(100 + i).ToString()}")));
+            }
+            Task.WaitAll(tasks.ToArray());
 
             hl7InterfaceB.Stop(); hl7InterfaceA.Stop();
         }

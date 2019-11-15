@@ -32,6 +32,7 @@ namespace HL7Interface
         private EndPoint m_LocalEndpoint;
         private Task m_ConnectionTask;
         private CancellationTokenSource m_ConnectionCancellationToken;
+        private object m_AckReceivedLock;
         #endregion
 
         #region Constructor
@@ -46,6 +47,7 @@ namespace HL7Interface
             m_HL7Protocol = new HL7ProtocolBase();
             m_HL7Server = new HL7Server();
             m_OutgoingRequests1 = new ConcurrentDictionary<string, HL7Request>();
+            m_AckReceivedLock = new object();
         }
         #endregion
 
@@ -245,14 +247,14 @@ namespace HL7Interface
             hl7Request.SenderTask = Task.Run(() =>
             {
                 bool success = false;
-                int ackRetries = m_HL7Protocol.Config.MaxAckRetriesNumber;
+               
                 int responseRetries = m_HL7Protocol.Config.MaxResponseRetriesNumber;
 
                 try
                 { 
                     do
                     {
-                        SendMessageOne(hl7Request, ref ackRetries, ref responseRetries, out success);
+                        success = SendMessageOne(hl7Request, ref responseRetries);
                     }
                     while (!success);
                 }
@@ -270,38 +272,40 @@ namespace HL7Interface
         }
 
 
-        private void SendMessageOne(HL7Request hl7Request, ref int ackRetries, ref int responseRetries, out bool success)
+        private bool SendMessageOne(HL7Request hl7Request, ref int responseRetries)
         {
             hl7Request.RequestCancellationToken.Token.ThrowIfCancellationRequested();
+            int ackRetries = m_HL7Protocol.Config.MaxAckRetriesNumber;
 
-            if (!SendAndWaitForAck(hl7Request, ackRetries))
-                return;
+            lock (m_AckReceivedLock)
+            {
+                while (!SendAndWaitForAck(hl7Request,  ref ackRetries)) ; 
+            }
 
             if (!Protocol.Config.IsResponseRequired)
             {
-                success = true; return;
+                return true;
             }
 
             if (!hl7Request.ResponseReceivedEvent.Wait(Protocol.Config.ResponseTimeout, hl7Request.RequestCancellationToken.Token))
             {
                 if (responseRetries-- > 0)
                 {
-                    success = false; return;
+                    return false; ;
                 }
                 else throw new HL7InterfaceException($"The message was not acknowledged after a total number of {ackRetries} retries");
             }
-            success = true;
+            return true;
         }
 
-        private bool SendAndWaitForAck(HL7Request hl7Request, int ackRetries)
+        private bool SendAndWaitForAck(HL7Request hl7Request, ref int ackRetries)
         {
             m_EasyClient.Send(Encoding.ASCII.GetBytes(MLLP.CreateMLLPMessage(hl7Request.Request.Encode())));
 
             string logMessage = string.Empty;
 
             logMessage = $"{hl7Request.Request.MessageID} sent (Ack RETRY) [{m_HL7Protocol.Config.MaxAckRetriesNumber}, {ackRetries}]";
-
-
+            
             if (!Protocol.Config.IsAckRequired)
             {
                 return  true;
@@ -323,7 +327,7 @@ namespace HL7Interface
                 {
                     return false;
                 }
-                else throw new HL7InterfaceException($"The message was not acknowledged after a total number of {ackRetries} retries");
+                else throw new HL7InterfaceException($"The message was not acknowledged after a total number of {m_HL7Protocol.Config.MaxAckRetriesNumber} retries");
             }
             return true;
         }
