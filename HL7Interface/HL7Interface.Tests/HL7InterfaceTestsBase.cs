@@ -24,7 +24,12 @@ namespace HL7Interface.Tests
         }
 
 
-        protected void CreateAndConfigureA(bool ackRequired = true, bool responseRequired = false, int connectionTimeout = -1)
+        protected void CreateAndConfigureA(
+            bool ackRequired = true, 
+            bool responseRequired = false,
+            int connectionTimeout = -1,
+            int ackTimeout = HL7ProtocolConfig.DefaultAcktimeout,
+            int responseTimeout = HL7ProtocolConfig.DefaultResponseTimeout)
         {
             hl7InterfaceA = new HL7InterfaceBase();
 
@@ -33,6 +38,7 @@ namespace HL7Interface.Tests
                 IsAckRequired = ackRequired,
                 IsResponseRequired = responseRequired,
                 ConnectionTimeout = connectionTimeout,
+                AckTimeout = ackTimeout
             };
 
             IServerConfig serverConfigA = new ServerConfig()
@@ -45,13 +51,18 @@ namespace HL7Interface.Tests
         }
 
 
-        protected void CreateAndConfigureB(bool ackRequired = true, bool responseRequired = false, int connectionTimeout = -1)
-        {
+        protected void CreateAndConfigureB(bool ackRequired = true,
+            bool responseRequired = false,
+            int connectionTimeout = -1,
+            int ackTimeout = HL7ProtocolConfig.DefaultAcktimeout,
+            int responseTimeout = HL7ProtocolConfig.DefaultResponseTimeout)
+        { 
             hl7InterfaceB = new HL7InterfaceBase();
 
             HL7ProtocolConfig hL7ProtocolConfigB = new HL7ProtocolConfig()
             {
                 IsAckRequired = ackRequired,
+                AckTimeout = ackTimeout,
                 IsResponseRequired = responseRequired,
                 ConnectionTimeout = connectionTimeout,
             };
@@ -86,7 +97,6 @@ namespace HL7Interface.Tests
             AppDomain domain = AppDomain.CurrentDomain;
             FieldInfo domainManagerField = domain.GetType().GetField("_domainManager", BindingFlags.Instance | BindingFlags.NonPublic);
             domainManagerField.SetValue(domain, manager);
-     
         }
     }
 }

@@ -15,6 +15,7 @@ using SuperSocket.SocketBase;
 using SuperSocket.SocketEngine;
 using SuperSocket.ClientEngine;
 using SuperSocket.SocketBase.Config;
+using System.Diagnostics;
 
 namespace HL7Interface
 {
@@ -33,6 +34,7 @@ namespace HL7Interface
         private Task m_ConnectionTask;
         private CancellationTokenSource m_ConnectionCancellationToken;
         private object m_AckReceivedLock;
+        
         #endregion
 
         #region Constructor
@@ -66,6 +68,9 @@ namespace HL7Interface
         #endregion
 
         #region Public Properties
+
+        public static Stopwatch GlobalWatch = new Stopwatch();
+
         /// <summary>
         /// The interface name
         /// </summary>
@@ -163,7 +168,6 @@ namespace HL7Interface
 
             m_HL7Protocol.Config = config.ProtocolConfig;
 
-
             return Initialize(m_HL7Server, m_HL7Protocol);
         }
 
@@ -185,8 +189,10 @@ namespace HL7Interface
 
             m_EasyClient.Initialize(new ReceiverFilter(m_HL7Protocol), (request) =>
             {
+               
                 if (request.Request.IsAcknowledge)
                 {
+                    
                     ProcessIncomingAck(request.Request);
                 }
                 else
@@ -215,6 +221,8 @@ namespace HL7Interface
             {
                 if (request.Request.IsAcknowledge)
                 {
+                    
+                    m_HL7Server.Logger.Info($"CALLBACK: Ack captured {request.Request.GetValue("MSA-2")}");
                     ProcessIncomingAck(request.Request);
                 }
                 else
@@ -233,7 +241,7 @@ namespace HL7Interface
             ProcessIncomingRequest(requestInfo);
         }
 
-        public Task<HL7Request> SendHL7MessageAsync(IHL7Message message)
+        public async Task<HL7Request> SendHL7MessageAsync(IHL7Message message)
         {
             HL7Request hl7Request = new HL7Request(message);
 
@@ -254,7 +262,7 @@ namespace HL7Interface
                 { 
                     do
                     {
-                        success = SendMessageOne(hl7Request, ref responseRetries);
+                       success = SendMessageOne(hl7Request, ref responseRetries);
                     }
                     while (!success);
                 }
@@ -268,24 +276,32 @@ namespace HL7Interface
 
             }, hl7Request.RequestCancellationToken.Token);
 
-            return hl7Request.SenderTask;
+            return await hl7Request.SenderTask; //.ConfigureAwait(false);
         }
 
+        static int i = 0;
 
         private bool SendMessageOne(HL7Request hl7Request, ref int responseRetries)
         {
             hl7Request.RequestCancellationToken.Token.ThrowIfCancellationRequested();
             int ackRetries = m_HL7Protocol.Config.MaxAckRetriesNumber;
-
-            lock (m_AckReceivedLock)
+     
+         
+            m_HL7Server.Logger.Info("Entering");
+            if(i++ == 1)
             {
+
+            }
+
+            //lock (m_AckReceivedLock)
+            {
+                m_HL7Server.Logger.Info("Critical Area");
                 while (!SendAndWaitForAck(hl7Request,  ref ackRetries)) ; 
             }
+            m_HL7Server.Logger.Info("Exit");
 
             if (!Protocol.Config.IsResponseRequired)
-            {
                 return true;
-            }
 
             if (!hl7Request.ResponseReceivedEvent.Wait(Protocol.Config.ResponseTimeout, hl7Request.RequestCancellationToken.Token))
             {
@@ -300,29 +316,34 @@ namespace HL7Interface
 
         private bool SendAndWaitForAck(HL7Request hl7Request, ref int ackRetries)
         {
+            m_HL7Server.Logger.Info($"Sending {hl7Request.Request.ControlID}");
+            GlobalWatch.Restart();
+
             m_EasyClient.Send(Encoding.ASCII.GetBytes(MLLP.CreateMLLPMessage(hl7Request.Request.Encode())));
+
+            
+            m_HL7Server.Logger.Info($"Sent {hl7Request.Request.ControlID}");
 
             string logMessage = string.Empty;
 
             logMessage = $"{hl7Request.Request.MessageID} sent (Ack RETRY) [{m_HL7Protocol.Config.MaxAckRetriesNumber}, {ackRetries}]";
             
             if (!Protocol.Config.IsAckRequired)
-            {
-                return  true;
-            }
+                return true;
 
             if (!m_OutgoingRequests.Contains(hl7Request))
-            {
                 throw new OperationCanceledException("");
-            }
+            
 
             if (hl7Request.RequestCancellationToken.Token.IsCancellationRequested)
                 throw new OperationCanceledException(hl7Request.RequestCancellationToken.Token);
 
             hl7Request.RequestCancellationToken.Token.ThrowIfCancellationRequested();
 
+            m_HL7Server.Logger.Info($"Waiting for ack {hl7Request.Request.ControlID}");
             if (!hl7Request.AckReceivedEvent.Wait(Protocol.Config.AckTimeout, hl7Request.RequestCancellationToken.Token))
             {
+                m_HL7Server.Logger.Info($"Ack received: {hl7Request.Request.ControlID}");
                 if (ackRetries-- > 0)
                 {
                     return false;

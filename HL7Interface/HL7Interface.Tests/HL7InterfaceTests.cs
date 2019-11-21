@@ -841,11 +841,11 @@ namespace HL7Interface.Tests
 
 
         [Test, Timeout(-1)]
-        public void Interfaces_Should_Handle_100_messages_Concurrently()
+        public void T_Handle_And_Acknowledge_messages_Concurrently()
         {
-            CreateAndConfigureA(true, false, 5000);
+            CreateAndConfigureA(true, false, 5000, -1);
 
-            CreateAndConfigureB(true, false);
+            CreateAndConfigureB(true, false, 5000, -1);
 
             Assert.That(hl7InterfaceA.Start());
 
@@ -859,7 +859,7 @@ namespace HL7Interface.Tests
 
             List<Task> tasks = new List<Task>(100);
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 1; i++)
             {
                 tasks.Add(hl7InterfaceA.SendHL7MessageAsync(new PrepareForSpecimenRequest($"{(100 + i).ToString()}")));
             }

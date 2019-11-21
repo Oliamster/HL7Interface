@@ -65,6 +65,8 @@ namespace HL7Interface.ServerProtocol
             return base.CreateLogger(loggerName);
         }
 
+
+       
         /// <summary>
         /// Execute the command convayed by the HL7Request
         /// </summary>
@@ -72,13 +74,17 @@ namespace HL7Interface.ServerProtocol
         /// <param name="requestInfo"></param>
         protected override void ExecuteCommand(HL7Session session, HL7Request requestInfo)
         {
+            Logger.Info($"message received at: ElapsedMillisecond {HL7InterfaceBase.GlobalWatch.ElapsedMilliseconds}ms");
             try
             {
+                Logger.Info($"Message received: {requestInfo.Request.ControlID}");
                 Logger.Debug($"Message received: {requestInfo.Request.Encode()}");
 
                 var ack = MLLP.CreateMLLPMessage(requestInfo.Acknowledgment.Encode());
 
                 session.Send(ack);
+                Logger.Info($"Ack sent: {requestInfo.Request.ControlID}");
+
 
                 base.ExecuteCommand(session, requestInfo);
                 Logger.Debug($"The command {requestInfo.Request.MessageID} has been executed");

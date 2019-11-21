@@ -12,12 +12,12 @@ namespace HL7Interface.Configuration
         /// <summary>
         /// Default ReceiveBufferSize
         /// </summary>
-        public const int DefaultMaxAckRetriesNumber = 1;
+        public const int DefaultMaxAckRetriesNumber = 0;
 
         /// <summary>
         ///
         /// </summary>
-        public const int DefaultMaxResponseRetriesNumber = 1;
+        public const int DefaultMaxResponseRetriesNumber = 0;
 
         /// <summary>
         /// 
