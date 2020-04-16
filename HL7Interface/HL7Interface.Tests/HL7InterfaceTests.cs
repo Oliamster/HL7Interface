@@ -746,7 +746,7 @@ namespace HL7Interface.Tests
 
 
         
-        [Test, Timeout(timeout + 1000000000)]
+        [Test, Timeout(timeout)]
         public void  R_Ack_Not_Received_Scenario()
         {
             CreateAndConfigureA(true, false, 5000);
@@ -771,7 +771,7 @@ namespace HL7Interface.Tests
 
             Assert.ThrowsAsync(Is.TypeOf<HL7InterfaceException>()
 
-                .And.Message.EqualTo("The message was not acknowledged after a total number of -1 retries"),  
+                .And.Message.EqualTo($"The message was not acknowledged after a total number of 0 retries"),  
 
                 async () =>  await  hl7InterfaceA.SendHL7MessageAsync(request));
 

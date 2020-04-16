@@ -3,10 +3,10 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
+ using HL7api.Model;
 using System.Threading.Tasks;
-using System.Collections.Concurrent;
 using NHapiTools.Base.Util;
-using HL7api.Model;
+using System.Collections.Concurrent;
 using Hl7Interface.ServerProtocol;
 using HL7Interface.ClientProtocol;
 using HL7Interface.Configuration;
@@ -34,7 +34,6 @@ namespace HL7Interface
         private Task m_ConnectionTask;
         private CancellationTokenSource m_ConnectionCancellationToken;
         private object m_AckReceivedLock;
-        
         #endregion
 
         #region Constructor
@@ -81,10 +80,7 @@ namespace HL7Interface
         /// </summary>
         public virtual IHL7Protocol Protocol
         {
-            get
-            {
-                return m_HL7Protocol;
-            }
+            get { return m_HL7Protocol; }
         }
 
         /// <summary>
@@ -189,7 +185,6 @@ namespace HL7Interface
 
             m_EasyClient.Initialize(new ReceiverFilter(m_HL7Protocol), (request) =>
             {
-               
                 if (request.Request.IsAcknowledge)
                 {
                     
@@ -221,7 +216,6 @@ namespace HL7Interface
             {
                 if (request.Request.IsAcknowledge)
                 {
-                    
                     m_HL7Server.Logger.Info($"CALLBACK: Ack captured {request.Request.GetValue("MSA-2")}");
                     ProcessIncomingAck(request.Request);
                 }
@@ -279,21 +273,14 @@ namespace HL7Interface
             return await hl7Request.SenderTask; //.ConfigureAwait(false);
         }
 
-        static int i = 0;
-
         private bool SendMessageOne(HL7Request hl7Request, ref int responseRetries)
         {
             hl7Request.RequestCancellationToken.Token.ThrowIfCancellationRequested();
             int ackRetries = m_HL7Protocol.Config.MaxAckRetriesNumber;
-     
-         
+
             m_HL7Server.Logger.Info("Entering");
-            if(i++ == 1)
-            {
 
-            }
-
-            //lock (m_AckReceivedLock)
+            lock (m_AckReceivedLock)
             {
                 m_HL7Server.Logger.Info("Critical Area");
                 while (!SendAndWaitForAck(hl7Request,  ref ackRetries)) ; 
