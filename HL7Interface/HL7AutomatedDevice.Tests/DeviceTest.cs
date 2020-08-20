@@ -15,6 +15,8 @@ namespace AutomatedDevice.Tests
         {
             Device d = new Device();
             d.Init();
+
+       
         }
     }
 }

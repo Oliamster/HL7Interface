@@ -14,6 +14,7 @@ namespace HL7DeviceSimulator
         public void Init()
         {
             State = new Ready();
+
             HL7Interface = new HL7Interface.HL7InterfaceBase();
 
             HL7Server server = new HL7Server();
